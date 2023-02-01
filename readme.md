@@ -1,9 +1,11 @@
 # Summary
-This is my personal *userspace* for [QMK Firmware](https://github.com/qmk/qmk_firmware). It is set up as a self-contained folder that avoids placing `keymap.c` files within keyboard sub-folders.
+This personal *userspace* for [QMK Firmware](https://github.com/qmk/qmk_firmware), was forked from *[filterpaper's userspace](https://github.com/filterpaper/qmk_userspace). The intention is to write the code necessary for my corne keyboard, my Mountain Ergo, a 60% YMD60MQ wooden case, and a 65% YMD60MQ with an acrylic case. I have just started so this will take a while as I'm a dad who works on this an hour here and and hour there. I'll work primarily on making this run as an "eldestroyer74" userspace, then I'll work towards getting the corne keyboard layout that I have in mind, see [my keymap principles](/keymap-principles.md) and see if you agree with how I'm thinking about it.
+
+It is set up as a self-contained folder that avoids placing `keymap.c` files within keyboard sub-folders.
 * Keymaps are saved as [QMK Configurator](https://config.qmk.fm/#/) JSON files.
 * Shared source files build with `rules.mk`.
 
-![corneplanck](https://github.com/filterpaper/filterpaper.github.io/raw/main/images/corneplanck.png)
+![A corne split keyboard with a Chieftain42 case and GMK Dots keycaps](/imgs/ChieftainDots.jpg)
 
 
 
