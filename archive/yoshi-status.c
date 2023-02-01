@@ -19,7 +19,7 @@
    vertical rendering (OLED_ROTATION_270).
 */
 
-#include "filterpaper.h"
+#include "eldestroyer74.h"
 
 #define YOSHI_FRAME_DURATION 130 // Number of ms between frames
 #define YOSHI_SIZE 128 // 32x32px, 128 bytes per array frame 

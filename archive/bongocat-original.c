@@ -23,7 +23,7 @@
    (keyboards/kyria/keymaps/j-inc)
 */
 
-#include "filterpaper.h"
+#include "eldestroyer74.h"
 
 // Animation frame defaults
 #define IDLE_FRAMES 5

@@ -1,7 +1,7 @@
 // Copyright 2022 @filterpaper
 // SPDX-License-Identifier: GPL-2.0+
 
-#include "filterpaper.h"
+#include "eldestroyer74.h"
 
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 static uint_fast16_t tap_timer = 0;

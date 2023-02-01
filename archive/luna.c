@@ -25,7 +25,7 @@
    (https://github.com/ItsWaffIe/waffle_corne/blob/proton-c/firmware/oled.c)
 */
 
-#include "filterpaper.h"
+#include "eldestroyer74.h"
 
 #define MIN_WALK_SPEED 10
 #define MIN_RUN_SPEED 40

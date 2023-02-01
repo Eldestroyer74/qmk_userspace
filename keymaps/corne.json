@@ -1,6 +1,6 @@
 {
 	"keyboard": "crkbd/rev1",
-	"keymap": "filterpaper",
+	"keymap": "eldestroyer74",
 	"layout": "LAYOUT_crkbd_w",
 	"layers": [
 		[ "C_42(HRM(_BASE))" ],
