@@ -35,3 +35,6 @@ The old layers (alt, ctrl, shift, gui) should remain where they used to be (if p
 
 ## Don't double up
 I wrote this principle as it would be easy to have a symbols layer, however that layer already exists by pressing the shift and the spacer bar at the same time. The only problem is that they are all in the number pad layout not the top row layer. However, as the left hand must be held to access them, I'll just have to learn where they all are. Note, 7,8,9 remain in the current locaiton, so I should be able to bring that knowldge back into it. 
+
+## Home row modifiers
+Make it so that the home row have modifiers.
