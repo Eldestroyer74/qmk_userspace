@@ -14,7 +14,7 @@ SPACE_CADET_ENABLE = no
 # Common features
 COMBO_ENABLE = yes
 EXTRAKEY_ENABLE = yes
-MOUSEKEY_ENABLE = no #disabled as I need to get the firmware small enough
+MOUSEKEY_ENABLE = yes #disabled as I need to get the firmware small enough
 BOOTMAGIC_ENABLE = yes
 
 VPATH += $(USER_PATH)/oled $(USER_PATH)/rgb $(USER_PATH)/features

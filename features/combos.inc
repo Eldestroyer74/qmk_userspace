@@ -8,20 +8,26 @@
 	COMB(swap_l,  SH_TG,  KC_X, KC_C, KC_V)
 	COMB(swap_r,  SH_TG,  TH_M, TH_COMM, TH_DOT)
 #endif
-
+/*
+ * @REJ: create 1 combo for the num pad
+ */
+//COMB(tog_fnc, TG(FNC), LT(SYM,KC_TAB),  KC_B)
 COMB(tog_fnc, TG(FNC), LT(SYM,KC_TAB),  KC_B)
 COMB(tog_num, TG(NUM), LT(NUM,KC_BSPC), KC_N)
 COMB(vol_up,  KC_VOLU, KC_P,    HM_QUOT)
 COMB(vol_dn,  KC_VOLD, HM_QUOT, TH_SLSH)
 
 // macros
-SUBS(vi_quit, ":q!",   KC_Q,    KC_W)
-SUBS(vi_save, ":x",    KC_Z,    KC_X)
-SUBS(dir_up,  "../",   TH_DOT,  TH_SLSH)
+//SUBS(vi_quit, ":q!",   KC_Q,    KC_W)
+//SUBS(vi_save, ":x",    KC_Z,    KC_X)
+//SUBS(dir_up,  "../",   TH_DOT,  TH_SLSH)
 
 // navigation
-COMB(nav_dn,  SA_DN,   TH_M,    TH_COMM)
-COMB(nav_up,  SA_UP,   TH_COMM, TH_DOT)
+COMB(nav_dn,  CS_DN,   TH_M,    TH_COMM)
+//COMB(nav_up,  SA_UP,   TH_COMM, TH_DOT)
+COMB(nav_up,  CS_UP,   KC_I, KC_O)
+COMB(nav_lf, CS_LF, KC_H, HM_J)
+COMB(nav_ri, CS_RI, HM_J, HM_K)
 
 // noop thumbs
 COMB(thmb_l,  KC_NO,   LT(SYM,KC_TAB), LCA_T(KC_ENT))
