@@ -21,6 +21,7 @@ COMB(vol_dn,  KC_VOLD, HM_QUOT, TH_SLSH)
 //SUBS(vi_quit, ":q!",   KC_Q,    KC_W)
 //SUBS(vi_save, ":x",    KC_Z,    KC_X)
 //SUBS(dir_up,  "../",   TH_DOT,  TH_SLSH)
+//SUBS(hub_mtng, "https://meetings.hubspot.com/ricardoescalon", KC_F, KC_G)
 
 // navigation
 COMB(nav_dn,  CS_DN,   TH_M,    TH_COMM)
@@ -29,6 +30,9 @@ COMB(nav_up,  CS_UP,   KC_I, KC_O)
 COMB(nav_lf, CS_LF, KC_H, HM_J)
 COMB(nav_ri, CS_RI, HM_J, HM_K)
 
+//CAPSLOCK 
+//COMB(caps, KC_CAPS, KC_F, KC_G)
+
 // noop thumbs
-COMB(thmb_l,  KC_NO,   LT(SYM,KC_TAB), LCA_T(KC_ENT))
-COMB(thmb_r,  KC_NO,   RSFT_T(KC_SPC), LT(NUM,KC_BSPC))
+// COMB(thmb_l,  KC_NO,   LT(SYM,KC_TAB), LCA_T(KC_ENT))
+// COMB(thmb_r,  KC_NO,   RSFT_T(KC_SPC), LT(NUM,KC_BSPC))

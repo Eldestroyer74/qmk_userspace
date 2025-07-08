@@ -3,10 +3,10 @@
 	"keymap": "eldestroyer74",
 	"layout": "LAYOUT_crkbd_w",
 	"layers": [
-		[ "C_42(HRM(_BASE))" ],
-		[ "C_42(HRM(_COLE))" ],
-		[ "C_42(_NUMB)" ],
-		[ "C_42(_SYMB)" ],
-		[ "C_42(_FUNC)" ]
+		[ "HRM(_BASE)" ],
+		[ "HRM(_COLE)"],
+		[ "_NUMB" ],
+		[ "_SYMB" ],
+		[ "_FUNC" ]
 	]
 }

@@ -5,8 +5,13 @@ I already know where a lot of layer modifiers are and I'm familiar with QWERTY. 
 - Ctrl in a similar location
 - Enter where it is
 
-## Symetrical taps and holds for thumbs
+## Make it so that your thumbs follow regular bottom keyboard layout
 Make it so that the three thumb buttons on the left and the right halfs of the keyboard do the same. This will make it easy to use keycaps with labels for 60% and 65% keyboards. For me personally, it will make it easier to remember as it builds on how I already use my existing keyboards with a single space bar.
+LEFT
+- gui, alt, space
+RIGHT
+- space, FN, menu
+
 
 ## Move/Select words, lines, pages
 I'm not a programmer, however a very common interaction that I enjoy is the ability to use arrows, home, end and page up and down with both control to just move the cursor there or with shift. Hence, 
@@ -37,4 +42,7 @@ The old layers (alt, ctrl, shift, gui) should remain where they used to be (if p
 I wrote this principle as it would be easy to have a symbols layer, however that layer already exists by pressing the shift and the spacer bar at the same time. The only problem is that they are all in the number pad layout not the top row layer. However, as the left hand must be held to access them, I'll just have to learn where they all are. Note, 7,8,9 remain in the current locaiton, so I should be able to bring that knowldge back into it. 
 
 ## Home row modifiers
-Make it so that the home row have modifiers.
+Make it so that the home row have modifiers. CAGS, NUM, SYM, FUNC
+THUBMS: GUI , ALT, FUN
+HOME ROW: SYM, NUM, CTRL, SHFT OR SyNCS SCNSy 
+- 
