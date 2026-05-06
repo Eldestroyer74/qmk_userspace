@@ -5,6 +5,7 @@
 /* Corne logo, コルネ label and @soundmonster icons
    Editor: https://helixfonteditor.netlify.com/
  */
+//C:\Users\RicardoEscalon\Documents\qmk_firmware\platforms
 
 #include "progmem.h"
 

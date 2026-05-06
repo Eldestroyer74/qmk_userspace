@@ -14,14 +14,14 @@
 //COMB(tog_fnc, TG(FNC), LT(SYM,KC_TAB),  KC_B)
 COMB(tog_fnc, TG(FNC), LT(SYM,KC_TAB),  KC_B)
 COMB(tog_num, TG(NUM), LT(NUM,KC_BSPC), KC_N)
-COMB(vol_up,  KC_VOLU, KC_P,    HM_QUOT)
-COMB(vol_dn,  KC_VOLD, HM_QUOT, TH_SLSH)
+COMB(vol_up,  KC_VOLU, KC_P,    HM_SCLN)
+COMB(vol_dn,  KC_VOLD, HM_SCLN, TH_SLSH)
 
 // macros
 //SUBS(vi_quit, ":q!",   KC_Q,    KC_W)
 //SUBS(vi_save, ":x",    KC_Z,    KC_X)
 //SUBS(dir_up,  "../",   TH_DOT,  TH_SLSH)
-//SUBS(hub_mtng, "https://meetings.hubspot.com/ricardoescalon", KC_F, KC_G)
+SUBS(hub_mtng, "https://meetings.hubspot.com/ricardoescalon", KC_F, KC_G)
 
 // navigation
 COMB(nav_dn,  CS_DN,   TH_M,    TH_COMM)
