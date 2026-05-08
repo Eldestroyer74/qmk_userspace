@@ -130,6 +130,19 @@ RGB should communicate keyboard state rather than compete with typing. Use it fo
 active layers, modifiers, Caps Lock, persistent toggles, and warnings. Avoid
 continuous decorative animation as the default.
 
+RGB should show the scope of the active state:
+
+- Whole-keyboard states use the whole keyboard. Caps Lock is red because it
+  changes ordinary typing globally. Colemak is purple because it is a persistent
+  whole-keyboard typing mode.
+- Modifier states light modifier positions, because they show which kind of held
+  helper key is affecting the next command.
+- Command layers light the usable command surface for that layer, not every
+  inherited or technically non-transparent key.
+
+When RGB does not match the layer concept, fix either the RGB mask or the layer
+concept deliberately rather than adding a second visual grammar.
+
 ### Challenge Principles During Feature Work
 
 Every feature must state which principle it supports or challenges. If a feature

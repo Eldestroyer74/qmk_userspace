@@ -31,6 +31,83 @@ static RGB rgb_for_layer(uint8_t layer) {
 	}
 }
 
+enum {
+	L_TOP,
+	L_HOME,
+	L_BOTTOM,
+	L_THUMB,
+	R_TOP,
+	R_HOME,
+	R_BOTTOM,
+	R_THUMB,
+};
+
+enum {
+	L_OUTER,
+	L_PINKY,
+	L_RING,
+	L_MIDDLE,
+	L_INDEX,
+	L_INNER,
+	R_INNER = 5,
+	R_INDEX = 4,
+	R_MIDDLE = 3,
+	R_RING = 2,
+	R_PINKY = 1,
+	R_OUTER = 0,
+	R_THUMB_INNER = 5,
+	R_THUMB_MIDDLE = 4,
+	R_THUMB_OUTER = 3,
+};
+
+static bool is_delete_position(uint8_t row, uint8_t col) {
+	return row == R_TOP && col == R_OUTER;
+}
+
+static bool is_direction_position(uint8_t row, uint8_t col) {
+	return (row == R_TOP && col == R_MIDDLE) ||
+	       (row == R_HOME && (col == R_INDEX || col == R_MIDDLE || col == R_RING));
+}
+
+static bool is_left_df_modifier_position(uint8_t row, uint8_t col) {
+	return row == L_HOME && (col == L_MIDDLE || col == L_INDEX);
+}
+
+static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col) {
+	switch (layer) {
+		case NUM:
+			return (row <= L_BOTTOM && L_PINKY <= col && col <= L_INDEX) ||
+			       (R_TOP <= row && row <= R_BOTTOM);
+		case SYM:
+			return (row == L_TOP && col <= L_PINKY) || row == L_HOME ||
+			       (row == R_TOP && R_PINKY <= col && col <= R_MIDDLE) || row == R_HOME ||
+			       (row == R_BOTTOM && R_PINKY <= col && col <= R_MIDDLE) ||
+			       (row == L_THUMB && L_MIDDLE <= col);
+		case NAV:
+			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
+			       is_delete_position(row, col);
+		case SEL:
+			return is_direction_position(row, col) || is_delete_position(row, col);
+		case EXT:
+			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
+			       is_delete_position(row, col);
+		case MED:
+			return is_delete_position(row, col) || (row == R_TOP && col == R_MIDDLE) ||
+			       (row == R_HOME && (col == R_INDEX || col == R_MIDDLE || col == R_RING)) ||
+			       (row == R_BOTTOM && col == R_MIDDLE);
+		case MOU:
+			return is_delete_position(row, col) ||
+			       (row == R_TOP && (col == R_INNER || col == R_MIDDLE)) ||
+			       (row == R_HOME &&
+			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING)) ||
+			       (row == R_THUMB && (col == R_THUMB_INNER || col == R_THUMB_OUTER));
+		case SYS:
+			return is_delete_position(row, col) || row == R_HOME;
+		default:
+			return false;
+	}
+}
+
 
 layer_state_t layer_state_set_user(layer_state_t const state) {
 	rgb_matrix_mode_noeeprom(DEF_MODE);
@@ -40,12 +117,11 @@ layer_state_t layer_state_set_user(layer_state_t const state) {
 
 #ifdef __AVR__
 
-static void rgb_set_layer_keys(uint8_t layer, RGB rgb) {
+static void rgb_set_command_keys(uint8_t layer, RGB rgb) {
 	for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
 		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
-			uint8_t  index_led     = g_led_config.matrix_co[row][col];
-			uint16_t index_keycode = keymap_key_to_keycode(layer, (keypos_t){col,row});
-			if (index_led != NO_LED && index_keycode > KC_TRNS) {
+			uint8_t index_led = g_led_config.matrix_co[row][col];
+			if (index_led != NO_LED && rgb_should_light_command_key(layer, row, col)) {
 				rgb_matrix_set_color(index_led, rgb.r, rgb.g, rgb.b);
 			}
 		}
@@ -70,10 +146,10 @@ bool rgb_matrix_indicators_user(void) {
 			}
 		}
 	}
-	// Layer keys indicator by @rgoulter
+	// Command layer indicators follow the documented ChieftainDots scope rule.
 	if (get_highest_layer(layer_state) > CMK) {
 		uint8_t layer = get_highest_layer(layer_state);
-		rgb_set_layer_keys(layer, rgb_for_layer(layer));
+		rgb_set_command_keys(layer, rgb_for_layer(layer));
 	}
 	return false;
 }
@@ -86,12 +162,12 @@ static inline RGB glow_hsv_to_rgb(HSV hsv) {
 	return hsv_to_rgb(hsv);
 }
 
-static void rgb_set_layer_keys(uint8_t layer, RGB rgb, uint8_t led_min, uint8_t led_max) {
+static void rgb_set_command_keys(uint8_t layer, RGB rgb, uint8_t led_min, uint8_t led_max) {
 	for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
 		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
-			uint8_t  index_led     = g_led_config.matrix_co[row][col];
-			uint16_t index_keycode = keymap_key_to_keycode(layer, (keypos_t){col,row});
-			if (led_min <= index_led && index_led <= led_max && index_keycode > KC_TRNS) {
+			uint8_t index_led = g_led_config.matrix_co[row][col];
+			if (index_led != NO_LED && led_min <= index_led && index_led <= led_max &&
+			    rgb_should_light_command_key(layer, row, col)) {
 				rgb_matrix_set_color(index_led, rgb.r, rgb.g, rgb.b);
 			}
 		}
@@ -122,10 +198,10 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 			}
 		}
 	}
-	// Layer keys indicator by @rgoulter
+	// Command layer indicators follow the documented ChieftainDots scope rule.
 	if (get_highest_layer(layer_state) > CMK) {
 		uint8_t layer = get_highest_layer(layer_state);
-		rgb_set_layer_keys(layer, rgb_for_layer(layer), led_min, led_max);
+		rgb_set_command_keys(layer, rgb_for_layer(layer), led_min, led_max);
 	}
 	return false;
 }

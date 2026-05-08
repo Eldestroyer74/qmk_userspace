@@ -91,11 +91,28 @@ Run QMK from MINGW64. From PowerShell, Codex can use:
 & 'C:\QMK_MSYS\shell_connector.cmd' -lc 'cd /c/Users/RicardoEscalon/Documents/qmk_firmware && qmk compile users/eldestroyer74/keymaps/corne.json'
 ```
 
+For split Corne flashing, prefer the canonical JSON flash commands so QMK uses
+the active ChieftainDots userspace and writes the correct `EE_HANDS` handedness
+marker to each half:
+
+```bash
+qmk flash users/eldestroyer74/keymaps/corne.json -bl dfu-split-left
+qmk flash users/eldestroyer74/keymaps/corne.json -bl dfu-split-right
+```
+
+Flash each half while USB is plugged directly into that half. Press the reset
+button near the screen when QMK waits for the bootloader. This matters for RGB
+and OLED behavior because each half must know whether it is left or right.
+
 The previous `C:\Program Files\QMK_MSYS` path caused AVR LTO linking to fail
 because the toolchain mishandled the space in `Program Files`.
 
 ## Known QMK Compatibility Notes
 
+- `EE_HANDS` requires the halves to be flashed with the correct split target.
+  If layer keys work but per-key RGB appears on only one side, or right-side
+  command-layer indicators do not light, check handedness flashing before
+  changing RGB masks.
 - Flow Tap is the preferred first experiment for accidental home-row tap-hold
   activation during normal typing flow. QMK documents `FLOW_TAP_TERM 150` as a
   starting point; ChieftainDots should trial it before making broader

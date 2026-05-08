@@ -69,6 +69,27 @@ resolved or the feature is rolled back.
 A compiled feature is not Kept until it has been flashed and tried on the actual
 keyboard. If the feature feels worse in real use, revise it or roll it back.
 
+For the split Corne, use the canonical JSON flash commands when RGB, OLED, or
+split-half behavior is being tested. These commands set the `EE_HANDS`
+left/right handedness markers as part of flashing:
+
+```bash
+qmk flash users/eldestroyer74/keymaps/corne.json -bl dfu-split-left
+qmk flash users/eldestroyer74/keymaps/corne.json -bl dfu-split-right
+```
+
+Flash the left half with USB plugged into the left controller, then flash the
+right half with USB plugged into the right controller. Press the reset button on
+the half being flashed when QMK waits for the bootloader.
+
+Do not use `qmk flash -kb crkbd/rev1 -km eldestroyer74` for ChieftainDots; that
+path can pick up the legacy `keyboards/crkbd/keymaps/eldestroyer74` folder
+instead of the canonical userspace JSON build.
+
+If split RGB behaves strangely, verify this handedness flash workflow before
+changing RGB code. Wrong or stale handedness can make per-key indicators appear
+only on one side even when the keymap itself works.
+
 ## Firmware Archive Gate
 
 After a source commit is accepted, compile from that committed state and copy the

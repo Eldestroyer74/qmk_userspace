@@ -60,6 +60,36 @@ where practical because those layers are used for editing and command work.
 - `process_record_user` should stay coordinated. New behavior should be routed
   deliberately so one feature does not silently block another.
 
+## RGB Scope Rule
+
+RGB belongs to feedback, not behavior. It should report the active scope of the
+keyboard state without becoming another place where key behavior is defined.
+
+- Caps Lock is whole-board red because it changes ordinary typing globally.
+- Colemak is whole-board purple because it is a persistent whole-board typing
+  mode.
+- Held modifiers use green modifier indicators.
+- Momentary command layers light their usable command surface. The mask should
+  follow the layer concept documented here, rather than relying only on QMK
+  keycode introspection.
+
+Because ChieftainDots runs on a split Corne, RGB state also depends on split
+state sync. `SPLIT_LAYER_STATE_ENABLE` is required for momentary layer RGB on
+the non-master half, `SPLIT_LED_STATE_ENABLE` is required for Caps Lock RGB on
+the non-master half, and `SPLIT_MODS_ENABLE` is required for modifier RGB on the
+non-master half. Keep those sync options explicit in `config.h` rather than
+hiding them behind feature-specific preprocessor guards.
+
+The current command-layer color vocabulary is deliberately small: Numbers is
+blue, Symbols is cyan, and the navigation/media/mouse/system command layers use
+the shared layer color until a stronger visual need is proven.
+
+Corne's right-hand matrix columns are reversed from the visual key order. For
+example, visual `Y U I O P BSPC` maps to matrix columns `5 4 3 2 1 0`.
+RGB masks should use named visual-position helpers such as right-hand index,
+middle, ring, and outer positions rather than raw column numbers. This keeps
+the indicator code aligned with the layout a user sees.
+
 ## HRM Wrapper Decision
 
 `HRM(...)` is a compile-time wrapper for typing layers. It rewrites selected
