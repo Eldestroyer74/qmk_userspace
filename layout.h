@@ -1,6 +1,8 @@
 // Copyright 2021 @filterpaper
 // SPDX-License-Identifier: GPL-2.0+
 
+#include "features/tap_dance.h"
+
 // macOS shortcuts
 // @REJ: Don't need shortcuts, these are called in the eldestroyr74.c file.
 #define Z_UND	C(KC_Z) 
@@ -65,7 +67,7 @@
 #define _BASE \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
 /* │  TAB   │  Q     │  W     │  E     │  R     │  T     │   │  Y     │  U     │  I     │  O     │  P     │  BSPC  │ */\
-	KC_TAB,   KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,   KC_BSPC,    \
+	TAB_ESC_CLOSE, KC_Q, KC_W,  KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,   KC_BSPC,    \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │  CAPS  │  A     │  S     │  D     │  F     │  G     │   │  H     │  J     │  K     │  L     │  ; :   │  ' "   │ */\
 	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
@@ -90,17 +92,18 @@
 	                            _______, _______, _______,     _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */ 
 
-// @REJ: put numbers on the right, and a shift modifier in the home row of the left, make your thumb buttons consistent
+// S/L-held numbered commands: function keys keep old number-layer memory on the left;
+// the right hand owns digits and calculator operators.
 #define _NUMB \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
-/* │   /    │  CALC  │  7     │  8     │  9     │        │   │        │ HOME   │ PG DN  │ PG UP  │ END    │ DELETE │ */\
-	KC_SLSH,  KC_CALC,  KC_7,    KC_8,    KC_9,   XXXXXXX,     XXXXXXX, KC_HOME, KC_PGDN, KC_PGUP, KC_END,  KC_DEL,   \
+/* │        │  F12   │  F7    │  F8    │  F9    │        │   │   +    │   7    │   8    │   9    │   *    │ DELETE │ */\
+	XXXXXXX, KC_F12,  KC_F7,   KC_F8,   KC_F9,   XXXXXXX,     KC_PLUS, KC_7,    KC_8,    KC_9,    KC_ASTR, KC_DEL,   \
 /* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │   *    │   +    │  4     │  5     │  6     │        │   │        │ LEFT   │ DOWN   │ UP     │  RIGHT │        │ */\
-	KC_ASTR, KC_PLUS,  KC_4,    KC_5,    KC_6,    XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______,   \
+/* │        │  F11   │  F4    │  F5    │  F6    │        │   │   -    │   4    │   5    │   6    │   /    │   .    │ */\
+	XXXXXXX, KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX,     KC_MINS, KC_4,    KC_5,    KC_6,    KC_SLSH, KC_DOT,   \
 /* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │    -   │    0   │  1     │  2     │  3     │        │   │        │CTSF LF │CTSF DN │CTSF UP │CTSF RI │        │ */\
-	KC_MINS,  KC_0,  	KC_1,    KC_2,    KC_3,   XXXXXXX,     XXXXXXX, CS_LF,	CS_DN,   CS_UP,  CS_RI,    _______,  \
+/* │        │  F10   │  F1    │  F2    │  F3    │        │   │   (    │   1    │   2    │   3    │   0    │   )    │ */\
+	XXXXXXX, KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX,     KC_LPRN, KC_1,    KC_2,    KC_3,    KC_0,    KC_RPRN, \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
 	                            _______, _______, _______,     _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */

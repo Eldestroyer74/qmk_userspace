@@ -41,6 +41,25 @@ Then compile the current baseline:
 qmk compile users/eldestroyer74/keymaps/corne.json
 ```
 
+## Firmware Checkpoints
+
+QMK should keep writing its normal output file:
+
+```text
+C:\Users\RicardoEscalon\Documents\qmk_firmware\crkbd_rev1_eldestroyer74.hex
+```
+
+After an accepted source commit, copy that file into the local ignored
+`firmware-history/` folder with a Julian-style date, short commit SHA, and short
+behavior name:
+
+```text
+firmware-history/2026128_6920586_checkpoint-cleanup.hex
+```
+
+These firmware files are for quick QMK Toolbox rollback only. They are not the
+source of truth and should not be committed.
+
 ## Coding Style
 
 Follow the userspace `.editorconfig`: UTF-8, tabs, and four-column tab width.
@@ -84,15 +103,27 @@ because the toolchain mishandled the space in `Program Files`.
 - Combo source that defines `key_combos` must be visible to QMK keymap
   introspection; use the current introspection build path instead of treating it
   as ordinary shared `SRC`.
+- Tap Dance source that defines `tap_dance_actions` must also be visible to QMK
+  keymap introspection. Put the action table in a feature file such as
+  `features/tap_dance.c`, include it from the introspection aggregator, wire that
+  aggregator with `INTROSPECTION_KEYMAP_C`, and do not add the same file to
+  `SRC`.
+- QMK keymap introspection accepts one include file. Use
+  `features/introspection.c` as the aggregator for Tap Dance, future combos, and
+  any other introspected tables.
+- `layout.h` is included through `config.h`, so it can be seen by AVR assembly
+  sources during the build. Keep declarations in `layout.h` preprocessor-safe;
+  avoid C-only declarations such as `enum` there.
 - Legacy keymap wiring that names `filterpaper` should not be copied into the
   active ChieftainDots userspace unless the goal is explicitly to build
   Filterpaper's original userspace.
 
 ## Size Pressure
 
-The successful Corne build with LTO enabled had about 460 bytes free. Any feature
-that adds code must include a size-risk check. If a feature pushes the firmware
-over size, optimize that feature or roll it back before starting another one.
+The current Corne build with Tap Dance enabled has about 2916 bytes free. Any
+feature that adds code must include a size-risk check. If a feature pushes the
+firmware over size, optimize that feature or roll it back before starting
+another one.
 
 ## Rollback Rule
 

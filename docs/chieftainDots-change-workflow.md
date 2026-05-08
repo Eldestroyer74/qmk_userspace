@@ -7,7 +7,8 @@ intended for one feature at a time.
 
 1. Capture the feature as an Idea in the roadmap.
 2. Discuss the user goal, ergonomics, and success criteria.
-3. Research QMK compatibility and local code implications.
+3. Research QMK native support, current QMK docs, community practice, best
+   implementation patterns, and local code implications.
 4. Challenge the feature against the current principles.
 5. Verify every QMK hook, callback, keycode, and config option against local QMK
    source, official QMK docs, or an existing working userspace pattern.
@@ -67,6 +68,24 @@ resolved or the feature is rolled back.
 
 A compiled feature is not Kept until it has been flashed and tried on the actual
 keyboard. If the feature feels worse in real use, revise it or roll it back.
+
+## Firmware Archive Gate
+
+After a source commit is accepted, compile from that committed state and copy the
+generated firmware into a local ignored archive. Do not rename QMK's normal
+output file in place; keep `crkbd_rev1_eldestroyer74.hex` as the build output
+and copy it into `firmware-history/`.
+
+Use Julian-style dates without dashes, followed by the short commit SHA and a
+short behavior name:
+
+```text
+firmware-history/2026128_6920586_checkpoint-cleanup.hex
+firmware-history/2026128_s-held-numbers-trial.hex
+```
+
+The archive is local and ignored by git. The commit remains the source of truth;
+the archived firmware is a quick physical rollback file for QMK Toolbox.
 
 ## Git Checkpoint Gate
 

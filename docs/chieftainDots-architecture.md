@@ -21,11 +21,19 @@ code.
 
 - Base: QWERTY typing layer with familiar outer modifiers and thumb keys.
 - Colemak: alternate typing layer toggled from the function layer.
-- Numbers/Nav: calculator-style numbers on the left and movement/navigation on
-  the right.
+- Numbers/Commands: function keys on the left using old number-layer memory,
+  numbers and calculator operators on the right, accessed from `S` or `L`.
 - Symbols: punctuation, brackets, braces, and shifted symbols.
-- Function: function keys, mouse keys, media keys, shutdown shortcut, and layer
-  toggles.
+- Function: legacy mixed function, mouse, media, shutdown, and layer-toggle
+  layer. It remains available for now while future Media/System behavior is
+  designed.
+
+## Cross-Layer Key Roles
+
+Some physical positions should keep a broad family meaning even when the exact
+keycode changes by layer. The Backspace position is one of these: Base should use
+Backspace for typing correction, while non-base command layers should use Delete
+where practical because those layers are used for editing and command work.
 
 ## Ownership Boundaries
 
@@ -59,6 +67,107 @@ If ChieftainDots needs modifiers or selection behavior on a command layer, prefe
 explicit named commands such as `C(S(KC_LEFT))`, explicit modifier positions, or
 a dedicated editing layer. Do not solve that by applying the typing-layer HRM
 wrapper to every layer.
+
+## Two Anchor Families Exploration
+
+One candidate direction is to use home-row anchors plus left-thumb refinements.
+The `S`/`L` numbered-command slice is implemented and being trialed; the
+left-thumb refinement layers are not implemented yet.
+
+The model:
+
+- The anchor key selects a command family.
+- A left thumb position refines that family into a related sub-layer.
+- The right hand performs the command.
+
+### `S` Family: Numbers And Editing
+
+- Hold `S`: Numbers on the right hand.
+- Hold `S` plus the left GUI thumb position: Arrows.
+- Hold `S` plus the left Alt thumb position: selection shortcuts such as
+  Ctrl+Shift+Arrows.
+- Hold `S` plus the left Space thumb position: extremes such as Home, End, Page
+  Up, and Page Down.
+
+First-slice number candidate:
+
+```text
+Y   U   I   O   P   BSPC
++   7   8   9   *   blank
+
+H   J   K   L   ;   '
+-   4   5   6   /   .
+
+N   M   ,   .   /   RSFT
+(   1   2   3   0   )
+```
+
+The first slice proved the right-hand number pad. It kept the left side blank
+while the number pad itself was tested.
+
+Active numbered-command refinement:
+
+```text
+TAB  Q    W   E   R   T       Y   U   I   O   P   BSPC
+---  F12  F7  F8  F9  ---     +   7   8   9   *   DEL
+
+CAPS A    S   D   F   G       H   J   K   L   ;   '
+---  F11  F4  F5  F6  ---     -   4   5   6   /   .
+
+LSFT Z    X   C   V   B       N   M   ,   .   /   RSFT
+---  F10  F1  F2  F3  ---     (   1   2   3   0   )
+```
+
+This keeps the old number/function memory: `F7/F8/F9`, `F4/F5/F6`, and
+`F1/F2/F3` sit where old `7/8/9`, `4/5/6`, and `1/2/3` lived. `F10`, `F11`, and
+`F12` sit to the left of their corresponding function rows. Tab, Caps, and Shift
+positions are blank on this layer because they do not belong to the numbered
+command concept. The Backspace position becomes Delete under the cross-layer
+editing-key rule.
+
+Both `S` and `L` can access this layer. `S` supports left-hand anchor, right-hand
+number entry. `L` remains useful as a right-hand access key for the function-key
+side of the same numbered-command layer.
+
+### `A` Family: Symbols And Tools
+
+- Hold `A`: Symbols.
+- Hold `A` plus the left GUI thumb position: Function keys and system actions.
+- Hold `A` plus the left Alt thumb position: Mouse.
+- Hold `A` plus the left Space thumb position: Media and volume.
+
+### Spatial Consistency
+
+Command layers should reuse physical meaning where possible:
+
+- Positions chosen for calculator plus/minus should correspond to mouse scroll
+  up/down.
+- Positions chosen for Enter, confirm, or accept should correspond to primary
+  mouse button behavior where that makes sense.
+- Related actions such as arrows, selection arrows, and Home/End/Page movement
+  should keep directional meaning across sub-layers.
+
+### Implementation Direction
+
+The likely readable implementation is ordinary QMK layer stacking: `S` or `A`
+enters the base family layer, and the left thumb positions on that layer
+temporarily enter related sub-layers. Avoid solving this with QMK Combos or
+custom state machines unless plain layers prove inadequate.
+
+This idea may require revising older principles. It prefers more narrowly named
+layers over fewer overloaded layers. It also treats thumbs as layer refinements
+inside an anchor family instead of only ordinary modifiers.
+
+### Ideas Considered And Set Aside
+
+- Left thumb Space as `LT(NUM, KC_SPC)`: common in ergonomic layouts, but risks
+  Space timing issues.
+- Left thumb GUI or Alt as a Number hold: rejected for now because GUI and Alt
+  need to remain reliable held modifiers for OS/application shortcuts.
+- Caps as a layer hub: promising because it preserves thumbs, but it touches
+  Caps Lock, Caps RGB, and `CAPS_UNLOCK`, so it is a larger design change.
+- QMK Combos for numbers/navigation/text: disabled for now after ergonomic trial
+  feedback. Reachable combos were not necessarily comfortable combos.
 
 ## Anti-Spaghetti Rules
 

@@ -13,6 +13,7 @@ SPACE_CADET_ENABLE = no
 
 # Common features
 COMBO_ENABLE = no
+TAP_DANCE_ENABLE = yes
 EXTRAKEY_ENABLE = yes
 MOUSEKEY_ENABLE = yes #disabled as I need to get the firmware small enough
 BOOTMAGIC_ENABLE = yes
@@ -22,7 +23,9 @@ OPT_DEFS += -DCAPS_UNLOCK -DINIT_EE_HANDS_$(shell echo ${SPLIT}|tr a-z A-Z)
 SRC += eldestroyer74.c caps_unlock.c
 # Combo definitions are disabled while ChieftainDots redesigns chords around
 # comfortable finger positions instead of inherited Filterpaper placements.
-# INTROSPECTION_KEYMAP_C = combos.c
+# QMK keymap introspection can include only one file. Use an aggregator for
+# Tap Dance now, and future combos or other introspected tables later.
+INTROSPECTION_KEYMAP_C = introspection.c
 
 ifeq ($(strip $(MCU)), atmega32u4)
 	LTO_ENABLE = yes

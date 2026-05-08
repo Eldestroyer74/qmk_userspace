@@ -74,6 +74,14 @@ commands, explicit modifier positions, or a dedicated editing layer. The layer
 table should still explain what the key does without requiring the user to
 remember nested tap-hold rules.
 
+### Make Editing Keys Layer-Aware
+
+Physical key positions can keep a related meaning across layers while changing
+the exact command for the layer's job. On Base, the Backspace position should
+remain Backspace for typing correction. On non-base command layers, that same
+position should become Delete where practical, because command layers are more
+often used for editing, navigation, and deliberate correction.
+
 ### One Layer, One Concept
 
 Each layer should have a primary job:
