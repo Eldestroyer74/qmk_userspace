@@ -1,48 +1,124 @@
-# Principles for redesigning key map
-## Retain finger memory
-I already know where a lot of layer modifiers are and I'm familiar with QWERTY. Hence, wherever possible keep those where they are. In particular, try and keep:
-- Shfit where it is
-- Ctrl in a similar location
-- Enter where it is
+# Principles for ChieftainDots
 
-## Make it so that your thumbs follow regular bottom keyboard layout
-Make it so that the three thumb buttons on the left and the right halfs of the keyboard do the same. This will make it easy to use keycaps with labels for 60% and 65% keyboards. For me personally, it will make it easier to remember as it builds on how I already use my existing keyboards with a single space bar.
-LEFT
-- gui, alt, space
-RIGHT
-- space, FN, menu
+ChieftainDots is the Corne keyboard project identity. These principles describe
+the intended typing experience, and they should be challenged by the current
+implementation before they are treated as rules.
 
+## Current Implementation Challenge
 
-## Move/Select words, lines, pages
-I'm not a programmer, however a very common interaction that I enjoy is the ability to use arrows, home, end and page up and down with both control to just move the cursor there or with shift. Hence, 
+- Finger memory is partly preserved: QWERTY, Shift, Enter, and familiar outer
+  keys still exist, but home-row layer taps now compete with ordinary typing.
+- Thumb consistency is partly implemented: left thumbs are GUI, Alt, Space and
+  right thumbs are Enter, Alt, Function. The earlier Menu goal is not currently
+  implemented.
+- Move/select behavior is implemented mainly in the Numbers/Nav layer, including
+  arrows, Home, End, Page Up, Page Down, and Ctrl+Shift navigation shortcuts.
+- The layer model mostly follows "one layer, one concept": Base, Colemak,
+  Numbers/Nav, Symbols, and Function. Numbers and navigation currently share a
+  layer, which is accepted for now because it keeps movement close to numbers.
+- Layers are mostly held rather than toggled, except Colemak, which is toggled
+  from the Function layer.
+- The left-hand-enables-right-hand idea is only partially true. Both hands can
+  invoke number and symbol access through home-row layer taps.
+- The "do not double up" principle is under review. A dedicated Symbols layer
+  exists even though shifted number symbols also exist conceptually.
+- Home-row modifiers/layers are implemented, but the exact CAGS/SyNCS ordering
+  is still experimental and may be causing accidental layer activation.
 
-## Focus on memorability of a layer concept over reducing the number of layers. 
-The miller principle states the human brain can remember 7 + or - 2 things. Hence, it is better to have 8 very memorable new layers that are easy to use, than 4 that cram everything you want into them.
+## Revised Principles
 
-## Place frequently used keys in the home rows in new layers
+### Preserve Useful Finger Memory
 
-## 1 layer, one concept
-The shift layer does one thing, makes things caps, (or it access it the symbols on top of the numbers). It makes the purpose of shift easy to remember. In contrast, the windows GUI layer has a lot of shortcuts, but it serves so many purposes that it's hard to remember. Making the user only use it infrequently. Specifically, you may need the following layers:
-- Numbers (and Symbols)
-- Arrows
-- Extremes - Home, Page Up, Page Downd, End
-- Modifiers - to multiply
+Keep familiar positions where they reduce friction: QWERTY on Base, Shift near
+the outside lower row, Ctrl in a familiar location, and Enter on the right hand.
+Changes are allowed when they make the layer model easier to remember, but they
+must be called out in the roadmap.
 
-## Layers are ON when held
-It's hard to remember whether a layer has been toggled, sure you could look at the keyboard, but his will slow down typing
+### Make Thumbs Memorable
 
-## The left hand enables the right hand
-Layers that we create will be accessed by the space bar (middle thumb button) and the home row on the left and right halves of the keyboard. 
-![Concept of how the left hand enables the right hand side](/imgs/right-layer-use.png)
+Thumb keys should follow a memorable bottom-row model. The intended direction is:
 
-## Keep new layers to space bar and home row combos
-The old layers (alt, ctrl, shift, gui) should remain where they used to be (if possible), this will reduce the need to learn a new spot, the new layers are then accessed by space bars, and space bar home row keys. This will make the new locations easy to access and over time I'll remember their location.
+- Left: GUI, Alt, Space.
+- Right: Space or Enter, Function, Menu or another deliberate command.
 
-## Don't double up
-I wrote this principle as it would be easy to have a symbols layer, however that layer already exists by pressing the shift and the spacer bar at the same time. The only problem is that they are all in the number pad layout not the top row layer. However, as the left hand must be held to access them, I'll just have to learn where they all are. Note, 7,8,9 remain in the current locaiton, so I should be able to bring that knowldge back into it. 
+Any change to thumb keys must explain whether it prioritizes keycap familiarity,
+typing comfort, or feature access.
 
-## Home row modifiers
-Make it so that the home row have modifiers. CAGS, NUM, SYM, FUNC
-THUBMS: GUI , ALT, FUN
-HOME ROW: SYM, NUM, CTRL, SHFT OR SyNCS SCNSy 
-- 
+### Support Movement And Selection
+
+Navigation should make it easy to move and select by character, word, line, and
+page. Arrows, Home, End, Page Up, Page Down, and Ctrl/Shift variants should stay
+easy to reach and easy to remember.
+
+### Prefer Memorable Layer Concepts
+
+It is better to have more layers with clear concepts than fewer layers that hide
+unrelated actions together. A layer should be judged by whether its purpose can
+be named quickly.
+
+### Keep Frequent Layer Access On Strong Positions
+
+Frequently used layers should be reachable from thumbs or home-row holds. If
+home-row holds cause accidental activation, tune timing or change placement
+before adding more behavior on top.
+
+### Keep Command Layers Literal
+
+Command layers should remain predictable. Do not apply broad typing-layer
+wrappers, such as `HRM(...)`, to Numbers/Nav, Symbols, Function, or future
+editing layers unless a specific feature is deliberately designed and tested for
+that behavior.
+
+If a command layer needs selection or modifier behavior, prefer explicit named
+commands, explicit modifier positions, or a dedicated editing layer. The layer
+table should still explain what the key does without requiring the user to
+remember nested tap-hold rules.
+
+### One Layer, One Concept
+
+Each layer should have a primary job:
+
+- Base: ordinary typing.
+- Colemak: alternate typing layout.
+- Numbers/Nav: calculator-style numbers and movement.
+- Symbols: punctuation and paired symbols.
+- Function: function keys, mouse, media, and system actions.
+
+If a feature does not fit a layer's concept, either change the feature, create a
+new concept, or update this principle deliberately.
+
+### Prefer Held Layers Over Toggles
+
+Momentary layers are preferred because they reduce the need to check keyboard
+state. Toggles are allowed only when the mode is intentionally persistent, such
+as Colemak.
+
+### Avoid Accidental Duplication
+
+Do not add the same behavior in multiple places unless the duplicate serves a
+clear ergonomic purpose. Duplicates must be documented as intentional.
+
+### Use RGB As An Indicator
+
+RGB should communicate keyboard state rather than compete with typing. Use it for
+active layers, modifiers, Caps Lock, persistent toggles, and warnings. Avoid
+continuous decorative animation as the default.
+
+### Challenge Principles During Feature Work
+
+Every feature must state which principle it supports or challenges. If a feature
+conflicts with a principle, decide before implementation whether to revise the
+feature or revise the principle.
+
+## Decision Log
+
+- Filterpaper remains acknowledged as ancestry, but ChieftainDots current
+  guidance should describe this userspace rather than inherited defaults.
+- A dedicated Symbols layer is accepted for now, even though shifted symbols also
+  exist conceptually, because memorability may matter more than strict
+  non-duplication.
+- Colemak is allowed as a toggle because it is a persistent typing mode rather
+  than a transient command layer.
+- Applying `HRM(...)` to Numbers/Nav, Symbols, and Function was tested and rolled
+  back. The wrapper works mechanically, but it transforms command-layer keys into
+  nested tap-hold behaviors and makes the layers hard to understand.

@@ -36,7 +36,7 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 #ifdef HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 // Select hold immediately with another key for layer tap 1 and higher.
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-	return IS_LAYER_TAP(keycode) ? true : false;
+	return IS_LAYER_TAP(keycode) && !IS_TYPING();
 }
 #endif
 

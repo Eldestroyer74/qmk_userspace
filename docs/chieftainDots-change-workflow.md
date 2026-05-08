@@ -1,0 +1,84 @@
+# ChieftainDots Change Workflow
+
+This workflow protects ChieftainDots from accumulating tangled behavior. It is
+intended for one feature at a time.
+
+## Required Loop
+
+1. Capture the feature as an Idea in the roadmap.
+2. Discuss the user goal, ergonomics, and success criteria.
+3. Research QMK compatibility and local code implications.
+4. Challenge the feature against the current principles.
+5. Verify every QMK hook, callback, keycode, and config option against local QMK
+   source, official QMK docs, or an existing working userspace pattern.
+6. If there is a conflict, decide whether to change the feature or revise the
+   principle before implementation.
+7. Check architecture ownership: layout, feature module, OLED, RGB, combo, or
+   userspace hook.
+8. Estimate firmware size risk.
+9. Compile the current baseline.
+10. Implement only the approved feature.
+11. Compile again and record firmware size.
+12. Fix bugs or optimize size if needed.
+13. Flash the firmware.
+14. Trial the behavior on the physical keyboard.
+15. Decide to keep, revise, or roll back.
+16. If kept, stage and commit only the files that belong to that feature.
+
+No second feature starts until the current feature is marked Kept or Rolled Back.
+
+## Question And Bug Triage Gate
+
+When the user asks a question about behavior, first answer the question and teach
+the likely cause. Do not edit code in the same step unless the user explicitly
+asks for the fix.
+
+When a bug is observed after flashing:
+
+1. Explain what the behavior probably means.
+2. Name the file or subsystem likely involved.
+3. Describe the smallest safe fix and any tradeoff.
+4. Wait for confirmation before changing code.
+
+This keeps diagnosis, approval, and implementation separate.
+
+## Principle Gate
+
+Each feature must answer one of these before implementation:
+
+- It supports an existing principle.
+- It exposes a gap in the principles and the principle will be updated.
+- It conflicts with a principle and the feature will be changed.
+- It conflicts with a principle and the principle will be deliberately revised.
+
+## Compile Gate
+
+Use the canonical Corne build:
+
+```bash
+qmk compile users/eldestroyer74/keymaps/corne.json
+```
+
+Record whether the build succeeded and how much flash space remains. If the
+firmware no longer fits, do not start another feature until the size issue is
+resolved or the feature is rolled back.
+
+## Flash Gate
+
+A compiled feature is not Kept until it has been flashed and tried on the actual
+keyboard. If the feature feels worse in real use, revise it or roll it back.
+
+## Git Checkpoint Gate
+
+Keep experimental work unstaged while a feature is being researched, compiled,
+flashed, and revised. This makes it easy to inspect or roll back that feature
+without mixing it with older accepted work.
+
+After the feature is flashed and accepted as Kept:
+
+1. Review `git status`.
+2. Stage only the files that belong to the accepted feature.
+3. Commit with a message that names the behavior, not just the file touched.
+4. Leave unrelated, unfinished, or exploratory changes unstaged.
+
+Do not stage, commit, or push without explicit approval.

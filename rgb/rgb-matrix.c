@@ -18,6 +18,22 @@ led_config_t g_led_config = { {
 #endif
 
 
+static RGB rgb_for_layer(uint8_t layer) {
+	switch (layer) {
+		case NUM:
+			return (RGB){RGB_NUM};
+		case SYM:
+			return (RGB){RGB_SYM};
+		case FNC:
+			return (RGB){RGB_FNC};
+		case CMK:
+			return (RGB){RGB_CMK};
+		default:
+			return (RGB){RGB_LAYER};
+	}
+}
+
+
 layer_state_t layer_state_set_user(layer_state_t const state) {
 	switch (get_highest_layer(state)) {
 		case CMK:
@@ -32,14 +48,25 @@ layer_state_t layer_state_set_user(layer_state_t const state) {
 
 #ifdef __AVR__
 
-bool rgb_matrix_indicators_user(void) {
-	// Caps lock
-	if (host_keyboard_led_state().caps_lock) {
-		for (uint8_t i = 0; i < RGB_MATRIX_LED_COUNT; ++i) {
-			if (g_led_config.flags[i] & CAP_FLAG) {
-				rgb_matrix_set_color(i, RGB_CAPS);
+static void rgb_set_layer_keys(uint8_t layer, RGB rgb) {
+	for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+			uint8_t  index_led     = g_led_config.matrix_co[row][col];
+			uint16_t index_keycode = keymap_key_to_keycode(layer, (keypos_t){col,row});
+			if (index_led != NO_LED && index_keycode > KC_TRNS) {
+				rgb_matrix_set_color(index_led, rgb.r, rgb.g, rgb.b);
 			}
 		}
+	}
+}
+
+
+bool rgb_matrix_indicators_user(void) {
+	rgb_matrix_set_color_all(RGB_OFF);
+
+	// Caps Lock should be visible across the key field.
+	if (host_keyboard_led_state().caps_lock) {
+		rgb_matrix_set_color_all(RGB_CAPS);
 	}
 	// Modifier keys
 	if (get_mods() & MOD_MASK_CSAG) {
@@ -52,15 +79,7 @@ bool rgb_matrix_indicators_user(void) {
 	// Layer keys indicator by @rgoulter
 	if (get_highest_layer(layer_state) > CMK) {
 		uint8_t layer = get_highest_layer(layer_state);
-		for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
-			for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
-				uint8_t  index_led     = g_led_config.matrix_co[row][col];
-				uint16_t index_keycode = keymap_key_to_keycode(layer, (keypos_t){col,row});
-				if (index_led != NO_LED && index_keycode > KC_TRNS) {
-					rgb_matrix_set_color(index_led, RGB_LAYER);
-				}
-			}
-		}
+		rgb_set_layer_keys(layer, rgb_for_layer(layer));
 	}
 	return false;
 }
@@ -73,14 +92,28 @@ static inline RGB glow_hsv_to_rgb(HSV hsv) {
 	return hsv_to_rgb(hsv);
 }
 
-bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-	// Caps lock
-	if (host_keyboard_led_state().caps_lock) {
-		RGB rgb = glow_hsv_to_rgb((HSV){HSV_RED});
-		for (uint8_t i = led_min; i <= led_max; ++i) {
-			if (g_led_config.flags[i] & CAP_FLAG) {
-				rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+static void rgb_set_layer_keys(uint8_t layer, RGB rgb, uint8_t led_min, uint8_t led_max) {
+	for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+			uint8_t  index_led     = g_led_config.matrix_co[row][col];
+			uint16_t index_keycode = keymap_key_to_keycode(layer, (keypos_t){col,row});
+			if (led_min <= index_led && index_led <= led_max && index_keycode > KC_TRNS) {
+				rgb_matrix_set_color(index_led, rgb.r, rgb.g, rgb.b);
 			}
+		}
+	}
+}
+
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+	for (uint8_t i = led_min; i <= led_max; ++i) {
+		rgb_matrix_set_color(i, RGB_OFF);
+	}
+
+	// Caps Lock should be visible across the key field.
+	if (host_keyboard_led_state().caps_lock) {
+		for (uint8_t i = led_min; i <= led_max; ++i) {
+			rgb_matrix_set_color(i, RGB_CAPS);
 		}
 	}
 	// Modifier keys
@@ -94,15 +127,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 	// Layer keys indicator by @rgoulter
 	if (get_highest_layer(layer_state) > CMK) {
 		uint8_t layer = get_highest_layer(layer_state);
-		for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
-			for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
-				uint8_t  index_led     = g_led_config.matrix_co[row][col];
-				uint16_t index_keycode = keymap_key_to_keycode(layer, (keypos_t){col,row});
-				if (led_min <= index_led && index_led <= led_max && index_keycode > KC_TRNS) {
-					rgb_matrix_set_color(index_led, RGB_LAYER);
-				}
-			}
-		}
+		rgb_set_layer_keys(layer, rgb_for_layer(layer), led_min, led_max);
 	}
 	return false;
 }

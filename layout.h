@@ -124,13 +124,13 @@
 #define _FUNC \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
 /* │ ESC `  │        │  F7    │  F8    │  F9    │   F10  │   │   F11  │   F12  │ WH DN  │ WH UP  │        │ DELETE │ */\
-	QK_GESC,  XXXXXXX, KC_F7,   KC_F8,   KC_F9,  KC_F10,      KC_F11,  KC_F12, KC_WH_D, KC_WH_U, XXXXXXX, KC_DEL,    \
+	QK_GESC,  XXXXXXX, KC_F7,   KC_F8,   KC_F9,  KC_F10,      KC_F11,  KC_F12, MS_WHLD, MS_WHLU, XXXXXXX, KC_DEL,    \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │        │ Alt+F4 │  F4    │  F5    │  F6    │        │   │ Vol +  │ MS LFT │ MS DN  │ MS UP  │ MS RGT │        │ */\
-	XXXXXXX,  Z_SHUT, KC_F4,   KC_F5,   KC_F6,   XXXXXXX,      KC_VOLU, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______,   \
+	XXXXXXX,  Z_SHUT, KC_F4,   KC_F5,   KC_F6,   XXXXXXX,      KC_VOLU, MS_LEFT, MS_DOWN, MS_UP,   MS_RGHT, _______,   \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │        │ 		 │  F1    │  F2    │  F3    │        │   │ Vol -  │        │ BTN 1  │ BTN 2  │  	  │ COLEQ  │ */\
-	XXXXXXX,  XXXXXXX, KC_F1,   KC_F2,   KC_F3,   XXXXXXX,     KC_VOLD, XXXXXXX, KC_BTN1, KC_BTN2, XXXXXXX, TG(CMK),   \
+	XXXXXXX,  XXXXXXX, KC_F1,   KC_F2,   KC_F3,   XXXXXXX,     KC_VOLD, XXXXXXX, MS_BTN1, MS_BTN2, XXXXXXX, TG(CMK),   \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┴────────┴────────╯ */\
 	                            _______, _______, _______,     _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
