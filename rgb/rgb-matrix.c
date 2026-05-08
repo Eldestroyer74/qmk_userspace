@@ -92,9 +92,10 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
 			       is_delete_position(row, col);
 		case MED:
-			return is_delete_position(row, col) || (row == R_TOP && col == R_MIDDLE) ||
-			       (row == R_HOME && (col == R_INDEX || col == R_MIDDLE || col == R_RING)) ||
-			       (row == R_BOTTOM && col == R_MIDDLE);
+			return is_delete_position(row, col) ||
+			       (row == R_TOP && (col == R_INNER || col == R_MIDDLE)) ||
+			       (row == R_HOME &&
+			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
 		case MOU:
 			return is_delete_position(row, col) ||
 			       (row == R_TOP && (col == R_INNER || col == R_MIDDLE)) ||
