@@ -20,13 +20,26 @@ code.
 ## Current Layer Concepts
 
 - Base: QWERTY typing layer with familiar outer modifiers and thumb keys.
-- Colemak: alternate typing layer toggled from the function layer.
+  The old right-thumb Function position now sends the Application/context-menu
+  key for typo fixes and right-click style menus.
+- Colemak: alternate typing layer toggled from the Apps/System layer.
 - Numbers/Commands: function keys on the left using old number-layer memory,
   numbers and calculator operators on the right, accessed from `S` or `L`.
 - Symbols: punctuation, brackets, braces, and shifted symbols.
-- Function: legacy mixed function, mouse, media, shutdown, and layer-toggle
-  layer. It remains available for now while future Media/System behavior is
-  designed.
+- Legacy Function: removed from the active Corne build recipe. Its useful jobs
+  have moved into Numbers/Commands, Media, Mouse, Apps/System, and Base Menu.
+- Navigation: arrow movement using the `I/J/K/L` spatial shape, accessed by
+  holding `S` or `L` and the left GUI thumb.
+- Selection: Ctrl+Shift arrow movement using the same `I/J/K/L` shape, accessed
+  by holding `S` or `L` and the left Alt thumb.
+- Extremes: Home/Page/End movement using the same `I/J/K/L` shape, accessed by
+  holding `S` or `L` and the left Space thumb.
+- Media: volume and track controls, accessed by holding `A` and the left GUI
+  thumb.
+- Mouse: pointer movement, scroll, and primary/secondary mouse buttons,
+  accessed by holding `A` and the left Alt thumb.
+- Apps/System: persistent application/system toggles such as Colemak, accessed
+  by holding `A` and the left Space thumb.
 
 ## Cross-Layer Key Roles
 
@@ -89,6 +102,50 @@ The model:
 - Hold `S` plus the left Space thumb position: extremes such as Home, End, Page
   Up, and Page Down.
 
+Directional sub-layers use a right-hand spatial shape:
+
+```text
+      I = Up
+J = Left   K = Down   L = Right
+```
+
+Selection and extremes should reuse this same physical shape. This intentionally
+deviates from a strict home-row-only rule because the spatial direction pattern
+is more memorable and easier to carry across related editing layers.
+
+First implemented refinement:
+
+```text
+Hold S or L, then hold left GUI thumb:
+
+      I = Up
+J = Left   K = Down   L = Right
+```
+
+Additional implemented refinements:
+
+```text
+Hold S or L, then hold left Alt thumb:
+
+      I = Ctrl+Shift+Up
+J = Ctrl+Shift+Left   K = Ctrl+Shift+Down   L = Ctrl+Shift+Right
+
+Hold S or L, then hold left Space thumb:
+
+      I = Page Up
+J = Home   K = Page Down   L = End
+```
+
+Navigation and extremes keep `D = Ctrl` and `F = Shift` as plain held modifiers
+for consistency. Selection leaves the left hand blank because the selected
+commands already include Ctrl+Shift.
+
+Known conflict: the left GUI thumb is also an operating-system modifier. Because
+it currently refines `S`/`L` into Navigation, ordinary keyboard-only window
+snapping such as GUI+Left and GUI+Right is no longer directly available from the
+arrow shape. Future navigation revisions must either add explicit window-snap
+commands, move Navigation off GUI, or provide another documented OS-window route.
+
 First-slice number candidate:
 
 ```text
@@ -136,16 +193,90 @@ side of the same numbered-command layer.
 - Hold `A` plus the left Alt thumb position: Mouse.
 - Hold `A` plus the left Space thumb position: Media and volume.
 
+Current A-family direction:
+
+- Hold `A`: Symbols stay as-is for now.
+- Hold `A` plus the left GUI thumb position: Media.
+- Hold `A` plus the left Alt thumb position: Mouse.
+- Hold `A` plus the left Space thumb position: Apps/System, including Colemak
+  toggle.
+
+Agreed media layout:
+
+```text
+Hold A, then hold left GUI thumb:
+
+Y = Play/Pause
+H = Mute
+        I = Volume Up
+J = Previous   K = Volume Down   L = Next
+```
+
+Visually:
+
+```text
+Y      U   I      O   P   BSPC
+Play   --- Vol+   --- --- DEL
+
+H      J      K      L     ;   '
+Mute   Prev   Vol-   Next  --- ---
+
+N   M   ,   .   /   RSFT
+--- --- --- --- --- ---
+```
+
+This deliberately treats Play/Pause and Mute like the calculator/media operator
+pair: `Y` carries the positive/additive action and `H` carries the
+negative/suppressing action. Right Shift is unused on this layer.
+
+Implemented mouse layout:
+
+```text
+Hold A, then hold left Alt thumb:
+
+Y = Wheel Up             I = Mouse Up
+H = Wheel Down   J = Mouse Left   K = Mouse Down   L = Mouse Right
+
+Right thumb Enter position = Mouse Button 1
+Right thumb old Function/Menu position = Mouse Button 2
+```
+
+Implemented apps/system layout:
+
+```text
+Hold A, then hold left Space thumb:
+
+Any right home-row key = Colemak toggle
+Backspace position = Delete
+```
+
+The System layer intentionally avoids duplicating clean Windows shortcuts and no
+longer acts as a general app-launch layer. Calculator and Media Player launch
+ideas are kept in the roadmap for a separate launcher design.
+
 ### Spatial Consistency
 
 Command layers should reuse physical meaning where possible:
 
 - Positions chosen for calculator plus/minus should correspond to mouse scroll
-  up/down.
+  up/down. Current rule: `Y = +` corresponds to `Y = Wheel Up`; `H = -`
+  corresponds to `H = Wheel Down`.
+- Multiplication and division should remain a vertical pair. Current rule:
+  `P = *` sits above `; = /`.
 - Positions chosen for Enter, confirm, or accept should correspond to primary
   mouse button behavior where that makes sense.
 - Related actions such as arrows, selection arrows, and Home/End/Page movement
   should keep directional meaning across sub-layers.
+
+Mouse wheel/operator consistency:
+
+```text
+Numbers/Commands      Mouse
+Y = +                 Y = Wheel Up
+H = -                 H = Wheel Down
+P = *                 Multiplication stays above division
+; = /                 Division stays below multiplication
+```
 
 ### Implementation Direction
 

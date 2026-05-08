@@ -9,15 +9,15 @@ implementation before they are treated as rules.
 - Finger memory is partly preserved: QWERTY, Shift, Enter, and familiar outer
   keys still exist, but home-row layer taps now compete with ordinary typing.
 - Thumb consistency is partly implemented: left thumbs are GUI, Alt, Space and
-  right thumbs are Enter, Alt, Function. The earlier Menu goal is not currently
-  implemented.
+  right thumbs are Enter, Alt, Menu. The old Function thumb has been retired in
+  the active Corne build.
 - Move/select behavior is implemented mainly in the Numbers/Nav layer, including
   arrows, Home, End, Page Up, Page Down, and Ctrl+Shift navigation shortcuts.
 - The layer model mostly follows "one layer, one concept": Base, Colemak,
   Numbers/Nav, Symbols, and Function. Numbers and navigation currently share a
   layer, which is accepted for now because it keeps movement close to numbers.
-- Layers are mostly held rather than toggled, except Colemak, which is toggled
-  from the Function layer.
+- Layers are mostly held rather than toggled, except Colemak, which is a
+  persistent typing mode and is being moved out of the retired Function layer.
 - The left-hand-enables-right-hand idea is only partially true. Both hands can
   invoke number and symbol access through home-row layer taps.
 - The "do not double up" principle is under review. A dedicated Symbols layer
@@ -49,6 +49,11 @@ typing comfort, or feature access.
 Navigation should make it easy to move and select by character, word, line, and
 page. Arrows, Home, End, Page Up, Page Down, and Ctrl/Shift variants should stay
 easy to reach and easy to remember.
+
+Directional command layers should prioritize spatial consistency over strict
+home-row purity. The intended right-hand directional shape is `I/J/K/L`: `I` is
+Up, `J` is Left, `K` is Down, and `L` is Right. Selection and extremes should
+reuse that same shape where practical, even though `I` is above the home row.
 
 ### Prefer Memorable Layer Concepts
 
@@ -90,7 +95,8 @@ Each layer should have a primary job:
 - Colemak: alternate typing layout.
 - Numbers/Nav: calculator-style numbers and movement.
 - Symbols: punctuation and paired symbols.
-- Function: function keys, mouse, media, and system actions.
+- Media/Mouse/System: tool and persistent-mode commands that replaced the old
+  mixed Function layer.
 
 If a feature does not fit a layer's concept, either change the feature, create a
 new concept, or update this principle deliberately.
@@ -105,6 +111,18 @@ as Colemak.
 
 Do not add the same behavior in multiple places unless the duplicate serves a
 clear ergonomic purpose. Duplicates must be documented as intentional.
+
+### Do Not Double Up Clean Windows Shortcuts
+
+Do not spend System-layer keys on Windows shortcuts that are already clean,
+memorable, and directly available, such as Snipping Tool (`Win+Shift+S`), Show
+Desktop (`Win+D`), Settings (`Win+I`), File Explorer (`Win+E`), or Lock
+(`Win+L`).
+
+The System layer should prefer app-launch keycodes, keyboard-mode toggles, and
+commands that do not already have a good operating-system shortcut. Exceptions
+are allowed only when the ergonomic benefit is explicit and recorded in the
+roadmap.
 
 ### Use RGB As An Indicator
 
@@ -130,3 +148,15 @@ feature or revise the principle.
 - Applying `HRM(...)` to Numbers/Nav, Symbols, and Function was tested and rolled
   back. The wrapper works mechanically, but it transforms command-layer keys into
   nested tap-hold behaviors and makes the layers hard to understand.
+- Directional command layers deliberately use `I/J/K/L` rather than a pure
+  home-row line because the spatial arrow shape is easier to remember and should
+  carry across arrows, selection, and extremes.
+- The old mixed Function layer has been removed from the active Corne build.
+  Function keys now live with Numbers/Commands, mouse behavior lives on the
+  Mouse layer, media behavior lives on the Media layer, and the old Function
+  thumb position is now Base Menu.
+- The Base corner Shift positions are now under review because the current
+  workflow does not depend on them. Candidate requirement: use those corners for
+  deliberate persistent/app-launch commands, such as Colemak on bottom-left and
+  Calculator on bottom-right, if testing confirms the loss of corner Shifts is
+  acceptable.

@@ -96,6 +96,10 @@ because the toolchain mishandled the space in `Program Files`.
 
 ## Known QMK Compatibility Notes
 
+- Flow Tap is the preferred first experiment for accidental home-row tap-hold
+  activation during normal typing flow. QMK documents `FLOW_TAP_TERM 150` as a
+  starting point; ChieftainDots should trial it before making broader
+  home-row timing or layer-placement changes.
 - Old mouse keycodes such as `KC_MS_L`, `KC_WH_U`, and `KC_BTN1` should use the
   current `MS_LEFT`, `MS_WHLU`, and `MS_BTN1` style names.
 - `IGNORE_MOD_TAP_INTERRUPT` has been removed from current QMK and should not be
@@ -120,10 +124,14 @@ because the toolchain mishandled the space in `Program Files`.
 
 ## Size Pressure
 
-The current Corne build with Tap Dance enabled has about 2916 bytes free. Any
-feature that adds code must include a size-risk check. If a feature pushes the
-firmware over size, optimize that feature or roll it back before starting
-another one.
+The current Corne build after the A-family command layers has about 2126 bytes
+free. Any feature that adds code must include a size-risk check. If a feature
+pushes the firmware over size, optimize that feature or roll it back before
+starting another one.
+
+ChieftainDots now uses more than eight layers, so `config.h` must use
+`LAYER_STATE_16BIT`. If QMK reports that the number of keymap layers exceeds
+`LAYER_STATE_(8|16|32)BIT`, check the layer count before changing behavior.
 
 ## Rollback Rule
 

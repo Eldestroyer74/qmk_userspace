@@ -24,8 +24,6 @@ static RGB rgb_for_layer(uint8_t layer) {
 			return (RGB){RGB_NUM};
 		case SYM:
 			return (RGB){RGB_SYM};
-		case FNC:
-			return (RGB){RGB_FNC};
 		case CMK:
 			return (RGB){RGB_CMK};
 		default:
@@ -35,13 +33,7 @@ static RGB rgb_for_layer(uint8_t layer) {
 
 
 layer_state_t layer_state_set_user(layer_state_t const state) {
-	switch (get_highest_layer(state)) {
-		case CMK:
-			rgb_matrix_mode_noeeprom(CMK_MODE);
-			break;
-		default:
-			rgb_matrix_mode_noeeprom(DEF_MODE);
-	}
+	rgb_matrix_mode_noeeprom(DEF_MODE);
 	return state;
 }
 
@@ -67,6 +59,8 @@ bool rgb_matrix_indicators_user(void) {
 	// Caps Lock should be visible across the key field.
 	if (host_keyboard_led_state().caps_lock) {
 		rgb_matrix_set_color_all(RGB_CAPS);
+	} else if (layer_state_is(CMK)) {
+		rgb_matrix_set_color_all(RGB_CMK);
 	}
 	// Modifier keys
 	if (get_mods() & MOD_MASK_CSAG) {
@@ -114,6 +108,10 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 	if (host_keyboard_led_state().caps_lock) {
 		for (uint8_t i = led_min; i <= led_max; ++i) {
 			rgb_matrix_set_color(i, RGB_CAPS);
+		}
+	} else if (layer_state_is(CMK)) {
+		for (uint8_t i = led_min; i <= led_max; ++i) {
+			rgb_matrix_set_color(i, RGB_CMK);
 		}
 	}
 	// Modifier keys

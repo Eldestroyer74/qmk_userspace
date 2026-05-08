@@ -12,10 +12,11 @@
 // Space saving options
 #undef LOCKING_SUPPORT_ENABLE
 #undef LOCKING_RESYNC_ENABLE
-#define LAYER_STATE_8BIT
+#define LAYER_STATE_16BIT
 #define NO_ACTION_ONESHOT
 // Tap-hold settings
 #define TAPPING_TERM 220
+#define FLOW_TAP_TERM 150
 #define TAPPING_TERM_PER_KEY
 #define QUICK_TAP_TERM 110
 #define QUICK_TAP_TERM_PER_KEY

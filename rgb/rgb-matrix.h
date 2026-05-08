@@ -14,7 +14,6 @@
 #define RGB_MODS	RGB_GREEN
 #define RGB_NUM		RGB_BLUE
 #define RGB_SYM		RGB_CYAN
-#define RGB_FNC		RGB_YELLOW
 #define RGB_CMK		RGB_DPURPLE
 #define RGB_LAYER	RGB_BSTEEL
 

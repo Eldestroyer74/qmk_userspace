@@ -54,13 +54,18 @@
 #define CS_RI C(S(KC_RIGHT))
 
 // Layers
-// @REJ: remove colemak, define BSE, NUM, FNC, use json file to see what else I defined
+// @REJ: remove colemak, define BSE, NUM, use json file to see what else I defined
 // add a layer for vide editing
 #define BSE 0
 #define CMK 1
 #define NUM 2
 #define SYM 3
-#define FNC 4
+#define NAV 4
+#define SEL 5
+#define EXT 6
+#define MED 7
+#define MOU 8
+#define SYS 9
 
 // Default 3x5_2 split layout
 // @REJ: modify so that the smallest keyboard is a corne keyboard
@@ -75,7 +80,7 @@
 /* │  SFT   │  Z     │  X     │  C     │  V     │  B     │   │  N     │  M     │ , <    │ . >    │ / ?    │  SFT   │ */\
 	KC_LSFT,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,    \
 /* ╰────────┴────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
-				  				KC_LGUI, KC_LALT, KC_SPC,  		KC_ENT, KC_RALT, MO(FNC)
+				  				KC_LGUI, KC_LALT, KC_SPC,  		KC_ENT, KC_RALT, KC_APP
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */ 
 
 #define _COLE \
@@ -105,7 +110,52 @@
 /* │        │  F10   │  F1    │  F2    │  F3    │        │   │   (    │   1    │   2    │   3    │   0    │   )    │ */\
 	XXXXXXX, KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX,     KC_LPRN, KC_1,    KC_2,    KC_3,    KC_0,    KC_RPRN, \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
-	                            _______, _______, _______,     _______, _______, _______
+	                            MO(NAV), MO(SEL), MO(EXT),     _______, _______, _______
+/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
+
+// S/L + left GUI thumb navigation: I/J/K/L form the right-hand arrow shape.
+#define _NAV \
+/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
+/* │        │        │        │        │        │        │   │        │        │   UP   │        │        │ DELETE │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
+/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
+/* │        │        │        │        │        │        │   │        │ LEFT   │ DOWN   │ RIGHT  │        │        │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX, \
+/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
+/* │        │        │        │        │        │        │   │        │        │        │        │        │        │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+	                            _______, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX
+/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
+
+// S/L + left Alt thumb selection: word/large-unit selection follows I/J/K/L.
+#define _SELE \
+/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
+/* │        │        │        │        │        │        │   │        │        │ CS UP  │        │        │ DELETE │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, CS_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
+/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
+/* │        │        │        │        │        │        │   │        │ CS LF  │ CS DN  │ CS RT  │        │        │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, CS_LF,   CS_DN,   CS_RI,   XXXXXXX, XXXXXXX, \
+/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
+/* │        │        │        │        │        │        │   │        │        │        │        │        │        │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+	                            XXXXXXX, _______, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX
+/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
+
+// S/L + left Space thumb extremes: Home/Page movement follows the same shape.
+#define _EXTR \
+/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
+/* │        │        │        │        │        │        │   │        │        │ PG UP  │        │        │ DELETE │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_PGUP, XXXXXXX, XXXXXXX, KC_DEL,   \
+/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
+/* │        │        │        │        │        │        │   │        │ HOME   │ PG DN  │ END    │        │        │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_HOME, KC_PGDN, KC_END,  XXXXXXX, XXXXXXX, \
+/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
+/* │        │        │        │        │        │        │   │        │        │        │        │        │        │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+	                            XXXXXXX, XXXXXXX, _______,     XXXXXXX, XXXXXXX, XXXXXXX
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
 #define _SYMB \
@@ -119,8 +169,29 @@
 /* │        │        │        │        │        │   	 |   │        │        │   {    │   }    │    |   │ 	   |*/\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_LCBR, KC_RCBR, KC_PIPE, _______,   \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┬────────┼────────┴────────┴────────╯ */\
-	                            _______, _______, _______,     _______, _______, _______
+	                            MO(MED), MO(MOU), MO(SYS),    _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
+// A + left GUI thumb media: volume and track controls follow the I/J/K/L shape.
+#define _MEDI \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,  \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_MPRV, KC_VOLD, KC_MNXT, XXXXXXX, XXXXXXX, \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_MPLY, XXXXXXX, XXXXXXX, XXXXXXX, \
+	                            _______, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
+
+// A + left Alt thumb mouse: pointer movement follows I/J/K/L; wheel follows +/-.
+#define _MOUS \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     MS_WHLU, XXXXXXX, MS_UP,   XXXXXXX, XXXXXXX, KC_DEL,  \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     MS_WHLD, MS_LEFT, MS_DOWN, MS_RGHT, XXXXXXX, XXXXXXX, \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+	                            XXXXXXX, _______, XXXXXXX,    MS_BTN1, XXXXXXX, MS_BTN2
+
+// A + left Space thumb apps/system: persistent toggles live away from typing keys.
+#define _SYST \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_DEL,  \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TG(CMK), TG(CMK), TG(CMK), TG(CMK), TG(CMK), TG(CMK), \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+	                            XXXXXXX, XXXXXXX, _______,    XXXXXXX, XXXXXXX, XXXXXXX
+
 // 	                           _______, _______,     _______, MO(FNC)
 /* │ BOOT   │  F1    │  F2    │  F3    │ F10    │   │        │ WH UP  │ WH DN  │        │COLEMAK │ */
 //	QK_BOOT, KC_F1,   KC_F2,   KC_F3,   KC_F10,      _______, KC_WH_U, KC_WH_D, _______, TG(CMK),    

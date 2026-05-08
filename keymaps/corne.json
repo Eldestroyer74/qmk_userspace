@@ -7,6 +7,11 @@
 		[ "HRM(_COLE)"],
 		[ "_NUMB" ],
 		[ "_SYMB" ],
-		[ "_FUNC" ]
+		[ "_NAV" ],
+		[ "_SELE" ],
+		[ "_EXTR" ],
+		[ "_MEDI" ],
+		[ "_MOUS" ],
+		[ "_SYST" ]
 	]
 }
