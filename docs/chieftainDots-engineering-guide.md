@@ -150,6 +150,31 @@ ChieftainDots now uses more than eight layers, so `config.h` must use
 `LAYER_STATE_16BIT`. If QMK reports that the number of keymap layers exceeds
 `LAYER_STATE_(8|16|32)BIT`, check the layer count before changing behavior.
 
+## OLED Lessons
+
+ChieftainDots currently keeps Filterpaper's OLED architecture: Bongocat renders
+on the master/primary side, and `oled-icons.c` renders the compact status panel
+on the secondary side. Do not casually change this to physical-left/physical-
+right behavior; the cat wake/sleep timer and split activity sync need deliberate
+testing if the cat moves away from the master side.
+
+Generated 30x16 outline/filled icon artwork for all concepts is too expensive
+for the current firmware budget. A generated `oledfont_icons.c` trial used glyph
+codes beyond `0xFF`, conflicted with existing font positions, and represented
+roughly 1KB or more of new font data. Future OLED art should be tiny: start with
+only the four home-row concepts (Symbols, Numbers, Control, Shift), reuse or
+replace a small number of existing glyphs, and measure size before flashing.
+
+Do not stack Filterpaper's existing Ctrl/Shift modifier glyph fragments as if
+they were standalone full-height tiles. They were designed for the original
+horizontal modifier panel and look partially drawn when used vertically by
+themselves. Either preserve the original panel, create purpose-built tiny
+home-row glyphs, or use text labels as a temporary readable fallback.
+
+If considering a full chord-discovery OLED concept, first measure how many bytes
+are recovered by removing Bongocat. Treat that as a separate product decision:
+the tradeoff is visual personality versus functional discoverability.
+
 ## Rollback Rule
 
 Every behavior change should be small enough to undo alone. If a feature fails
