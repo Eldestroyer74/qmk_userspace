@@ -24,6 +24,8 @@ static RGB rgb_for_layer(uint8_t layer) {
 			return (RGB){RGB_NUM};
 		case SYM:
 			return (RGB){RGB_SYM};
+		case SYS:
+			return (RGB){RGB_SYS};
 		case CMK:
 			return (RGB){RGB_CMK};
 		default:
@@ -73,15 +75,21 @@ static bool is_left_df_modifier_position(uint8_t row, uint8_t col) {
 	return row == L_HOME && (col == L_MIDDLE || col == L_INDEX);
 }
 
+static bool is_system_function_position(uint8_t row, uint8_t col) {
+	return is_delete_position(row, col) ||
+	       (row == R_TOP && (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING)) ||
+	       (row == R_HOME &&
+	        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING || col == R_OUTER)) ||
+	       (row == R_BOTTOM && (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
+}
+
 static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col) {
 	switch (layer) {
 		case NUM:
 			return (row <= L_BOTTOM && L_PINKY <= col && col <= L_INDEX) ||
 			       (R_TOP <= row && row <= R_BOTTOM);
 		case SYM:
-			return (row == L_TOP && col <= L_PINKY) || row == L_HOME ||
-			       (row == R_TOP && R_PINKY <= col && col <= R_MIDDLE) || row == R_HOME ||
-			       (row == R_BOTTOM && R_PINKY <= col && col <= R_MIDDLE) ||
+			return row == L_TOP || row == R_TOP ||
 			       (row == L_THUMB && L_MIDDLE <= col);
 		case NAV:
 			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
@@ -103,7 +111,7 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING)) ||
 			       (row == R_THUMB && (col == R_THUMB_INNER || col == R_THUMB_OUTER));
 		case SYS:
-			return is_delete_position(row, col) || row == R_HOME;
+			return is_system_function_position(row, col);
 		default:
 			return false;
 	}

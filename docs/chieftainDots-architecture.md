@@ -23,9 +23,10 @@ code.
   The old right-thumb Function position now sends the Application/context-menu
   key for typo fixes and right-click style menus.
 - Colemak: alternate typing layer toggled from the Apps/System layer.
-- Numbers/Commands: function keys on the left using old number-layer memory,
-  numbers and calculator operators on the right, accessed from `S` or `L`.
-- Symbols: punctuation, brackets, braces, and shifted symbols.
+- Numbers/Commands: numbers and calculator operators on the right, accessed
+  from `S` or `L`.
+- Symbols: top-row punctuation and shifted symbols, with lower rows transparent
+  so Base/Colemak letters still pass through while symbol access is held.
 - Legacy Function: removed from the active Corne build recipe. Its useful jobs
   have moved into Numbers/Commands, Media, Mouse, Apps/System, and Base Menu.
 - Navigation: arrow movement using the `I/J/K/L` spatial shape, accessed by
@@ -196,21 +197,19 @@ Active numbered-command refinement:
 
 ```text
 TAB  Q    W   E   R   T       Y   U   I   O   P   BSPC
----  F12  F7  F8  F9  ---     +   7   8   9   *   DEL
+---  ---  --- --- --- ---     +   7   8   9   *   DEL
 
 CAPS A    S   D   F   G       H   J   K   L   ;   '
----  F11  F4  F5  F6  ---     -   4   5   6   /   .
+---  ---  --- --- --- ---     -   4   5   6   /   .
 
 LSFT Z    X   C   V   B       N   M   ,   .   /   RSFT
----  F10  F1  F2  F3  ---     (   1   2   3   0   )
+---  ---  --- --- --- ---     (   1   2   3   0   )
 ```
 
-This keeps the old number/function memory: `F7/F8/F9`, `F4/F5/F6`, and
-`F1/F2/F3` sit where old `7/8/9`, `4/5/6`, and `1/2/3` lived. `F10`, `F11`, and
-`F12` sit to the left of their corresponding function rows. Tab, Caps, and Shift
-positions are blank on this layer because they do not belong to the numbered
-command concept. The Backspace position becomes Delete under the cross-layer
-editing-key rule.
+The left side is blank because function keys moved into the A-family
+Function/System layer. Tab, Caps, and Shift positions are blank on this layer
+because they do not belong to the numbered command concept. The Backspace
+position becomes Delete under the cross-layer editing-key rule.
 
 Both `S` and `L` can access this layer. `S` supports left-hand anchor, right-hand
 number entry. `L` remains useful as a right-hand access key for the function-key
@@ -225,11 +224,26 @@ side of the same numbered-command layer.
 
 Current A-family direction:
 
-- Hold `A`: Symbols stay as-is for now.
+- Hold `A`: Symbols on the top row.
 - Hold `A` plus the left GUI thumb position: Media.
 - Hold `A` plus the left Alt thumb position: Mouse.
 - Hold `A` plus the left Space thumb position: Apps/System, including Colemak
   toggle.
+
+Implemented Symbols layout:
+
+```text
+Hold A or ;
+
+TAB  Q  W  E  R  T      Y  U  I      O      P  BSPC
+!    @  #  $  %  ^      &  *  (/[/{  )/]/}  _  DEL
+
+Home row and bottom row: transparent to the active typing layer
+Left thumbs: Media, Mouse, System refinements
+```
+
+The bracket keys use one physical concept: tap for round brackets, hold for
+square brackets, and double tap for curly brackets.
 
 Agreed media layout:
 
@@ -271,18 +285,25 @@ Right thumb Enter position = Mouse Button 1
 Right thumb old Function/Menu position = Mouse Button 2
 ```
 
-Implemented apps/system layout:
+Implemented Function/System layout:
 
 ```text
 Hold A, then hold left Space thumb:
 
-Any right home-row key = Colemak toggle
-Backspace position = Delete
+Y   U   I   O   P   BSPC
+F12 F7  F8  F9  --- DEL
+
+H   J   K   L   ;   '
+F11 F4  F5  F6  --- Colemak toggle
+
+N   M   ,   .   /   RSFT
+F10 F1  F2  F3  --- ---
 ```
 
 The System layer intentionally avoids duplicating clean Windows shortcuts and no
-longer acts as a general app-launch layer. Calculator and Media Player launch
-ideas are kept in the roadmap for a separate launcher design.
+longer acts as a general app-launch layer. Function/System uses a momentary
+command-layer RGB color distinct from persistent whole-board Colemak RGB.
+Calculator and Media Player launch ideas are handled by Base lower-corner keys.
 
 ### Spatial Consistency
 

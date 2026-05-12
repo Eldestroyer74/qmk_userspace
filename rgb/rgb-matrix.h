@@ -15,6 +15,7 @@
 #define RGB_NUM		RGB_BLUE
 #define RGB_SYM		RGB_CYAN
 #define RGB_CMK		RGB_DPURPLE
+#define RGB_SYS		RGB_FLUOR
 #define RGB_LAYER	RGB_BSTEEL
 
 // Custom effects

@@ -75,10 +75,10 @@
 	TAB_ESC_CLOSE, KC_Q, KC_W,  KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,   KC_BSPC,    \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │  CAPS  │  A     │  S     │  D     │  F     │  G     │   │  H     │  J     │  K     │  L     │  ; :   │  ' "   │ */\
-	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
+	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, QUOTE_TILDE,\
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │ MEDIA  │  Z     │  X     │  C     │  V     │  B     │   │  N     │  M     │ , <    │ . >    │ / ?    │  CALC  │ */\
-	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_CALC,    \
+	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, KC_CALC, \
 /* ╰────────┴────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
 				  				KC_LGUI, KC_LALT, KC_SPC,  		KC_ENT, KC_RALT, KC_APP
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */ 
@@ -86,29 +86,28 @@
 #define _COLE \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
 /* │  TAB   │  Q     │  W     │  F     │  P     │  G     │   │  J     │  L     │  U     │  Y     │  ' "   │  BSPC  │ */\
-	KC_TAB,   KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,        KC_J,    KC_L,    KC_U,   KC_Y,   KC_QUOT,   KC_BSPC,   \
+	KC_TAB,   KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,        KC_J,    KC_L,    KC_U,   KC_Y,   QUOTE_TILDE, KC_BSPC, \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │  CAPS  │  A     │  R     │  S     │  T     │  D     │   │  H     │  N     │  E     │  I     │  O     │  ; :   │ */\
 	KC_CAPS,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,        KC_H,    KC_N,    KC_E,    KC_I,    KC_O,   KC_SCLN,    \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │ MEDIA  │  Z     │  X     │  C     │  V     │  B     │   │  K     │  M     │ , <    │ . >    │ / ?    │  CALC  │ */\
-	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_CALC,    \
+	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, KC_CALC, \
 /* ╰────────┴────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
 	                            _______, _______, _______,     _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */ 
 
-// S/L-held numbered commands: function keys keep old number-layer memory on the left;
-// the right hand owns digits and calculator operators.
+// S/L-held numbered commands: the right hand owns digits and calculator operators.
 #define _NUMB \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
-/* │        │  F12   │  F7    │  F8    │  F9    │        │   │   +    │   7    │   8    │   9    │   *    │ DELETE │ */\
-	XXXXXXX, KC_F12,  KC_F7,   KC_F8,   KC_F9,   XXXXXXX,     KC_PLUS, KC_7,    KC_8,    KC_9,    KC_ASTR, KC_DEL,   \
+/* │        │        │        │        │        │        │   │   +    │   7    │   8    │   9    │   *    │ DELETE │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_PLUS, KC_7,    KC_8,    KC_9,    KC_ASTR, KC_DEL,   \
 /* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │  F11   │  F4    │  F5    │  F6    │        │   │   -    │   4    │   5    │   6    │   /    │   .    │ */\
-	XXXXXXX, KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX,     KC_MINS, KC_4,    KC_5,    KC_6,    KC_SLSH, KC_DOT,   \
+/* │        │        │        │        │        │        │   │   -    │   4    │   5    │   6    │   /    │   .    │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MINS, KC_4,    KC_5,    KC_6,    KC_SLSH, KC_DOT,   \
 /* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │  F10   │  F1    │  F2    │  F3    │        │   │   (    │   1    │   2    │   3    │   0    │   )    │ */\
-	XXXXXXX, KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX,     KC_LPRN, KC_1,    KC_2,    KC_3,    KC_0,    KC_RPRN, \
+/* │        │        │        │        │        │        │   │   (    │   1    │   2    │   3    │   0    │   )    │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_LPRN, KC_1,    KC_2,    KC_3,    KC_0,    KC_RPRN, \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
 	                            MO(NAV), MO(SEL), MO(EXT),     _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
@@ -160,14 +159,14 @@
 
 #define _SYMB \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
-/* │    ~   │    `   │        │        │        │        │   │        │        │   [    │  ]     │   \    │ DELETE │ */\
-	KC_TILD,  KC_GRV, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,    \
+/* │   !    │  @     │   #    │   $    │   %    │   ^    │   │   &    │   *    │ ( [ {  │ ) ] }  │   _    │ DELETE │ */\
+	KC_EXLM,  KC_AT,  KC_HASH,  KC_DLR, KC_PERC,  KC_CIRC,    KC_AMPR, KC_ASTR, LEFT_BRACKET, RIGHT_BRACKET, KC_UNDS, KC_DEL, \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │   !    │  @     │   #    │   $    │   %    │   ^    │   │  &     │  *     │   (    │   )    │   _    │   =    │ */\
-	KC_EXLM,  KC_AT,  KC_HASH,  KC_DLR, KC_PERC,  KC_CIRC,    KC_AMPR, KC_ASTR, KC_LPRN,  KC_RPRN, KC_UNDS, KC_EQL,    \
+/* │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │   │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │ */\
+	_______, _______, _______, _______, _______, _______,     _______, _______, _______, _______, _______, _______, \
 /* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │   	 |   │        │        │   {    │   }    │    |   │ 	   |*/\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_LCBR, KC_RCBR, KC_PIPE, _______,   \
+/* │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │   │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │ */\
+	_______, _______, _______, _______, _______, _______,     _______, _______, _______, _______, _______, _______, \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┬────────┼────────┴────────┴────────╯ */\
 	                            MO(MED), MO(MOU), MO(SYS),    _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
@@ -185,11 +184,11 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 	                            XXXXXXX, _______, XXXXXXX,    MS_BTN1, XXXXXXX, MS_BTN2
 
-// A + left Space thumb apps/system: persistent toggles live away from typing keys.
+// A + left Space thumb function/system: function keys mirror the number-pad shape.
 #define _SYST \
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_DEL,  \
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TG(CMK), TG(CMK), TG(CMK), TG(CMK), TG(CMK), TG(CMK), \
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F12,  KC_F7,   KC_F8,   KC_F9,   XXXXXXX, KC_DEL,  \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX, TG(CMK), \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
 	                            XXXXXXX, XXXXXXX, _______,    XXXXXXX, XXXXXXX, XXXXXXX
 
 // 	                           _______, _______,     _______, MO(FNC)
