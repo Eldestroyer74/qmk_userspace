@@ -28,6 +28,20 @@ intended for one feature at a time.
 
 No second feature starts until the current feature is marked Kept or Rolled Back.
 
+## Private Data Gate
+
+Do not commit personal addresses, passwords, recovery keys, private URLs with
+tokens, or other sensitive strings. Text snippets that are safe to share may
+live in committed source. Private snippets must live in an ignored local file,
+currently `features/text_stubs_private.h`.
+
+Before staging or committing any text-snippet feature:
+
+1. Run `git status --short --ignored`.
+2. Confirm `features/text_stubs_private.h` is ignored and not staged.
+3. Inspect staged diffs for private address strings.
+4. Replace any committed private value with a placeholder before committing.
+
 ## Question And Bug Triage Gate
 
 When the user asks a question about behavior, first answer the question and teach

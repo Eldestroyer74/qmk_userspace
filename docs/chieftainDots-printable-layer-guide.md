@@ -32,12 +32,12 @@ Command refinements
 
 Hold S or L, then:
   Left GUI thumb    = Navigation / arrows
-  Left Alt thumb    = Selection
-  Left Space thumb  = Extremes: Home / Page Up / Page Down / End
+  Left Alt thumb    = Extremes: Home / Page Up / Page Down / End
+  Left Space thumb  = Snap: Windows GUI + arrows
 
 Hold A or ;, then:
   Left GUI thumb    = Media
-  Left Alt thumb    = Mouse
+  Left Alt thumb    = Text snippets
   Left Space thumb  = Function / System
 ```
 
@@ -83,14 +83,14 @@ Access: hold `S` or `L`.
 ---      ---    ---    ---    ---    ---        +      7      8      9      *      DEL
 ---      ---    ---    ---    ---    ---        -      4      5      6      /      .
 ---      ---    ---    ---    ---    ---        (      1      2      3      0      )
-                         NAV    SEL    EXT         trans  trans  trans
+                         NAV    EXT    SNP         trans  trans  trans
 ```
 
 Useful combinations from Numbers / Commands:
 
 - Hold `S` or `L` + left GUI thumb = Navigation.
-- Hold `S` or `L` + left Alt thumb = Selection.
-- Hold `S` or `L` + left Space thumb = Extremes.
+- Hold `S` or `L` + left Alt thumb = Extremes.
+- Hold `S` or `L` + left Space thumb = Snap.
 
 ## Symbols
 
@@ -100,7 +100,7 @@ Access: hold `A` or `;` on Base, or hold `A` or `O` on Colemak.
 !        @      #      $      %      ^          &      *      (      )      _      DEL
 trans    trans  trans  trans  trans  trans      trans  trans  trans  trans  trans  trans
 trans    trans  trans  trans  trans  trans      trans  trans  trans  trans  trans  trans
-                         MED    MOUSE  SYS         trans  trans  trans
+                         MED    TEXT   SYS         trans  trans  trans
 ```
 
 Symbols bracket keys:
@@ -123,31 +123,31 @@ Access: hold `S` or `L`, then hold left GUI thumb.
 
 Use plain `CTRL` and `SHIFT` positions on the left side with arrows when needed.
 
-## Selection
-
-Access: hold `S` or `L`, then hold left Alt thumb.
-
-```text
----      ---    ---    ---    ---    ---        ---    ---    C-S-UP ---    ---    DEL
----      ---    ---    ---    ---    ---        ---    C-S-L  C-S-DN C-S-R  ---    ---
----      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    trans  ---         ---    ---    ---
-```
-
-`C-S` means Ctrl+Shift. This layer is a candidate for future removal if selection is handled by plain Ctrl/Shift with arrows.
-
 ## Extremes
 
-Access: hold `S` or `L`, then hold left Space thumb.
+Access: hold `S` or `L`, then hold left Alt thumb.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    PG UP  ---    ---    DEL
 ---      ---    ---    CTRL   SHIFT  ---        ---    HOME   PG DN  END    ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    ---    trans       ---    ---    ---
+                         ---    trans  ---         ---    ---    ---
 ```
 
 Use plain `CTRL` and `SHIFT` positions on the left side with Home/End/Page keys when needed.
+
+## Snap
+
+Access: hold `S` or `L`, then hold left Space thumb.
+
+```text
+---      ---    ---    ---    ---    ---        ---    ---    G-UP   ---    ---    DEL
+---      ---    ---    ---    ---    ---        ---    G-LEFT G-DOWN G-RIGHT ---   ---
+---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
+                         ---    ---    trans       ---    ---    ---
+```
+
+`G` means GUI/Windows. Use this for keyboard-only window snapping.
 
 ## Media
 
@@ -162,16 +162,19 @@ Access: hold `A` or `;`, then hold left GUI thumb.
 
 Known trial note: Play/Pause and Mute worked. Previous/Next may depend on the app.
 
-## Mouse
+## Text Snippets
 
 Access: hold `A` or `;`, then hold left Alt thumb.
 
 ```text
----      ---    ---    ---    ---    ---        WH UP  ---    MS UP  ---    ---    DEL
----      ---    ---    ---    ---    ---        WH DN  MS L   MS DN  MS R   ---    ---
+---      ---    ---    ---    ---    ---        HOME   ---    PHONE  ---    ---    DEL
+---      ---    ---    ---    ---    ---        WORK   MEET   EMAIL  NAME   ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    trans  ---         BTN1   ---    BTN2
+                         ---    trans  ---         ---    ---    ---
 ```
+
+Text snippets are compiled from a local private header. Do not commit private
+address values.
 
 ## Function / System
 
@@ -202,8 +205,4 @@ Symbols )          )         ]          }
 
 These are documented requirements, not necessarily active firmware:
 
-- Remove the dedicated Selection layer.
-- Use plain Ctrl/Shift with Navigation and Extremes for selection.
-- Move Extremes to the left Alt thumb slot.
-- Use the left Space thumb slot for GUI+Arrows / window manipulation.
 - Function keys now live in `A + Space`; verify and mark kept after physical trial.

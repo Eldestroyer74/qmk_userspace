@@ -18,14 +18,9 @@
 #define RGB_SYS		RGB_FLUOR
 #define RGB_LAYER	RGB_BSTEEL
 
-// Custom effects
-#ifdef RGB_MATRIX_CUSTOM_USER
-#	define DEF_MODE RGB_MATRIX_NONE
-#	define CMK_MODE RGB_MATRIX_NONE
-#else
-#	define DEF_MODE RGB_MATRIX_SOLID_REACTIVE_SIMPLE
-#	define CMK_MODE RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS
-#endif
+// Base RGB mode. ChieftainDots paints Caps/Colemak directly in the indicator
+// callback so split state feedback stays simple and predictable.
+#define DEF_MODE RGB_MATRIX_NONE
 
 // Custom indicators
 #ifdef KEYBOARD_crkbd_rev1

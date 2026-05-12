@@ -16,6 +16,7 @@ static tap_hold_double_t left_bracket_dance = {KC_LPRN, KC_LBRC, KC_LCBR};
 static tap_hold_double_t right_bracket_dance = {KC_RPRN, KC_RBRC, KC_RCBR};
 static tap_hold_double_t slash_pipe_dance = {KC_SLSH, KC_BSLS, KC_PIPE};
 static tap_hold_double_t quote_tilde_dance = {KC_QUOT, KC_GRV, KC_TILD};
+static tap_hold_double_t plus_equal_dance = {KC_PLUS, KC_EQL, KC_PLUS};
 
 static void tap_hold_double_finished(tap_dance_state_t *state, void *user_data) {
 	tap_hold_double_t *dance = (tap_hold_double_t *)user_data;
@@ -66,5 +67,9 @@ tap_dance_action_t tap_dance_actions[] = {
 	[TD_QUOTE_TILDE] = {
 		.fn = {NULL, tap_hold_double_finished, NULL, NULL},
 		.user_data = &quote_tilde_dance,
+	},
+	[TD_PLUS_EQUAL] = {
+		.fn = {NULL, tap_hold_double_finished, NULL, NULL},
+		.user_data = &plus_equal_dance,
 	},
 };

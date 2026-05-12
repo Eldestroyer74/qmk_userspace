@@ -1,2 +1,5 @@
 # Local compiled firmware checkpoints.
 firmware-history/
+
+# Local-only text snippets compiled into personal firmware.
+features/text_stubs_private.h

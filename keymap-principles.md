@@ -140,6 +140,20 @@ RGB should show the scope of the active state:
 - Command layers light the usable command surface for that layer, not every
   inherited or technically non-transparent key.
 
+Red needs a clear visual grammar:
+
+- Whole-board red Candy Rain means Caps Lock, because Caps changes ordinary
+  typing globally.
+- A short whole-board red flash means "that key is blank on the active command
+  layer." This is event feedback, not a persistent map, so blank keys stay quiet
+  until they are actually pressed.
+
+Colemak may use a distinctive whole-board pattern rather than a flat fill if the
+pattern makes the persistent typing mode easier to notice and does not conflict
+with Caps Lock or command-layer warning feedback. Current trial uses Filterpaper
+style Candy Rain for Colemak, with Caps using the same Candy engine constrained
+to red.
+
 When RGB does not match the layer concept, fix either the RGB mask or the layer
 concept deliberately rather than adding a second visual grammar.
 

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 
 #include "eldestroyer74.h"
+#include "features/text_stubs.h"
 
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 static uint_fast16_t tap_timer = 0;
@@ -52,6 +53,39 @@ static inline bool process_tap_hold(uint16_t hold_keycode, keyrecord_t *record) 
 
 
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
+	switch (keycode) {
+		case TXT_EMAIL:
+			if (record->event.pressed) {
+				SEND_STRING(TEXT_STUB_EMAIL);
+			}
+			return false;
+		case TXT_PHONE:
+			if (record->event.pressed) {
+				SEND_STRING(TEXT_STUB_PHONE);
+			}
+			return false;
+		case TXT_NAME:
+			if (record->event.pressed) {
+				SEND_STRING(TEXT_STUB_NAME);
+			}
+			return false;
+		case TXT_MEET:
+			if (record->event.pressed) {
+				SEND_STRING(TEXT_STUB_MEETING);
+			}
+			return false;
+		case TXT_WORK:
+			if (record->event.pressed) {
+				SEND_STRING(TEXT_STUB_WORK);
+			}
+			return false;
+		case TXT_HOME:
+			if (record->event.pressed) {
+				SEND_STRING(TEXT_STUB_HOME);
+			}
+			return false;
+	}
+
 	if (record->event.pressed) {
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 		tap_timer = timer_read();

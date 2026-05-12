@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 
 #include "rgb-matrix.h"
+#include "lib/lib8tion/lib8tion.h"
 
 // Assign left and right keys to KB2040 LEDs on each side
 #ifdef CONVERT_TO_KB2040
@@ -83,18 +84,21 @@ static bool is_system_function_position(uint8_t row, uint8_t col) {
 	       (row == R_BOTTOM && (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
 }
 
+static bool rgb_should_light_number_key(uint8_t row) {
+	return R_TOP <= row && row <= R_BOTTOM;
+}
+
 static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col) {
 	switch (layer) {
 		case NUM:
-			return (row <= L_BOTTOM && L_PINKY <= col && col <= L_INDEX) ||
-			       (R_TOP <= row && row <= R_BOTTOM);
+			return rgb_should_light_number_key(row);
 		case SYM:
 			return row == L_TOP || row == R_TOP ||
 			       (row == L_THUMB && L_MIDDLE <= col);
 		case NAV:
 			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
 			       is_delete_position(row, col);
-		case SEL:
+		case SNP:
 			return is_direction_position(row, col) || is_delete_position(row, col);
 		case EXT:
 			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
@@ -104,12 +108,11 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 			       (row == R_TOP && (col == R_INNER || col == R_MIDDLE)) ||
 			       (row == R_HOME &&
 			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
-		case MOU:
+		case TXT:
 			return is_delete_position(row, col) ||
 			       (row == R_TOP && (col == R_INNER || col == R_MIDDLE)) ||
 			       (row == R_HOME &&
-			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING)) ||
-			       (row == R_THUMB && (col == R_THUMB_INNER || col == R_THUMB_OUTER));
+			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
 		case SYS:
 			return is_system_function_position(row, col);
 		default:
@@ -117,12 +120,10 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 	}
 }
 
-
 layer_state_t layer_state_set_user(layer_state_t const state) {
 	rgb_matrix_mode_noeeprom(DEF_MODE);
 	return state;
 }
-
 
 #ifdef __AVR__
 
@@ -139,13 +140,14 @@ static void rgb_set_command_keys(uint8_t layer, RGB rgb) {
 
 
 bool rgb_matrix_indicators_user(void) {
-	rgb_matrix_set_color_all(RGB_OFF);
-
-	// Caps Lock should be visible across the key field.
 	if (host_keyboard_led_state().caps_lock) {
-		rgb_matrix_set_color_all(RGB_CAPS);
+		uint8_t pulse = scale8(abs8(sin8(scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8)) - 128) * 2,
+		                       rgb_matrix_config.hsv.v);
+		rgb_matrix_set_color_all(pulse, 0, 0);
 	} else if (layer_state_is(CMK)) {
 		rgb_matrix_set_color_all(RGB_CMK);
+	} else {
+		rgb_matrix_set_color_all(RGB_OFF);
 	}
 	// Modifier keys
 	if (get_mods() & MOD_MASK_CSAG) {
@@ -165,12 +167,6 @@ bool rgb_matrix_indicators_user(void) {
 
 #else
 
-#	include "lib/lib8tion/lib8tion.h"
-static inline RGB glow_hsv_to_rgb(HSV hsv) {
-	hsv.v = scale8(abs8(sin8(scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8)) - 128) * 2, hsv.v);
-	return hsv_to_rgb(hsv);
-}
-
 static void rgb_set_command_keys(uint8_t layer, RGB rgb, uint8_t led_min, uint8_t led_max) {
 	for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
 		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
@@ -185,18 +181,19 @@ static void rgb_set_command_keys(uint8_t layer, RGB rgb, uint8_t led_min, uint8_
 
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-	for (uint8_t i = led_min; i <= led_max; ++i) {
-		rgb_matrix_set_color(i, RGB_OFF);
-	}
-
-	// Caps Lock should be visible across the key field.
 	if (host_keyboard_led_state().caps_lock) {
+		uint8_t pulse = scale8(abs8(sin8(scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8)) - 128) * 2,
+		                       rgb_matrix_config.hsv.v);
 		for (uint8_t i = led_min; i <= led_max; ++i) {
-			rgb_matrix_set_color(i, RGB_CAPS);
+			rgb_matrix_set_color(i, pulse, 0, 0);
 		}
 	} else if (layer_state_is(CMK)) {
 		for (uint8_t i = led_min; i <= led_max; ++i) {
 			rgb_matrix_set_color(i, RGB_CMK);
+		}
+	} else {
+		for (uint8_t i = led_min; i <= led_max; ++i) {
+			rgb_matrix_set_color(i, RGB_OFF);
 		}
 	}
 	// Modifier keys

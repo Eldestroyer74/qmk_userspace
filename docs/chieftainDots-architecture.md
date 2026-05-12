@@ -28,17 +28,18 @@ code.
 - Symbols: top-row punctuation and shifted symbols, with lower rows transparent
   so Base/Colemak letters still pass through while symbol access is held.
 - Legacy Function: removed from the active Corne build recipe. Its useful jobs
-  have moved into Numbers/Commands, Media, Mouse, Apps/System, and Base Menu.
+  have moved into Numbers/Commands, Media, Text Snippets, Apps/System, and Base
+  Menu.
 - Navigation: arrow movement using the `I/J/K/L` spatial shape, accessed by
   holding `S` or `L` and the left GUI thumb.
-- Selection: Ctrl+Shift arrow movement using the same `I/J/K/L` shape, accessed
-  by holding `S` or `L` and the left Alt thumb.
 - Extremes: Home/Page/End movement using the same `I/J/K/L` shape, accessed by
-  holding `S` or `L` and the left Space thumb.
+  holding `S` or `L` and the left Alt thumb.
+- Snap: Windows GUI+Arrow window snapping using the same `I/J/K/L` shape,
+  accessed by holding `S` or `L` and the left Space thumb.
 - Media: volume and track controls, accessed by holding `A` and the left GUI
   thumb.
-- Mouse: pointer movement, scroll, and primary/secondary mouse buttons,
-  accessed by holding `A` and the left Alt thumb.
+- Text Snippets: safe-to-type personal snippets, accessed by holding `A` and
+  the left Alt thumb. Private string values must live in ignored local files.
 - Apps/System: persistent application/system toggles such as Colemak, accessed
   by holding `A` and the left Space thumb.
 
@@ -73,6 +74,9 @@ keyboard state without becoming another place where key behavior is defined.
 - Momentary command layers light their usable command surface. The mask should
   follow the layer concept documented here, rather than relying only on QMK
   keycode introspection.
+- Pressing an intentionally blank command-layer position may trigger a short
+  whole-board red flash as a trial learning aid. This is different from Caps
+  Lock because it is a brief error event rather than a persistent typing state.
 
 Because ChieftainDots runs on a split Corne, RGB state also depends on split
 state sync. `SPLIT_LAYER_STATE_ENABLE` is required for momentary layer RGB on
@@ -82,8 +86,10 @@ non-master half. Keep those sync options explicit in `config.h` rather than
 hiding them behind feature-specific preprocessor guards.
 
 The current command-layer color vocabulary is deliberately small: Numbers is
-blue, Symbols is cyan, and the navigation/media/mouse/system command layers use
-the shared layer color until a stronger visual need is proven.
+blue, Symbols is cyan, navigation/media/text/system command layers use the
+shared layer color, Colemak uses a whole-board Candy Rain mode, Caps uses the
+same Candy engine constrained to red, and blank command-key presses produce a
+brief whole-board red flash.
 
 Corne's right-hand matrix columns are reversed from the visual key order. For
 example, visual `Y U I O P BSPC` maps to matrix columns `5 4 3 2 1 0`.
@@ -115,8 +121,8 @@ wrapper to every layer.
 ## Two Anchor Families Exploration
 
 One candidate direction is to use home-row anchors plus left-thumb refinements.
-The `S`/`L` numbered-command slice is implemented and being trialed; the
-left-thumb refinement layers are not implemented yet.
+The `S`/`L` numbered-command slice and its left-thumb refinements are active
+firmware concepts.
 
 The model:
 
@@ -128,10 +134,10 @@ The model:
 
 - Hold `S`: Numbers on the right hand.
 - Hold `S` plus the left GUI thumb position: Arrows.
-- Hold `S` plus the left Alt thumb position: selection shortcuts such as
-  Ctrl+Shift+Arrows.
-- Hold `S` plus the left Space thumb position: extremes such as Home, End, Page
+- Hold `S` plus the left Alt thumb position: extremes such as Home, End, Page
   Up, and Page Down.
+- Hold `S` plus the left Space thumb position: snap shortcuts such as
+  GUI+Left and GUI+Right.
 
 Directional sub-layers use a right-hand spatial shape:
 
@@ -140,7 +146,7 @@ Directional sub-layers use a right-hand spatial shape:
 J = Left   K = Down   L = Right
 ```
 
-Selection and extremes should reuse this same physical shape. This intentionally
+Extremes and snap should reuse this same physical shape. This intentionally
 deviates from a strict home-row-only rule because the spatial direction pattern
 is more memorable and easier to carry across related editing layers.
 
@@ -158,24 +164,22 @@ Additional implemented refinements:
 ```text
 Hold S or L, then hold left Alt thumb:
 
-      I = Ctrl+Shift+Up
-J = Ctrl+Shift+Left   K = Ctrl+Shift+Down   L = Ctrl+Shift+Right
+      I = Page Up
+J = Home   K = Page Down   L = End
 
 Hold S or L, then hold left Space thumb:
 
-      I = Page Up
-J = Home   K = Page Down   L = End
+      I = GUI+Up
+J = GUI+Left   K = GUI+Down   L = GUI+Right
 ```
 
 Navigation and extremes keep `D = Ctrl` and `F = Shift` as plain held modifiers
-for consistency. Selection leaves the left hand blank because the selected
-commands already include Ctrl+Shift.
+for consistency. Selection is now composed from those plain modifiers plus
+Navigation or Extremes, instead of being owned by a dedicated layer.
 
-Known conflict: the left GUI thumb is also an operating-system modifier. Because
-it currently refines `S`/`L` into Navigation, ordinary keyboard-only window
-snapping such as GUI+Left and GUI+Right is no longer directly available from the
-arrow shape. Future navigation revisions must either add explicit window-snap
-commands, move Navigation off GUI, or provide another documented OS-window route.
+The Snap layer exists because the left GUI thumb is already used to enter
+Navigation. It provides explicit GUI+Arrow commands without adding double-tap
+timing to ordinary arrow keys.
 
 First-slice number candidate:
 
@@ -219,14 +223,14 @@ side of the same numbered-command layer.
 
 - Hold `A`: Symbols.
 - Hold `A` plus the left GUI thumb position: Function keys and system actions.
-- Hold `A` plus the left Alt thumb position: Mouse.
+- Hold `A` plus the left Alt thumb position: Text Snippets.
 - Hold `A` plus the left Space thumb position: Media and volume.
 
 Current A-family direction:
 
 - Hold `A`: Symbols on the top row.
 - Hold `A` plus the left GUI thumb position: Media.
-- Hold `A` plus the left Alt thumb position: Mouse.
+- Hold `A` plus the left Alt thumb position: Text Snippets.
 - Hold `A` plus the left Space thumb position: Apps/System, including Colemak
   toggle.
 
@@ -239,7 +243,7 @@ TAB  Q  W  E  R  T      Y  U  I      O      P  BSPC
 !    @  #  $  %  ^      &  *  (/[/{  )/]/}  _  DEL
 
 Home row and bottom row: transparent to the active typing layer
-Left thumbs: Media, Mouse, System refinements
+Left thumbs: Media, Text Snippets, System refinements
 ```
 
 The bracket keys use one physical concept: tap for round brackets, hold for
@@ -273,16 +277,16 @@ This deliberately treats Play/Pause and Mute like the calculator/media operator
 pair: `Y` carries the positive/additive action and `H` carries the
 negative/suppressing action. Right Shift is unused on this layer.
 
-Implemented mouse layout:
+Implemented Text Snippets layout:
 
 ```text
 Hold A, then hold left Alt thumb:
 
-Y = Wheel Up             I = Mouse Up
-H = Wheel Down   J = Mouse Left   K = Mouse Down   L = Mouse Right
+Y = Home address           I = Phone
+H = Work address   J = Meeting link   K = Email   L = Name
 
-Right thumb Enter position = Mouse Button 1
-Right thumb old Function/Menu position = Mouse Button 2
+The committed source must not contain private address values. Local private
+values live in `features/text_stubs_private.h`, which is ignored by git.
 ```
 
 Implemented Function/System layout:
@@ -309,24 +313,18 @@ Calculator and Media Player launch ideas are handled by Base lower-corner keys.
 
 Command layers should reuse physical meaning where possible:
 
-- Positions chosen for calculator plus/minus should correspond to mouse scroll
-  up/down. Current rule: `Y = +` corresponds to `Y = Wheel Up`; `H = -`
-  corresponds to `H = Wheel Down`.
+- Paired vertical concepts should stay aligned where useful. Current Text
+  Snippets rule: `Y = Home address` and `H = Work address`.
 - Multiplication and division should remain a vertical pair. Current rule:
   `P = *` sits above `; = /`.
-- Positions chosen for Enter, confirm, or accept should correspond to primary
-  mouse button behavior where that makes sense.
 - Related actions such as arrows, selection arrows, and Home/End/Page movement
   should keep directional meaning across sub-layers.
 
-Mouse wheel/operator consistency:
+Text snippet placement:
 
 ```text
-Numbers/Commands      Mouse
-Y = +                 Y = Wheel Up
-H = -                 H = Wheel Down
-P = *                 Multiplication stays above division
-; = /                 Division stays below multiplication
+Y = Home address           I = Phone
+H = Work address   J = Meeting link   K = Email   L = Name
 ```
 
 ### Implementation Direction

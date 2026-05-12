@@ -15,7 +15,7 @@ SPACE_CADET_ENABLE = no
 COMBO_ENABLE = no
 TAP_DANCE_ENABLE = yes
 EXTRAKEY_ENABLE = yes
-MOUSEKEY_ENABLE = yes #disabled as I need to get the firmware small enough
+MOUSEKEY_ENABLE = no
 BOOTMAGIC_ENABLE = yes
 
 VPATH += $(USER_PATH)/oled $(USER_PATH)/rgb $(USER_PATH)/features

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 
 #include "features/tap_dance.h"
+#include "features/text_stubs.h"
 
 // macOS shortcuts
 // @REJ: Don't need shortcuts, these are called in the eldestroyr74.c file.
@@ -44,14 +45,16 @@
 //#define HRMR(k1,k2,k3,k4) LGUI_T(k1),LCTL_T(k2),LALT_T(k3),LSFT_T(k4)
 #define HRMR(k1,k2,k3,k4) LSFT_T(k1),LCTL_T(k2),LT(NUM, k3),LT(SYM, k4)
 
-// Navigation shortcuts
-// @REJ: define my select word "Ctrl" + "Shift" + Left, or right, same with home and end
-//#define SA_UP S(A(KC_UP))
+// Window snap shortcuts. Plain Ctrl/Shift live on NAV and EXT so selection
+// remains composable instead of needing a dedicated selection layer.
 #define CS_UP C(S(KC_UP))
-//#define SA_DN S(A(KC_DOWN))
 #define CS_DN C(S(KC_DOWN))
 #define CS_LF C(S(KC_LEFT))
 #define CS_RI C(S(KC_RIGHT))
+#define G_UP G(KC_UP)
+#define G_DN G(KC_DOWN)
+#define G_LF G(KC_LEFT)
+#define G_RI G(KC_RIGHT)
 
 // Layers
 // @REJ: remove colemak, define BSE, NUM, use json file to see what else I defined
@@ -61,10 +64,10 @@
 #define NUM 2
 #define SYM 3
 #define NAV 4
-#define SEL 5
-#define EXT 6
+#define EXT 5
+#define SNP 6
 #define MED 7
-#define MOU 8
+#define TXT 8
 #define SYS 9
 
 // Default 3x5_2 split layout
@@ -101,7 +104,7 @@
 #define _NUMB \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
 /* │        │        │        │        │        │        │   │   +    │   7    │   8    │   9    │   *    │ DELETE │ */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_PLUS, KC_7,    KC_8,    KC_9,    KC_ASTR, KC_DEL,   \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     PLUS_EQUAL, KC_7, KC_8,    KC_9,    KC_ASTR, KC_DEL,   \
 /* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │        │        │        │        │        │        │   │   -    │   4    │   5    │   6    │   /    │   .    │ */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MINS, KC_4,    KC_5,    KC_6,    KC_SLSH, KC_DOT,   \
@@ -109,7 +112,7 @@
 /* │        │        │        │        │        │        │   │   (    │   1    │   2    │   3    │   0    │   )    │ */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_LPRN, KC_1,    KC_2,    KC_3,    KC_0,    KC_RPRN, \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
-	                            MO(NAV), MO(SEL), MO(EXT),     _______, _______, _______
+	                            MO(NAV), MO(EXT), MO(SNP),     _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
 // S/L + left GUI thumb navigation: I/J/K/L form the right-hand arrow shape.
@@ -127,22 +130,22 @@
 	                            _______, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
-// S/L + left Alt thumb selection: word/large-unit selection follows I/J/K/L.
-#define _SELE \
+// S/L + left Space thumb snap: GUI+arrows follow the same I/J/K/L shape.
+#define _SNP \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
-/* │        │        │        │        │        │        │   │        │        │ CS UP  │        │        │ DELETE │ */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, CS_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
+/* │        │        │        │        │        │        │   │        │        │ G UP   │        │        │ DELETE │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, G_UP,    XXXXXXX, XXXXXXX, KC_DEL,   \
 /* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │        │ CS LF  │ CS DN  │ CS RT  │        │        │ */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, CS_LF,   CS_DN,   CS_RI,   XXXXXXX, XXXXXXX, \
+/* │        │        │        │        │        │        │   │        │ G LEFT │ G DOWN │ G RGHT │        │        │ */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, G_LF,    G_DN,    G_RI,    XXXXXXX, XXXXXXX, \
 /* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
 /* │        │        │        │        │        │        │   │        │        │        │        │        │        │ */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
-	                            XXXXXXX, _______, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX
+	                            XXXXXXX, XXXXXXX, _______,     XXXXXXX, XXXXXXX, XXXXXXX
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
-// S/L + left Space thumb extremes: Home/Page movement follows the same shape.
+// S/L + left Alt thumb extremes: Home/Page movement follows the same shape.
 #define _EXTR \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
 /* │        │        │        │        │        │        │   │        │        │ PG UP  │        │        │ DELETE │ */\
@@ -168,7 +171,7 @@
 /* │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │   │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │ */\
 	_______, _______, _______, _______, _______, _______,     _______, _______, _______, _______, _______, _______, \
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┬────────┼────────┴────────┴────────╯ */\
-	                            MO(MED), MO(MOU), MO(SYS),    _______, _______, _______
+	                            MO(MED), MO(TXT), MO(SYS),    _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 // A + left GUI thumb media: volume and track controls follow the I/J/K/L shape.
 #define _MEDI \
@@ -177,12 +180,12 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 	                            _______, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
 
-// A + left Alt thumb mouse: pointer movement follows I/J/K/L; wheel follows +/-.
-#define _MOUS \
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     MS_WHLU, XXXXXXX, MS_UP,   XXXXXXX, XXXXXXX, KC_DEL,  \
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     MS_WHLD, MS_LEFT, MS_DOWN, MS_RGHT, XXXXXXX, XXXXXXX, \
+// A + left Alt thumb text stubs: contact snippets follow the I/J/K/L shape.
+#define _TEXT \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_HOME, XXXXXXX, TXT_PHONE, XXXXXXX, XXXXXXX, KC_DEL,  \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_WORK, TXT_MEET, TXT_EMAIL, TXT_NAME, XXXXXXX, XXXXXXX, \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-	                            XXXXXXX, _______, XXXXXXX,    MS_BTN1, XXXXXXX, MS_BTN2
+	                            XXXXXXX, _______, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
 
 // A + left Space thumb function/system: function keys mirror the number-pad shape.
 #define _SYST \

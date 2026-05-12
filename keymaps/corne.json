@@ -8,10 +8,10 @@
 		[ "_NUMB" ],
 		[ "_SYMB" ],
 		[ "_NAV" ],
-		[ "_SELE" ],
 		[ "_EXTR" ],
+		[ "_SNP" ],
 		[ "_MEDI" ],
-		[ "_MOUS" ],
+		[ "_TEXT" ],
 		[ "_SYST" ]
 	]
 }
