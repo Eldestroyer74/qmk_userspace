@@ -45,6 +45,8 @@ enum {
 	R_THUMB,
 };
 
+// These names describe QMK's row/column matrix, not the visual LED order.
+// RGB bugs often come from assuming the split wiring matches key positions.
 enum {
 	L_OUTER,
 	L_PINKY,
@@ -157,7 +159,7 @@ bool rgb_matrix_indicators_user(void) {
 			}
 		}
 	}
-	// Command layer indicators follow the documented ChieftainDots scope rule.
+	// Command layers light only the keys that do work on that layer.
 	if (get_highest_layer(layer_state) > CMK) {
 		uint8_t layer = get_highest_layer(layer_state);
 		rgb_set_command_keys(layer, rgb_for_layer(layer));
@@ -204,7 +206,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 			}
 		}
 	}
-	// Command layer indicators follow the documented ChieftainDots scope rule.
+	// Command layers light only the keys that do work on that layer.
 	if (get_highest_layer(layer_state) > CMK) {
 		uint8_t layer = get_highest_layer(layer_state);
 		rgb_set_command_keys(layer, rgb_for_layer(layer), led_min, led_max);

@@ -4,24 +4,16 @@
 #include "features/tap_dance.h"
 #include "features/text_stubs.h"
 
-// macOS shortcuts
-// @REJ: Don't need shortcuts, these are called in the eldestroyr74.c file.
+// Editing/window shortcut keycodes used by tap-hold helpers and combos.
 #define Z_UND	C(KC_Z) 
 #define Z_CUT	C(KC_X)
 #define Z_CPY	C(KC_C)
 #define Z_PST	C(KC_V)
 #define Z_LOCK	G(KC_L)
 #define Z_SHUT  A(KC_F4) //Alt + F4 shuts
-/*#define Z_SLEEP	A(G(KC_PWR))
-#define Z_SHUT	C(A(G(KC_PWR)))
-#define Z_SSAVE	HYPR(KC_S)*/
 
 
-// Tap hold macros
-/* @REJ: Leave, back to layer 0 if you press the bottom right hand row from any layer?
- * Add TH macros for accents and egne 
- * These are multiple options to return to layer 0
- */
+// Tap-hold helper keys used by legacy combos.
 #define TH_M	LT(0,KC_M)
 #define TH_COMM	LT(0,KC_COMM) //GUI Key
 #define TH_DOT	LT(0,KC_DOT)
@@ -29,7 +21,6 @@
 #define TH(k1,k2,k3,k4) LT(0,k1),LT(0,k2),LT(0,k3),LT(0,k4) // provides a shortcut to the base layer from either hand
 
 // Home row mod-tap macros
-/* @REJ: Change the order of this SyNCS SCNSy  */
 #define HM_A	/*LSFT_T(KC_A) LGUI_T(KC_A)*/ LT(SYM, KC_A) // SYMBOL
 #define HM_S	/*LALT_T(KC_S)*/ LT(NUM, KC_S) // NUMBERS
 #define HM_D	LCTL_T(KC_D)
@@ -39,7 +30,6 @@
 #define HM_L	/*LALT_T(KC_L)*/ LT(NUM, KC_L) // NUMBERS
 //#define HM_QUOT	/*LSFT_T(KC_QUOT) LGUI_T(KC_QUOT)*/ LT(SYM, KC_QUOT)// SYMBOL
 #define HM_SCLN LT(SYM, KC_SCLN)
-// @REJ: change the below to match the order that you like
 //#define HRML(k1,k2,k3,k4) LSFT_T(k1),LALT_T(k2),LCTL_T(k3),LGUI_T(k4)
 #define HRML(k1,k2,k3,k4) LT(SYM, k1),LT(NUM, k2),LCTL_T(k3),LSFT_T(k4)
 //#define HRMR(k1,k2,k3,k4) LGUI_T(k1),LCTL_T(k2),LALT_T(k3),LSFT_T(k4)
@@ -56,9 +46,7 @@
 #define G_LF G(KC_LEFT)
 #define G_RI G(KC_RIGHT)
 
-// Layers
-// @REJ: remove colemak, define BSE, NUM, use json file to see what else I defined
-// add a layer for vide editing
+// Layer ids used by corne.json.
 #define BSE 0
 #define CMK 1
 #define NUM 2
@@ -70,8 +58,7 @@
 #define TXT 8
 #define SYS 9
 
-// Default 3x5_2 split layout
-// @REJ: modify so that the smallest keyboard is a corne keyboard
+// Base and Colemak alpha layers. corne.json applies HRM(...) to these layers.
 #define _BASE \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
 /* │  TAB   │  Q     │  W     │  E     │  R     │  T     │   │  Y     │  U     │  I     │  O     │  P     │  BSPC  │ */\
@@ -100,7 +87,7 @@
 	                            _______, _______, _______,     _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */ 
 
-// S/L-held numbered commands: the right hand owns digits and calculator operators.
+// S/L-held command layers: Numbers anchors the right-hand digit/operator pad.
 #define _NUMB \
 /* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
 /* │        │        │        │        │        │        │   │   +    │   7    │   8    │   9    │   *    │ DELETE │ */\
@@ -173,47 +160,30 @@
 /* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┬────────┼────────┴────────┴────────╯ */\
 	                            MO(MED), MO(TXT), MO(SYS),    _______, _______, _______
 /*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
-// A + left GUI thumb media: volume and track controls follow the I/J/K/L shape.
+// A/; + left-thumb command layers.
+// Media uses the same right-hand I/J/K/L navigation shape for volume and tracks.
 #define _MEDI \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MPLY, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,  \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MUTE, KC_MPRV, KC_VOLD, KC_MNXT, XXXXXXX, XXXXXXX, \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 	                            _______, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
 
-// A + left Alt thumb text stubs: contact snippets follow the I/J/K/L shape.
+// Text stubs keep personal snippets in the same right-hand I/J/K/L shape.
 #define _TEXT \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_HOME, XXXXXXX, TXT_PHONE, XXXXXXX, XXXXXXX, KC_DEL,  \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_WORK, TXT_MEET, TXT_EMAIL, TXT_NAME, XXXXXXX, XXXXXXX, \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 	                            XXXXXXX, _______, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
 
-// A + left Space thumb function/system: function keys mirror the number-pad shape.
+// System/function keys mirror the number-pad shape.
 #define _SYST \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F12,  KC_F7,   KC_F8,   KC_F9,   XXXXXXX, KC_DEL,  \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX, TG(CMK), \
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
 	                            XXXXXXX, XXXXXXX, _______,    XXXXXXX, XXXXXXX, XXXXXXX
 
-// 	                           _______, _______,     _______, MO(FNC)
-/* │ BOOT   │  F1    │  F2    │  F3    │ F10    │   │        │ WH UP  │ WH DN  │        │COLEMAK │ */
-//	QK_BOOT, KC_F1,   KC_F2,   KC_F3,   KC_F10,      _______, KC_WH_U, KC_WH_D, _______, TG(CMK),    
-#define _FUNC \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
-/* │ ESC `  │        │  F7    │  F8    │  F9    │   F10  │   │   F11  │   F12  │ WH DN  │ WH UP  │        │ DELETE │ */\
-	QK_GESC,  XXXXXXX, KC_F7,   KC_F8,   KC_F9,  KC_F10,      KC_F11,  KC_F12, MS_WHLD, MS_WHLU, XXXXXXX, KC_DEL,    \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │ Alt+F4 │  F4    │  F5    │  F6    │        │   │ Vol +  │ MS LFT │ MS DN  │ MS UP  │ MS RGT │        │ */\
-	XXXXXXX,  Z_SHUT, KC_F4,   KC_F5,   KC_F6,   XXXXXXX,      KC_VOLU, MS_LEFT, MS_DOWN, MS_UP,   MS_RGHT, _______,   \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │ 		 │  F1    │  F2    │  F3    │        │   │ Vol -  │        │ BTN 1  │ BTN 2  │  	  │ COLEQ  │ */\
-	XXXXXXX,  XXXXXXX, KC_F1,   KC_F2,   KC_F3,   XXXXXXX,     KC_VOLD, XXXXXXX, MS_BTN1, MS_BTN2, XXXXXXX, TG(CMK),   \
-/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┴────────┴────────╯ */\
-	                            _______, _______, _______,     _______, _______, _______
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
-/* │ SLEEP  │  F7    │  F8    │  F9    │ F12    │   │        │ BTN 2  │ BTN 1  │        │ SSAVE  │ */
-//	                           _______, QK_RBT,      _______, _______
-/*                            ╰────────┴────────╯   ╰────────┴────────╯ */
-// Mod-tap wrapper
+// Home-row wrapper. Only Base/Colemak pass through HRM(...) in corne.json;
+// command layers stay plain so held keys compose predictably with thumbs.
 #define HRM(k) HRM_TAPHOLD(k)
 #define HRM_TAPHOLD( \
 	  l01, l02, l03, l04, l05, l06,   r01, r02, r03, r04, r05, r06,  \
@@ -228,14 +198,13 @@
 
 
 
-// Layout aliases for
+// Layout aliases used by the userspace keymap JSON files.
 #define LAYOUT_34key_w(...) LAYOUT_split_3x5_2(__VA_ARGS__)
 #define LAYOUT_crkbd_w(...) LAYOUT_split_3x6_3(__VA_ARGS__)
 #define LAYOUT_ortho_w(...) LAYOUT_ortho_4x12(__VA_ARGS__)
 
 
-// Convert 3x5_2 to 42-key
-/* REJ: Swap tab and gesc, put sym, del in the buttons for thumbs*/
+// Convert 3x5_2 to 42-key for legacy userspace keymaps.
 #define C_42(k) CONV_42(k)
 #define CONV_42( \
 	     l01, l02, l03, l04, l05,   r01, r02, r03, r04, r05, \
@@ -249,7 +218,7 @@ KC_LSFT, l11, l12, l13, l14, l15,   r11, r12, r13, r14, r15, KC_SCLN, \
 	     LT(SYM, KC_DEL), l16, l17,   r16, r17, LT(SYM, KC_DEL)
 //	     RSA_T(KC_ESC), l16, l17,   r16, r17, RAG_T(KC_DEL)
 
-// Convert 3x5_2 to 4x12
+// Convert 3x5_2 to 4x12 for legacy userspace keymaps.
 #define C_O(k) CONV_4x12(k)
 #define CONV_4x12( \
 	                      l01, l02, l03, l04, l05, r01, r02, r03, r04, r05, \

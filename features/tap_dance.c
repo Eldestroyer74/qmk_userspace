@@ -12,6 +12,8 @@ typedef struct {
 	uint16_t double_tap;
 } tap_hold_double_t;
 
+// One pattern powers the small punctuation ladders:
+// tap = common character, hold = related alternate, double-tap = rarer pair.
 static tap_hold_double_t left_bracket_dance = {KC_LPRN, KC_LBRC, KC_LCBR};
 static tap_hold_double_t right_bracket_dance = {KC_RPRN, KC_RBRC, KC_RCBR};
 static tap_hold_double_t slash_pipe_dance = {KC_SLSH, KC_BSLS, KC_PIPE};
@@ -33,6 +35,7 @@ static void tap_hold_double_finished(tap_dance_state_t *state, void *user_data) 
 static void tab_esc_close_finished(tap_dance_state_t *state, void *user_data) {
 	tab_esc_close_held = false;
 
+	// Tab is tap, Esc is hold, and Alt+F4 is double-tap on the same key.
 	if (state->count == 1 && state->pressed) {
 		register_code16(KC_ESC);
 		tab_esc_close_held = true;
