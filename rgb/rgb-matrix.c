@@ -86,17 +86,37 @@ static bool is_system_function_position(uint8_t row, uint8_t col) {
 	       (row == R_BOTTOM && (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
 }
 
-static bool rgb_should_light_number_key(uint8_t row) {
-	return R_TOP <= row && row <= R_BOTTOM;
+static bool is_number_top_row_position(uint8_t row, uint8_t col) {
+	return (row == L_TOP && L_PINKY <= col) || row == R_TOP;
+}
+
+static bool is_right_number_pad_position(uint8_t row, uint8_t col) {
+	return (row == R_HOME && R_PINKY <= col && col <= R_INDEX) ||
+	       (row == R_BOTTOM && R_OUTER <= col && col <= R_INDEX);
+}
+
+static bool is_number_symbol_shift_position(uint8_t row, uint8_t col) {
+	return row == L_HOME && col == L_INDEX;
+}
+
+static bool rgb_should_light_number_key(uint8_t row, uint8_t col) {
+	return is_number_top_row_position(row, col) ||
+	       is_right_number_pad_position(row, col) ||
+	       is_number_symbol_shift_position(row, col);
+}
+
+static bool rgb_should_light_symbol_key(uint8_t row, uint8_t col) {
+	return is_number_top_row_position(row, col) ||
+	       is_right_number_pad_position(row, col) ||
+	       (row == L_THUMB && L_MIDDLE <= col);
 }
 
 static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col) {
 	switch (layer) {
 		case NUM:
-			return rgb_should_light_number_key(row);
+			return rgb_should_light_number_key(row, col);
 		case SYM:
-			return row == L_TOP || row == R_TOP ||
-			       (row == L_THUMB && L_MIDDLE <= col);
+			return rgb_should_light_symbol_key(row, col);
 		case NAV:
 			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
 			       is_delete_position(row, col);

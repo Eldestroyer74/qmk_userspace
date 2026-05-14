@@ -53,7 +53,7 @@ MEDIA    Z      X      C      V      B          N      M      ,      .      /   
 Base special keys:
 
 - `Tab`: tap Tab, hold Escape, double tap Alt+F4.
-- `'`: tap `'`, hold `` ` ``, double tap `~`.
+- `'`: tap `'`.
 - `/`: tap `/`, hold `\`, double tap `|`.
 - Lower-left corner launches Media Player.
 - Lower-right corner launches Calculator.
@@ -70,7 +70,7 @@ MEDIA    Z      X      C      V      B          K      M      ,      .      /   
 
 Colemak special keys:
 
-- `'`: tap `'`, hold `` ` ``, double tap `~`.
+- `'`: tap `'`.
 - `/`: tap `/`, hold `\`, double tap `|`.
 - Lower-left corner launches Media Player.
 - Lower-right corner launches Calculator.
@@ -80,9 +80,9 @@ Colemak special keys:
 Access: hold `S` or `L`.
 
 ```text
----      ---    ---    ---    ---    ---        +      7      8      9      *      DEL
----      ---    ---    ---    ---    ---        -      4      5      6      /      .
----      ---    ---    ---    ---    ---        (      1      2      3      0      )
+`        1      2      3      4      5          6      7      8      9      0      -
+---      ---    ---    ---    SYM    ---        ---    4      5      6      =      ---
+---      ---    ---    ---    ---    ---        ---    1      2 , <  3 . >  ---    /
                          NAV    EXT    SNP         trans  trans  trans
 ```
 
@@ -91,15 +91,20 @@ Useful combinations from Numbers / Commands:
 - Hold `S` or `L` + left GUI thumb = Navigation.
 - Hold `S` or `L` + left Alt thumb = Extremes.
 - Hold `S` or `L` + left Space thumb = Snap.
+- Hold `S` or `L` + the `F` position = shifted-number Symbols.
+- On the right-hand pad, `2` taps `2`, holds `,`, and double-taps `<`.
+- On the right-hand pad, `3` taps `3`, holds `.`, and double-taps `>`.
 
 ## Symbols
 
 Access: hold `A` or `;` on Base, or hold `A` or `O` on Colemak.
+Also available from Numbers by holding the `F` position while `S` or `L` is
+held.
 
 ```text
-!        @      #      $      %      ^          &      *      (      )      _      DEL
-trans    trans  trans  trans  trans  trans      trans  trans  trans  trans  trans  trans
-trans    trans  trans  trans  trans  trans      trans  trans  trans  trans  trans  trans
+~        !      @      #      $      %          ^      &      *      (      )      _
+---      ---    ---    ---    ---    ---        ---    $      %      ^      +      ---
+---      ---    ---    ---    ---    ---        ---    !      @      #      ---    ---
                          MED    TEXT   SYS         trans  trans  trans
 ```
 
@@ -108,7 +113,10 @@ Symbols bracket keys:
 - `(` key: tap `(`, hold `[`, double tap `{`.
 - `)` key: tap `)`, hold `]`, double tap `}`.
 
-Transparent rows mean ordinary Base/Colemak letters still work while Symbols is held.
+Symbols is currently a trial surface for shifted-number memory. The top row
+keeps the normal shifted number row; the right-hand lower rows mirror the
+Numbers pad with shifted equivalents. `?` is intentionally absent here because
+it is reached from Base/Colemak with Shift plus `/`, not through Symbols.
 
 ## Navigation
 
@@ -195,11 +203,17 @@ Press quote on this layer to toggle Colemak.
 Physical key       Tap       Hold       Double tap
 --------------------------------------------------
 Tab                Tab       Esc        Alt+F4
-'                  '         `          ~
 /                  /         \          |
 Symbols (          (         [          {
 Symbols )          )         ]          }
 ```
+
+## Timing Trial
+
+- `F` and `J` home-row Shift now bypass Flow Tap and become eager holds like the
+  modifier keys. Number/Symbol layer keys stay more deliberate. Test `F + /`
+  for `?`, `F + I` for capital `I`, ordinary words containing `fi`, and normal
+  typing that previously produced accidental numbers.
 
 ## Current Pending Redesign Ideas
 

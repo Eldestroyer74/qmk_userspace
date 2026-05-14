@@ -26,6 +26,16 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 #endif
 
 
+#ifdef FLOW_TAP_TERM
+uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_keycode) {
+	if (keycode == HM_F || keycode == HM_J) {
+		return 0;
+	}
+	return is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode) ? FLOW_TAP_TERM : 0;
+}
+#endif
+
+
 #ifdef PERMISSIVE_HOLD_PER_KEY
 // Select Shift mod tap immediately when another key is pressed and released.
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
@@ -35,9 +45,15 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 
 
 #ifdef HOLD_ON_OTHER_KEY_PRESS_PER_KEY
-// Select hold immediately with another key for layer tap 1 and higher.
+static inline bool is_eager_hold_key(uint16_t keycode) {
+	return keycode == HM_F || keycode == HM_J;
+}
+
+// Shift participates in typing, so it gets eager-hold behavior. Layers are
+// command modes, so they stay deliberate and rely on tapping term, Flow Tap, and
+// Chordal Hold instead.
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-	return IS_LAYER_TAP(keycode) && !IS_TYPING();
+	return is_eager_hold_key(keycode) && !IS_TYPING();
 }
 #endif
 
