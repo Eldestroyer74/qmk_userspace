@@ -17,6 +17,12 @@ The layer contents and layout concepts live mainly in `layout.h`. Shared
 behavior lives in feature modules, OLED modules, RGB modules, and userspace hook
 code.
 
+Only `keymaps/corne.json` is considered the active ChieftainDots build target.
+The older Filterpaper-inherited `keymaps/cradio.json` and
+`keymaps/technik.json` recipes were removed because they referenced the removed
+`_FUNC` layer and no longer described current ChieftainDots. Future keyboard
+recipes should be created from the current layer model when a real port starts.
+
 ## Current Layer Concepts
 
 - Base: QWERTY typing layer with familiar outer modifiers and thumb keys.
@@ -67,6 +73,7 @@ Current source ownership:
 | File or folder | Owns | Should not own |
 | --- | --- | --- |
 | `keymaps/corne.json` | Corne build recipe and layer order. | Key behavior details or feature logic. |
+| future `keymaps/*.json` recipes | Keyboard-specific recipe, wrapper layout, and deliberate layer list for a tested port. | Inherited stale layers or behavior copied without compile/testing. |
 | `layout.h` | Layer tables, home-row wrappers, aliases, and cross-layer placement concepts. | RGB/OLED drawing rules or private string values. |
 | `eldestroyer74.c` | Userspace hook coordination, timing callbacks, Caps Unlock call, OLED tap timer, and text snippet dispatch. | Large feature-specific state machines when a feature module would be clearer. |
 | `features/` | Reusable behavior: Tap Dance, text snippets, Caps Unlock, disabled combos, and future macros. | Physical layer ownership beyond named keycodes exposed to `layout.h`. |
@@ -77,6 +84,91 @@ Current source ownership:
 If a change needs to update more than one owner, name the source of truth first.
 For example, layer behavior starts in `layout.h`; RGB may derive from the
 keymap, and the printable guide should describe the result.
+
+## Porting To Other Keyboards
+
+ChieftainDots can support other keyboards later, but a new recipe should start
+from the current Corne concepts rather than an old inherited file. Treat a port
+as a deliberate feature with its own compile target, firmware-size check, and
+physical test.
+
+Porting checklist:
+
+- Confirm the QMK keyboard name and supported layout macro.
+- Count the physical keys and thumbs.
+- Decide which ChieftainDots roles must remain identical.
+- Decide which roles move because the keyboard has fewer or more keys.
+- Add a fresh wrapper in `layout.h` only when the recipe needs one.
+- Compile and test the new target before calling it supported.
+
+Example for a slightly smaller keyboard:
+
+```json
+{
+  "keyboard": "example/smaller_board",
+  "keymap": "eldestroyer74",
+  "layout": "LAYOUT_chieftaindots_small",
+  "layers": [
+    [ "SMALL(HRM(_BASE))" ],
+    [ "SMALL(HRM(_COLE))" ],
+    [ "SMALL(_NUMB)" ],
+    [ "SMALL(_SYMB)" ],
+    [ "SMALL(_NAV)" ],
+    [ "SMALL(_EXTR)" ],
+    [ "SMALL(_SNP)" ],
+    [ "SMALL(_MEDI)" ],
+    [ "SMALL(_TEXT)" ],
+    [ "SMALL(_SYST)" ]
+  ]
+}
+```
+
+In that model, `SMALL(...)` would be a new wrapper that drops or relocates
+lower-priority physical positions while preserving the layer concepts.
+
+Example for a slightly larger keyboard:
+
+```json
+{
+  "keyboard": "example/larger_board",
+  "keymap": "eldestroyer74",
+  "layout": "LAYOUT_chieftaindots_large",
+  "layers": [
+    [ "LARGE(HRM(_BASE))" ],
+    [ "LARGE(HRM(_COLE))" ],
+    [ "LARGE(_NUMB)" ],
+    [ "LARGE(_SYMB)" ],
+    [ "LARGE(_NAV)" ],
+    [ "LARGE(_EXTR)" ],
+    [ "LARGE(_SNP)" ],
+    [ "LARGE(_MEDI)" ],
+    [ "LARGE(_TEXT)" ],
+    [ "LARGE(_SYST)" ]
+  ]
+}
+```
+
+In that model, `LARGE(...)` would add convenience keys around the existing
+concepts rather than inventing a different keyboard philosophy.
+
+A larger board such as the Mountain Ergo is a good candidate for this approach.
+The useful inherited idea is not the old Filterpaper helper itself, but the
+pattern: keep the ChieftainDots core stable, then use a wrapper to place that
+core inside a larger physical layout. Extra keys should be assigned deliberately
+as convenience keys, duplicates, or board-specific experiments.
+
+The removed Filterpaper-era conversion helpers are preserved in git for
+reference at tag `filterpaper-layout-wrappers-20260515`. To inspect the old
+helper code without restoring it:
+
+```bash
+git show filterpaper-layout-wrappers-20260515:layout.h
+```
+
+To restore one old helper for study, copy it from that tagged version into a
+new branch and rewrite it around the current ChieftainDots layers before
+compiling. Do not reintroduce the old helper unchanged; it encoded stale
+Filterpaper placement decisions.
 
 ## RGB Scope Rule
 

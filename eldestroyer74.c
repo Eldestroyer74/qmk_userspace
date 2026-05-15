@@ -49,11 +49,11 @@ static inline bool is_eager_hold_key(uint16_t keycode) {
 	return keycode == HM_F || keycode == HM_J;
 }
 
-// Shift participates in typing, so it gets eager-hold behavior. Layers are
-// command modes, so they stay deliberate and rely on tapping term, Flow Tap, and
-// Chordal Hold instead.
+// Keep hold-on-other-key-press disabled for typing keys. Shift mod-taps rely on
+// permissive hold, Flow Tap, and Chordal Hold so ordinary rolls like "fo" do not
+// become accidental shifted letters.
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-	return is_eager_hold_key(keycode) && !IS_TYPING();
+	return false;
 }
 #endif
 
