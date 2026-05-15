@@ -58,16 +58,6 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 #endif
 
 
-// Send custom hold keycode for mod tap.
-static inline bool process_tap_hold(uint16_t hold_keycode, keyrecord_t *record) {
-	if (!record->tap.count) {
-		tap_code16(hold_keycode);
-		return false;
-	}
-	return true;
-}
-
-
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 	switch (keycode) {
 		case TXT_EMAIL:
@@ -122,13 +112,6 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 			return false;
 		}
 #endif
-		// Clipboard shortcuts.
-		switch(keycode) {
-			case TH_SLSH: return process_tap_hold(Z_UND, record);
-			case TH_DOT:  return process_tap_hold(Z_CUT, record);
-			case TH_COMM: return process_tap_hold(Z_CPY, record);
-			case TH_M:    return process_tap_hold(Z_PST, record);
-		}
 	}
 	return true;
 }

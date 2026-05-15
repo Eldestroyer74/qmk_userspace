@@ -88,6 +88,17 @@ source of truth instead of mirroring it. For example, RGB layer masks should
 follow the actual keymap when possible, rather than maintaining a separate
 manual row/column map that can drift and consume firmware space.
 
+Byte is king when code is unused. Before enabling or keeping a QMK feature,
+source file, helper, or config option, ask what active behavior uses it. If the
+answer is "nothing in the current Corne build," disable or remove it and measure
+the byte difference. Git history and the roadmap are the archive; compiled
+firmware should not carry dormant experiments.
+
+Do not treat visible features as free cleanup. OLED, RGB, Caps Unlock, text
+snippets, Tap Dance, Extra Keys, and split recovery settings may be expensive,
+but they are design choices unless the user explicitly decides they are no
+longer worth their bytes.
+
 ## Compile Gate
 
 Use the canonical Corne build:

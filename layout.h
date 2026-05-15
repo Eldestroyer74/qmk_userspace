@@ -4,22 +4,6 @@
 #include "features/tap_dance.h"
 #include "features/text_stubs.h"
 
-// Editing/window shortcut keycodes used by tap-hold helpers and combos.
-#define Z_UND	C(KC_Z) 
-#define Z_CUT	C(KC_X)
-#define Z_CPY	C(KC_C)
-#define Z_PST	C(KC_V)
-#define Z_LOCK	G(KC_L)
-#define Z_SHUT  A(KC_F4) //Alt + F4 shuts
-
-
-// Tap-hold helper keys used by legacy combos.
-#define TH_M	LT(0,KC_M)
-#define TH_COMM	LT(0,KC_COMM) //GUI Key
-#define TH_DOT	LT(0,KC_DOT)
-#define TH_SLSH	LT(0,KC_SLSH)
-#define TH(k1,k2,k3,k4) LT(0,k1),LT(0,k2),LT(0,k3),LT(0,k4) // provides a shortcut to the base layer from either hand
-
 // Home row mod-tap macros
 #define HM_A	/*LSFT_T(KC_A) LGUI_T(KC_A)*/ LT(SYM, KC_A) // SYMBOL
 #define HM_S	/*LALT_T(KC_S)*/ LT(NUM, KC_S) // NUMBERS

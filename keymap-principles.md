@@ -129,6 +129,19 @@ Examples:
 - Size optimizations should first look for duplicated concepts, stale helpers,
   and custom code that QMK already provides before cutting useful behavior.
 
+### Byte Is King For Unused Code
+
+Do not spend firmware bytes on behavior ChieftainDots is not actively using.
+Unused QMK features, stale helpers, inherited aliases, dormant source files, and
+"maybe later" code should be disabled, removed, or left in git history instead
+of compiled into the keyboard.
+
+Byte cuts should be measured one at a time. A feature is safe to disable only
+when the active Corne layout does not use it, the compile still succeeds, and
+the expected physical behavior is unchanged. If the feature is behavior-visible,
+such as OLED, RGB, Caps Unlock, app launchers, text snippets, or split-hand
+recovery, treat it as a design decision rather than a cleanup.
+
 ### Do Not Double Up Clean Windows Shortcuts
 
 Do not spend System-layer keys on Windows shortcuts that are already clean,
