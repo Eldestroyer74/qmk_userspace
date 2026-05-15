@@ -55,12 +55,28 @@ where practical because those layers are used for editing and command work.
 - JSON chooses the keyboard, keymap name, wrapper layout, and layer macro list.
 - `layout.h` owns physical key placement, layer concepts, home-row wrappers, and
   high-level key aliases.
-- Feature modules own reusable behavior such as combos, caps unlock, and future
-  macros.
+- Feature modules own reusable behavior such as Tap Dance punctuation ladders,
+  text snippets, combos, Caps Unlock, and future macros.
 - OLED and RGB modules should report state or provide feedback; they should not
   become the owner of core key behavior.
 - `process_record_user` should stay coordinated. New behavior should be routed
   deliberately so one feature does not silently block another.
+
+Current source ownership:
+
+| File or folder | Owns | Should not own |
+| --- | --- | --- |
+| `keymaps/corne.json` | Corne build recipe and layer order. | Key behavior details or feature logic. |
+| `layout.h` | Layer tables, home-row wrappers, aliases, and cross-layer placement concepts. | RGB/OLED drawing rules or private string values. |
+| `eldestroyer74.c` | Userspace hook coordination, timing callbacks, Caps Unlock call, OLED tap timer, and text snippet dispatch. | Large feature-specific state machines when a feature module would be clearer. |
+| `features/` | Reusable behavior: Tap Dance, text snippets, Caps Unlock, disabled combos, and future macros. | Physical layer ownership beyond named keycodes exposed to `layout.h`. |
+| `rgb/` | RGB state vocabulary, layer/chord indicators, physical LED mapping helpers. | Key behavior or alternate layer definitions. |
+| `oled/` | Screen rendering and animation. | Core key behavior or RGB policy. |
+| `docs/` | Principles, workflow, architecture, roadmap, and printable learning aids. | Independent source-of-truth tables that silently drift from the keymap. |
+
+If a change needs to update more than one owner, name the source of truth first.
+For example, layer behavior starts in `layout.h`; RGB may derive from the
+keymap, and the printable guide should describe the result.
 
 ## RGB Scope Rule
 
@@ -70,26 +86,29 @@ keyboard state without becoming another place where key behavior is defined.
 - Caps Lock is whole-board red because it changes ordinary typing globally.
 - Colemak is whole-board purple because it is a persistent whole-board typing
   mode.
-- Held modifiers use green modifier indicators.
 - Momentary command layers light their usable command surface. The mask should
-  follow the layer concept documented here, rather than relying only on QMK
-  keycode introspection.
-- Pressing an intentionally blank command-layer position may trigger a short
-  whole-board red flash as a trial learning aid. This is different from Caps
-  Lock because it is a brief error event rather than a persistent typing state.
+  follow the active keymap where possible, with explicit visual exceptions for
+  chord anchors, future thumb hints, and the Delete cue.
+- Pressed global modifier RGB is currently disabled. It was removed because it
+  lit ambiguous opposite-hand positions and did not clearly identify the
+  physical key being held.
+- Reactive per-key RGB is currently disabled by omitting
+  `RGB_MATRIX_KEYPRESSES`. Restoring it costs roughly 372 bytes before any
+  custom effect code and should be treated as a new feature.
 
 Because ChieftainDots runs on a split Corne, RGB state also depends on split
 state sync. `SPLIT_LAYER_STATE_ENABLE` is required for momentary layer RGB on
 the non-master half, `SPLIT_LED_STATE_ENABLE` is required for Caps Lock RGB on
-the non-master half, and `SPLIT_MODS_ENABLE` is required for modifier RGB on the
-non-master half. Keep those sync options explicit in `config.h` rather than
-hiding them behind feature-specific preprocessor guards.
+the non-master half, and `SPLIT_MODS_ENABLE` preserves cross-half modifier
+awareness for OLED/status/future behavior. Keep those sync options explicit in
+`config.h` unless a future feature deliberately accepts the tradeoff.
 
 The current command-layer color vocabulary is deliberately small: Numbers is
-blue, Symbols is cyan, navigation/media/text/system command layers use the
-shared layer color, Colemak uses a whole-board Candy Rain mode, Caps uses the
-same Candy engine constrained to red, and blank command-key presses produce a
-brief whole-board red flash.
+blue, Symbols is cyan, Navigation is cyan, Extremes is yellow, Snap is white,
+Media is dark teal, Text Snippets is dark pink, Function/System is fluorescent
+green, Colemak is whole-board purple, and Caps is whole-board red. On
+thumb-refined command layers, the Backspace position lights red when it is
+available as Delete.
 
 Corne's right-hand matrix columns are reversed from the visual key order. For
 example, visual `Y U I O P BSPC` maps to matrix columns `5 4 3 2 1 0`.
@@ -197,7 +216,7 @@ N   M   ,   .   /   RSFT
 The first slice proved the right-hand number pad. It kept the left side blank
 while the number pad itself was tested.
 
-Active numbered-command refinement:
+Historical numbered-command refinement:
 
 ```text
 TAB  Q    W   E   R   T       Y   U   I   O   P   BSPC
@@ -210,21 +229,36 @@ LSFT Z    X   C   V   B       N   M   ,   .   /   RSFT
 ---  ---  --- --- --- ---     (   1   2   3   0   )
 ```
 
-The left side is blank because function keys moved into the A-family
-Function/System layer. Tab, Caps, and Shift positions are blank on this layer
-because they do not belong to the numbered command concept. The Backspace
-position becomes Delete under the cross-layer editing-key rule.
+That older shape proved the right-hand number-pad idea, but function keys later
+moved to the A-family Function/System layer and the number layer was redesigned
+around traditional top-row memory.
+
+Active Numbers layout:
+
+```text
+Hold S or L
+
+`   1   2   3   4   5       6   7   8   9   0   -
+
+--- --- --- --- SYM ---     --- 4   5   6   =   ---
+
+--- --- --- --- --- ---     --- 1   2   3   /   ---
+                            2 hold = ,   2 double tap = <
+                            3 hold = .   3 double tap = >
+```
 
 Both `S` and `L` can access this layer. `S` supports left-hand anchor, right-hand
-number entry. `L` remains useful as a right-hand access key for the function-key
-side of the same numbered-command layer.
+number entry. `L` remains useful as a right-hand access key for the same
+numbered-command layer. The left-hand `F` position enters Symbols while Numbers
+is held, so the layer can mimic shifted number-row symbols without adding a
+second concept to the base number layer.
 
 ### `A` Family: Symbols And Tools
 
 - Hold `A`: Symbols.
-- Hold `A` plus the left GUI thumb position: Function keys and system actions.
+- Hold `A` plus the left GUI thumb position: Media and volume.
 - Hold `A` plus the left Alt thumb position: Text Snippets.
-- Hold `A` plus the left Space thumb position: Media and volume.
+- Hold `A` plus the left Space thumb position: Function keys and system actions.
 
 Current A-family direction:
 
