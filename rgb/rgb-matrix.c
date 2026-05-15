@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-2.0+
 
 #include "rgb-matrix.h"
-#include "lib/lib8tion/lib8tion.h"
 
 // Assign left and right keys to KB2040 LEDs on each side
 #ifdef CONVERT_TO_KB2040
@@ -25,6 +24,16 @@ static RGB rgb_for_layer(uint8_t layer) {
 			return (RGB){RGB_NUM};
 		case SYM:
 			return (RGB){RGB_SYM};
+		case NAV:
+			return (RGB){RGB_NAV};
+		case EXT:
+			return (RGB){RGB_EXT};
+		case SNP:
+			return (RGB){RGB_SNP};
+		case MED:
+			return (RGB){RGB_MED};
+		case TXT:
+			return (RGB){RGB_TXT};
 		case SYS:
 			return (RGB){RGB_SYS};
 		case CMK:
@@ -65,78 +74,89 @@ enum {
 	R_THUMB_OUTER = 3,
 };
 
-static bool is_delete_position(uint8_t row, uint8_t col) {
-	return row == R_TOP && col == R_OUTER;
+static bool is_left_thumb_gui_position(uint8_t row, uint8_t col) {
+	return row == L_THUMB && col == L_MIDDLE;
 }
 
-static bool is_direction_position(uint8_t row, uint8_t col) {
-	return (row == R_TOP && col == R_MIDDLE) ||
-	       (row == R_HOME && (col == R_INDEX || col == R_MIDDLE || col == R_RING));
+static bool is_left_thumb_alt_position(uint8_t row, uint8_t col) {
+	return row == L_THUMB && col == L_INDEX;
 }
 
-static bool is_left_df_modifier_position(uint8_t row, uint8_t col) {
-	return row == L_HOME && (col == L_MIDDLE || col == L_INDEX);
+static bool is_left_thumb_space_position(uint8_t row, uint8_t col) {
+	return row == L_THUMB && col == L_INNER;
 }
 
-static bool is_system_function_position(uint8_t row, uint8_t col) {
-	return is_delete_position(row, col) ||
-	       (row == R_TOP && (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING)) ||
-	       (row == R_HOME &&
-	        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING || col == R_OUTER)) ||
-	       (row == R_BOTTOM && (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
+static RGB rgb_dim(RGB rgb) {
+	return (RGB){rgb.r / 5, rgb.g / 5, rgb.b / 5};
 }
 
-static bool is_number_top_row_position(uint8_t row, uint8_t col) {
-	return (row == L_TOP && L_PINKY <= col) || row == R_TOP;
-}
-
-static bool is_right_number_pad_position(uint8_t row, uint8_t col) {
-	return (row == R_HOME && R_PINKY <= col && col <= R_INDEX) ||
-	       (row == R_BOTTOM && R_OUTER <= col && col <= R_INDEX);
+static RGB rgb_for_thumb_hint(uint8_t layer, uint8_t row, uint8_t col) {
+	if (layer == NUM) {
+		if (is_left_thumb_gui_position(row, col)) {
+			return (RGB){RGB_NAV};
+		}
+		if (is_left_thumb_alt_position(row, col)) {
+			return (RGB){RGB_EXT};
+		}
+		if (is_left_thumb_space_position(row, col)) {
+			return (RGB){RGB_SNP};
+		}
+	}
+	if (layer == SYM) {
+		if (is_left_thumb_gui_position(row, col)) {
+			return (RGB){RGB_MED};
+		}
+		if (is_left_thumb_alt_position(row, col)) {
+			return (RGB){RGB_TXT};
+		}
+		if (is_left_thumb_space_position(row, col)) {
+			return (RGB){RGB_SYS};
+		}
+	}
+	return (RGB){RGB_OFF};
 }
 
 static bool is_number_symbol_shift_position(uint8_t row, uint8_t col) {
 	return row == L_HOME && col == L_INDEX;
 }
 
-static bool rgb_should_light_number_key(uint8_t row, uint8_t col) {
-	return is_number_top_row_position(row, col) ||
-	       is_right_number_pad_position(row, col) ||
-	       is_number_symbol_shift_position(row, col);
+static uint16_t keycode_at_position(uint8_t layer, uint8_t row, uint8_t col) {
+	return keymap_key_to_keycode(layer, MAKE_KEYPOS(row, col));
 }
 
-static bool rgb_should_light_symbol_key(uint8_t row, uint8_t col) {
-	return is_number_top_row_position(row, col) ||
-	       is_right_number_pad_position(row, col) ||
-	       (row == L_THUMB && L_MIDDLE <= col);
+static bool is_nontransparent_layer_key(uint16_t keycode) {
+	return keycode > KC_TRNS;
 }
 
-static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col) {
+static bool is_delete_key(uint16_t keycode) {
+	return keycode == KC_DEL;
+}
+
+static bool is_colemak_toggle_key(uint16_t keycode) {
+	return keycode == TG(CMK);
+}
+
+static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col, uint16_t keycode) {
+	// Most layer RGB follows the keymap itself; explicit rules below add chord anchors and thumb hints.
+	if (is_nontransparent_layer_key(keycode)) {
+		return true;
+	}
+
 	switch (layer) {
-		case NUM:
-			return rgb_should_light_number_key(row, col);
-		case SYM:
-			return rgb_should_light_symbol_key(row, col);
 		case NAV:
-			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
-			       is_delete_position(row, col);
+			// Completed S/L chords keep the anchor and selected thumb lit.
+			return (row == L_HOME && col == L_INDEX) || is_left_thumb_gui_position(row, col);
 		case SNP:
-			return is_direction_position(row, col) || is_delete_position(row, col);
+			return (row == L_HOME && col == L_INDEX) || is_left_thumb_space_position(row, col);
 		case EXT:
-			return is_direction_position(row, col) || is_left_df_modifier_position(row, col) ||
-			       is_delete_position(row, col);
+			return (row == L_HOME && col == L_INDEX) || is_left_thumb_alt_position(row, col);
 		case MED:
-			return is_delete_position(row, col) ||
-			       (row == R_TOP && (col == R_INNER || col == R_MIDDLE)) ||
-			       (row == R_HOME &&
-			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
+			// Completed A/; chords keep the anchor and selected thumb lit.
+			return (row == L_HOME && col == L_PINKY) || is_left_thumb_gui_position(row, col);
 		case TXT:
-			return is_delete_position(row, col) ||
-			       (row == R_TOP && (col == R_INNER || col == R_MIDDLE)) ||
-			       (row == R_HOME &&
-			        (col == R_INNER || col == R_INDEX || col == R_MIDDLE || col == R_RING));
+			return (row == L_HOME && col == L_PINKY) || is_left_thumb_alt_position(row, col);
 		case SYS:
-			return is_system_function_position(row, col);
+			return (row == L_HOME && col == L_PINKY) || is_left_thumb_space_position(row, col);
 		default:
 			return false;
 	}
@@ -147,67 +167,80 @@ layer_state_t layer_state_set_user(layer_state_t const state) {
 	return state;
 }
 
+void keyboard_post_init_user(void) {
+	rgb_matrix_mode_noeeprom(DEF_MODE);
+}
+
+static RGB rgb_for_position(uint8_t layer, uint8_t row, uint8_t col) {
+	RGB rgb = (RGB){RGB_OFF};
+	uint16_t keycode = keycode_at_position(layer, row, col);
+
+	if (layer > CMK && rgb_should_light_command_key(layer, row, col, keycode)) {
+		rgb = rgb_for_layer(layer);
+		if (layer == NUM && is_number_symbol_shift_position(row, col)) {
+			rgb = rgb_dim((RGB){RGB_SYM});
+		} else if (layer != NUM && layer != SYM && is_delete_key(keycode)) {
+			rgb = (RGB){RGB_CAPS};
+		} else if (is_colemak_toggle_key(keycode)) {
+			rgb = (RGB){RGB_CMK};
+		}
+	}
+
+	RGB thumb_rgb = rgb_for_thumb_hint(layer, row, col);
+	if (thumb_rgb.r || thumb_rgb.g || thumb_rgb.b) {
+		rgb = thumb_rgb;
+	}
+
+	return rgb;
+}
+
 #ifdef __AVR__
 
-static void rgb_set_command_keys(uint8_t layer, RGB rgb) {
+static void rgb_set_key_positions(uint8_t layer) {
 	for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
 		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
 			uint8_t index_led = g_led_config.matrix_co[row][col];
-			if (index_led != NO_LED && rgb_should_light_command_key(layer, row, col)) {
+			RGB rgb = rgb_for_position(layer, row, col);
+			if (index_led != NO_LED && (rgb.r || rgb.g || rgb.b)) {
 				rgb_matrix_set_color(index_led, rgb.r, rgb.g, rgb.b);
 			}
 		}
 	}
 }
 
-
 bool rgb_matrix_indicators_user(void) {
+	uint8_t layer = get_highest_layer(layer_state);
 	if (host_keyboard_led_state().caps_lock) {
-		uint8_t pulse = scale8(abs8(sin8(scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8)) - 128) * 2,
-		                       rgb_matrix_config.hsv.v);
-		rgb_matrix_set_color_all(pulse, 0, 0);
+		rgb_matrix_set_color_all(RGB_CAPS);
 	} else if (layer_state_is(CMK)) {
 		rgb_matrix_set_color_all(RGB_CMK);
 	} else {
 		rgb_matrix_set_color_all(RGB_OFF);
 	}
-	// Modifier keys
-	if (get_mods() & MOD_MASK_CSAG) {
-		for (uint8_t i = 0; i < RGB_MATRIX_LED_COUNT; ++i) {
-			if (g_led_config.flags[i] & MOD_FLAG) {
-				rgb_matrix_set_color(i, RGB_MODS);
-			}
-		}
-	}
-	// Command layers light only the keys that do work on that layer.
-	if (get_highest_layer(layer_state) > CMK) {
-		uint8_t layer = get_highest_layer(layer_state);
-		rgb_set_command_keys(layer, rgb_for_layer(layer));
-	}
+	rgb_set_key_positions(layer);
 	return false;
 }
 
 #else
 
-static void rgb_set_command_keys(uint8_t layer, RGB rgb, uint8_t led_min, uint8_t led_max) {
+static void rgb_set_key_positions(uint8_t layer, uint8_t led_min, uint8_t led_max) {
 	for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
 		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
 			uint8_t index_led = g_led_config.matrix_co[row][col];
+			RGB rgb = rgb_for_position(layer, row, col);
 			if (index_led != NO_LED && led_min <= index_led && index_led <= led_max &&
-			    rgb_should_light_command_key(layer, row, col)) {
+			    (rgb.r || rgb.g || rgb.b)) {
 				rgb_matrix_set_color(index_led, rgb.r, rgb.g, rgb.b);
 			}
 		}
 	}
 }
 
-
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+	uint8_t layer = get_highest_layer(layer_state);
 	if (host_keyboard_led_state().caps_lock) {
-		uint8_t pulse = scale8(abs8(sin8(scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8)) - 128) * 2,
-		                       rgb_matrix_config.hsv.v);
 		for (uint8_t i = led_min; i <= led_max; ++i) {
-			rgb_matrix_set_color(i, pulse, 0, 0);
+			rgb_matrix_set_color(i, RGB_CAPS);
 		}
 	} else if (layer_state_is(CMK)) {
 		for (uint8_t i = led_min; i <= led_max; ++i) {
@@ -218,19 +251,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 			rgb_matrix_set_color(i, RGB_OFF);
 		}
 	}
-	// Modifier keys
-	if (get_mods() & MOD_MASK_CSAG) {
-		for (uint8_t i = led_min; i <= led_max; ++i) {
-			if (g_led_config.flags[i] & MOD_FLAG) {
-				rgb_matrix_set_color(i, RGB_MODS);
-			}
-		}
-	}
-	// Command layers light only the keys that do work on that layer.
-	if (get_highest_layer(layer_state) > CMK) {
-		uint8_t layer = get_highest_layer(layer_state);
-		rgb_set_command_keys(layer, rgb_for_layer(layer), led_min, led_max);
-	}
+	rgb_set_key_positions(layer, led_min, led_max);
 	return false;
 }
 

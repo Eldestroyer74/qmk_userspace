@@ -16,15 +16,19 @@ intended for one feature at a time.
    principle before implementation.
 7. Check architecture ownership: layout, feature module, OLED, RGB, combo, or
    userspace hook.
-8. Estimate firmware size risk.
-9. Compile the current baseline.
-10. Implement only the approved feature.
-11. Compile again and record firmware size.
-12. Fix bugs or optimize size if needed.
-13. Flash the firmware.
-14. Trial the behavior on the physical keyboard.
-15. Decide to keep, revise, or roll back.
-16. If kept, stage and commit only the files that belong to that feature.
+8. Check the proposed implementation for elegance, readability, and
+   maintainability before editing.
+9. Estimate firmware size risk.
+10. Compile the current baseline.
+11. Implement only the approved feature.
+12. Compile again and record firmware size.
+13. Review the finished code for elegance, readability, maintainability, and
+   byte cost.
+14. Fix bugs or optimize size if needed.
+15. Flash the firmware.
+16. Trial the behavior on the physical keyboard.
+17. Decide to keep, revise, or roll back.
+18. If kept, stage and commit only the files that belong to that feature.
 
 No second feature starts until the current feature is marked Kept or Rolled Back.
 
@@ -65,6 +69,24 @@ Each feature must answer one of these before implementation:
 - It exposes a gap in the principles and the principle will be updated.
 - It conflicts with a principle and the feature will be changed.
 - It conflicts with a principle and the principle will be deliberately revised.
+
+## Code Quality And Byte Gate
+
+Before keeping a code change, review it against these questions:
+
+- Is it elegant: does it solve the problem at the right level of the
+  architecture, without duplicating another source of truth?
+- Is it readable: can future-us understand the behavior from names, structure,
+  and a small number of useful comments?
+- Is it maintainable: if the layout or feature changes later, how many places
+  must be updated?
+- Is it byte-aware: does it reuse QMK or existing local structures instead of
+  adding parallel tables, duplicate masks, or extra state?
+
+The preferred byte-saving pattern is to derive behavior from the canonical
+source of truth instead of mirroring it. For example, RGB layer masks should
+follow the actual keymap when possible, rather than maintaining a separate
+manual row/column map that can drift and consume firmware space.
 
 ## Compile Gate
 

@@ -112,6 +112,23 @@ as Colemak.
 Do not add the same behavior in multiple places unless the duplicate serves a
 clear ergonomic purpose. Duplicates must be documented as intentional.
 
+### Prefer One Source Of Truth
+
+When QMK or the local architecture already knows something, derive from that
+source instead of copying the same knowledge into another table or helper. This
+keeps behavior aligned, reduces maintenance, and can save firmware bytes.
+
+Examples:
+
+- RGB command-layer lighting should follow the active keymap where possible,
+  with explicit exceptions only for visual concepts that are not literal keys,
+  such as chord anchors, thumb previews, or warning colors.
+- Documentation diagrams should be updated when a layer changes, but code should
+  not maintain a second independent map of the same layer unless the visual rule
+  deliberately differs from the key behavior.
+- Size optimizations should first look for duplicated concepts, stale helpers,
+  and custom code that QMK already provides before cutting useful behavior.
+
 ### Do Not Double Up Clean Windows Shortcuts
 
 Do not spend System-layer keys on Windows shortcuts that are already clean,
@@ -135,24 +152,57 @@ RGB should show the scope of the active state:
 - Whole-keyboard states use the whole keyboard. Caps Lock is red because it
   changes ordinary typing globally. Colemak is purple because it is a persistent
   whole-keyboard typing mode.
-- Modifier states light modifier positions, because they show which kind of held
-  helper key is affecting the next command.
+- Plain modifier states should not be lit from global modifier state. That
+  approach made Ctrl and Shift ambiguous and lit opposite-hand modifiers that
+  were not physically pressed. Modifier RGB can return only if it tracks the
+  actual physical modifier key being held and uses distinct Ctrl/Shift colors.
 - Command layers light the usable command surface for that layer, not every
   inherited or technically non-transparent key.
 
+RGB should also distinguish present state from future choice:
+
+- Base and Colemak should stay visually quiet. Do not use idle home-row preview
+  lights; they proved noisy and did not help because some modifier previews did
+  not correspond to pressed-key feedback.
+- When only an anchor such as Numbers or Symbols is held, the active command
+  surface should light in that anchor's current-layer color.
+- While only the anchor half of a chord is held, the thumb keys that can refine
+  that anchor should light in the colors of their future layers, not in the color
+  of the currently held anchor. For example, holding Numbers can show thumb hints
+  for Navigation, Extremes, and Snap; holding Symbols can show hints for Media,
+  Text, and System.
+- Once a thumb refinement is pressed, the refined layer becomes the active state
+  and its usable command surface should light in that layer's own color. The
+  unused thumb hints should turn off; only the anchor key and the pressed thumb
+  key should remain lit as the active chord path.
+- If a command key toggles a persistent future state, it should use the color of
+  that future state. For example, the Colemak toggle key on Function/System
+  should use the same purple as persistent Colemak mode.
+- Future-layer colors must be distinguishable in real use, not only in code.
+  If two command concepts look too similar on the physical board, such as Snap
+  and Function/System, change the color vocabulary before adding more cues.
+- Do not rely on LEDs that are physically unavailable or consistently dark on
+  the current board. If the leftmost columns or GUI thumb LED do not light,
+  treat that as a physical display limitation rather than a behavior bug.
+- On thumb-refined command layers, the Backspace position should light red when
+  it has become Delete. Numbers and Symbols should not show that red Delete cue
+  when Delete is not part of their current character-entry concept.
+
+Active states override previews. The intended priority is whole-board modes,
+active held layers, then off.
+
 Red needs a clear visual grammar:
 
-- Whole-board red Candy Rain means Caps Lock, because Caps changes ordinary
-  typing globally.
+- Whole-board flat red means Caps Lock, because Caps changes ordinary typing
+  globally. A pulsing red effect was considered, but the bytes are currently
+  better spent on anchor and thumb-chord discoverability.
 - A short whole-board red flash means "that key is blank on the active command
   layer." This is event feedback, not a persistent map, so blank keys stay quiet
   until they are actually pressed.
 
 Colemak may use a distinctive whole-board pattern rather than a flat fill if the
 pattern makes the persistent typing mode easier to notice and does not conflict
-with Caps Lock or command-layer warning feedback. Current trial uses Filterpaper
-style Candy Rain for Colemak, with Caps using the same Candy engine constrained
-to red.
+with Caps Lock or command-layer warning feedback.
 
 When RGB does not match the layer concept, fix either the RGB mask or the layer
 concept deliberately rather than adding a second visual grammar.

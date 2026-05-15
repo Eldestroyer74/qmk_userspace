@@ -82,7 +82,7 @@ Access: hold `S` or `L`.
 ```text
 `        1      2      3      4      5          6      7      8      9      0      -
 ---      ---    ---    ---    SYM    ---        ---    4      5      6      =      ---
----      ---    ---    ---    ---    ---        ---    1      2 , <  3 . >  ---    /
+---      ---    ---    ---    ---    ---        ---    1      2 , <  3 . >  /      ---
                          NAV    EXT    SNP         trans  trans  trans
 ```
 
@@ -214,6 +214,33 @@ Symbols )          )         ]          }
   modifier keys. Number/Symbol layer keys stay more deliberate. Test `F + /`
   for `?`, `F + I` for capital `I`, ordinary words containing `fi`, and normal
   typing that previously produced accidental numbers.
+
+## RGB Reminders
+
+- Base/Colemak idle should stay visually quiet.
+- Caps Lock should show whole-board flat red immediately after startup:
+  `#FF0000`.
+- Colemak mode should show whole-board dark purple: `#3C0073`.
+- Numbers is dark blue: `#0A195F`.
+- Symbols is dark amber: `#693C00`.
+- Navigation is cyan: `#00FFFF`.
+- Extremes is yellow: `#FFFF00`.
+- Snap is white: `#FFFFFF`.
+- Media is dark teal: `#052323`.
+- Text snippets are dark pink: `#73142D`.
+- Function/System is fluoro green: `#4B7A16`.
+- Holding only `S`/`L` or `A`/`;` shows the active layer plus future thumb
+  options. The thumb options use the colors of the layers they would open.
+- Once a thumb chord is pressed, unused thumb hints turn off. The active layer,
+  anchor key, and selected thumb key remain lit where the board has working LEDs.
+- Delete lights red only on thumb-refined command layers where the Backspace key
+  has become Delete. Numbers and Symbols do not use the red Delete cue.
+- Function/System uses its own layer color, but the `COLE` toggle key should be
+  Colemak purple.
+- Plain Ctrl/Shift/Alt/GUI no longer have RGB feedback. Global modifier-state
+  lighting was removed because it lit opposite-hand modifiers and was confusing.
+- The leftmost LED columns on the left half may not light on this physical board.
+  Do not rely on those LEDs for chord discovery.
 
 ## Current Pending Redesign Ideas
 
