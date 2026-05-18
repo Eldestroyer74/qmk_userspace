@@ -44,126 +44,110 @@
 
 // Base and Colemak alpha layers. corne.json applies HRM(...) to these layers.
 #define _BASE \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
-/* │  TAB   │  Q     │  W     │  E     │  R     │  T     │   │  Y     │  U     │  I     │  O     │  P     │  BSPC  │ */\
+/* Top:    TAB    Q      W      E      R      T        Y      U      I      O      P      BSPC */\
 	TAB_ESC_CLOSE, KC_Q, KC_W,  KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,   KC_BSPC,    \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │  CAPS  │  A     │  S     │  D     │  F     │  G     │   │  H     │  J     │  K     │  L     │  ; :   │  ' "   │ */\
+/* Home:   CAPS   A      S      D      F      G        H      J      K      L      ;      '    */\
 	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │ MEDIA  │  Z     │  X     │  C     │  V     │  B     │   │  N     │  M     │ , <    │ . >    │ / ?    │  CALC  │ */\
+/* Bottom: MEDIA  Z      X      C      V      B        N      M      ,      .      /      CALC */\
 	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, KC_CALC, \
-/* ╰────────┴────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+/* Thumbs:                         GUI    ALT    SPACE    ENTER  RALT   MENU */\
 				  				KC_LGUI, KC_LALT, KC_SPC,  		KC_ENT, KC_RALT, KC_APP
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */ 
 
 #define _COLE \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
-/* │  TAB   │  Q     │  W     │  F     │  P     │  G     │   │  J     │  L     │  U     │  Y     │  ' "   │  BSPC  │ */\
+/* Top:    TAB    Q      W      F      P      G        J      L      U      Y      '      BSPC */\
 	KC_TAB,   KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,        KC_J,    KC_L,    KC_U,   KC_Y,   KC_QUOT, KC_BSPC, \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │  CAPS  │  A     │  R     │  S     │  T     │  D     │   │  H     │  N     │  E     │  I     │  O     │  ; :   │ */\
+/* Home:   CAPS   A      R      S      T      D        H      N      E      I      O      ;    */\
 	KC_CAPS,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,        KC_H,    KC_N,    KC_E,    KC_I,    KC_O,   KC_SCLN,    \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │ MEDIA  │  Z     │  X     │  C     │  V     │  B     │   │  K     │  M     │ , <    │ . >    │ / ?    │  CALC  │ */\
+/* Bottom: MEDIA  Z      X      C      V      B        K      M      ,      .      /      CALC */\
 	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, KC_CALC, \
-/* ╰────────┴────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+/* Thumbs:                         trans  trans  trans    trans  trans  trans */\
 	                            _______, _______, _______,     _______, _______, _______
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */ 
 
 // S/L-held command layers: Numbers combines top-row memory with a right-hand pad.
 #define _NUMB \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
-/* │        │        │        │        │        │        │   │   +    │   7    │   8    │   9    │   *    │ DELETE │ */\
+/* Top:    `      1      2      3      4      5        6      7      8      9      0      -    */\
 	KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,        KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │   -    │   4    │   5    │   6    │   /    │   .    │ */\
+/* Home:   ---    ---    ---    ---    SYM    ---      ---    4      5      6      =      ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO(SYM), XXXXXXX,     XXXXXXX, KC_4,    KC_5,    KC_6,    KC_EQL,  XXXXXXX, \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │   (    │   1    │   2    │   3    │   0    │   )    │ */\
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    1      2/,/<  3/./>  /      ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_1,    NUM_TWO_COMMA_LT, NUM_THREE_DOT_GT, KC_SLSH, XXXXXXX, \
-/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+/* Thumbs:                         NAV    EXT    SNP      trans  trans  trans */\
 	                            MO(NAV), MO(EXT), MO(SNP),     _______, _______, _______
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
 // S/L + left GUI thumb navigation: I/J/K/L form the right-hand arrow shape.
 #define _NAV \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
-/* │        │        │        │        │        │        │   │        │        │   UP   │        │        │ DELETE │ */\
+/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │        │ LEFT   │ DOWN   │ RIGHT  │        │        │ */\
+/* Home:   ---    ---    ---    CTRL   SHIFT  ---      ---    LEFT   DOWN   RIGHT  ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX, \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │        │        │        │        │        │        │ */\
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+/* Thumbs:                         trans  ---    ---      ---    ---    --- */\
 	                            _______, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
 // S/L + left Space thumb snap: GUI+arrows follow the same I/J/K/L shape.
 #define _SNP \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
-/* │        │        │        │        │        │        │   │        │        │ G UP   │        │        │ DELETE │ */\
+/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    G-UP   ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, G_UP,    XXXXXXX, XXXXXXX, KC_DEL,   \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │        │ G LEFT │ G DOWN │ G RGHT │        │        │ */\
+/* Home:   ---    ---    ---    ---    ---    ---      ---    G-LEFT G-DOWN G-RIGHT ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, G_LF,    G_DN,    G_RI,    XXXXXXX, XXXXXXX, \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │        │        │        │        │        │        │ */\
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+/* Thumbs:                         ---    ---    trans    ---    ---    --- */\
 	                            XXXXXXX, XXXXXXX, _______,     XXXXXXX, XXXXXXX, XXXXXXX
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
 // S/L + left Alt thumb extremes: Home/Page movement follows the same shape.
 #define _EXTR \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┼────────┬────────┬────────┬────────╮ */\
-/* │        │        │        │        │        │        │   │        │        │ PG UP  │        │        │ DELETE │ */\
+/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    PGUP   ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_PGUP, XXXXXXX, XXXXXXX, KC_DEL,   \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │        │ HOME   │ PG DN  │ END    │        │        │ */\
+/* Home:   ---    ---    ---    CTRL   SHIFT  ---      ---    HOME   PGDN   END    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_HOME, KC_PGDN, KC_END,  XXXXXXX, XXXXXXX, \
-/* ├────────┼────────┬────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │        │        │        │        │        │        │   │        │        │        │        │        │        │ */\
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┴────────┴────────╯ */\
+/* Thumbs:                         ---    trans  ---      ---    ---    --- */\
 	                            XXXXXXX, XXXXXXX, _______,     XXXXXXX, XXXXXXX, XXXXXXX
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 
 #define _SYMB \
-/* ╭────────┬────────┬────────┬────────┬────────┬────────╮   ╭────────┬────────┬────────┬────────┬────────┬────────╮ */\
-/* │   !    │  @     │   #    │   $    │   %    │   ^    │   │   &    │   *    │ ( [ {  │ ) ] }  │   _    │ DELETE │ */\
+/* Top:    ~      !      @      #      $      %        ^      &      *      (/[/{  )/]/}  _    */\
 	KC_TILD,  KC_EXLM, KC_AT,  KC_HASH, KC_DLR,   KC_PERC,    KC_CIRC, KC_AMPR, KC_ASTR, LEFT_BRACKET, RIGHT_BRACKET, KC_UNDS, \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │   │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │ */\
+/* Home:   ---    ---    ---    ---    ---    ---      ---    $      %      ^      +      ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_DLR,  KC_PERC, KC_CIRC, KC_PLUS, XXXXXXX, \
-/* ├────────┼────────┼────────┼────────┼────────┼────────┤   ├────────┼────────┼────────┼────────┼────────┼────────┤ */\
-/* │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │   │ trans  │ trans  │ trans  │ trans  │ trans  │ trans  │ */\
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    !      @      #      ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, XXXXXXX, XXXXXXX, \
-/* ╰────────┴────────┴────────┴────────┼────────┼────────┤   ├────────┼────────┬────────┼────────┴────────┴────────╯ */\
+/* Thumbs:                         MED    TEXT   SYS      trans  trans  trans */\
 	                            MO(MED), MO(TXT), MO(SYS),    _______, _______, _______
-/*                            ╰────────┴────────┴────────╯   ╰────────┴────────┴────────╯ */
 // A/; + left-thumb command layers.
 // Media uses the same right-hand I/J/K/L navigation shape for volume and tracks.
 #define _MEDI \
+/* Top:    ---    ---    ---    ---    ---    ---      PLAY   ---    VOL+   ---    ---    DEL */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MPLY, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,  \
+/* Home:   ---    ---    ---    ---    ---    ---      MUTE   PREV   VOL-   NEXT   ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MUTE, KC_MPRV, KC_VOLD, KC_MNXT, XXXXXXX, XXXXXXX, \
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+/* Thumbs:                         trans  ---    ---      ---    ---    --- */\
 	                            _______, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
 
 // Text stubs keep personal snippets in the same right-hand I/J/K/L shape.
 #define _TEXT \
+/* Top:    ---    ---    ---    ---    ---    ---      HOME   ---    PHONE  ---    ---    DEL */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_HOME, XXXXXXX, TXT_PHONE, XXXXXXX, XXXXXXX, KC_DEL,  \
+/* Home:   ---    ---    ---    ---    ---    ---      WORK   MEET   EMAIL  NAME   ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_WORK, TXT_MEET, TXT_EMAIL, TXT_NAME, XXXXXXX, XXXXXXX, \
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+/* Thumbs:                         ---    trans  ---      ---    ---    --- */\
 	                            XXXXXXX, _______, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
 
 // System/function keys mirror the number-pad shape.
 #define _SYST \
+/* Top:    ---    ---    ---    ---    ---    ---      F12    F7     F8     F9     ---    DEL */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F12,  KC_F7,   KC_F8,   KC_F9,   XXXXXXX, KC_DEL,  \
+/* Home:   ---    ---    ---    ---    ---    ---      F11    F4     F5     F6     ---    COLE */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX, TG(CMK), \
+/* Bottom: ---    ---    ---    ---    ---    ---      F10    F1     F2     F3     ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
+/* Thumbs:                         ---    ---    trans    ---    ---    --- */\
 	                            XXXXXXX, XXXXXXX, _______,    XXXXXXX, XXXXXXX, XXXXXXX
 
 // Home-row wrapper. Only Base/Colemak pass through HRM(...) in corne.json;

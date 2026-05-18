@@ -1,44 +1,38 @@
-# ChieftainDots Printable Layer Guide
+# ChieftainDots Daily Layer Guide
 
-Print this as a desk-side reminder for the current Corne firmware.
+Print this as the desk-side map for the current Corne firmware.
 
-Legend:
+Legend: `---` intentionally blank, `trans` falls through, `DEL` means the
+Backspace key sends Delete.
 
-- `---` means the key is intentionally blank on that layer.
-- `trans` means the key falls through to the active typing layer.
-- `DEL` means the physical Backspace position sends Delete on that layer.
-- Tap/hold/double-tap keys are listed after the diagrams.
-
-## Layer Access
+## Daily Anchors
 
 ```text
-Typing layers
+Typing
 
-Base:
-  Hold A or ;  = Symbols
-  Hold S or L  = Numbers / Commands
-  Hold D/K     = Ctrl
-  Hold F/J     = Shift
-
-Colemak:
-  Hold A or O  = Symbols
-  Hold R or I  = Numbers / Commands
-  Hold S/E     = Ctrl
-  Hold T/N     = Shift
+Tap A / S / D / F       = letters
+Hold A                 = Symbols
+Hold S or L            = Numbers
+Hold D / K             = Ctrl
+Hold F / J             = Shift
 ```
 
 ```text
-Command refinements
+S or L family: numbers and movement
 
-Hold S or L, then:
-  Left GUI thumb    = Navigation / arrows
-  Left Alt thumb    = Extremes: Home / Page Up / Page Down / End
-  Left Space thumb  = Snap: Windows GUI + arrows
+Hold S or L            = Numbers
+Hold S/L + left GUI    = Navigation arrows
+Hold S/L + left Alt    = Extremes: Home / Page / End
+Hold S/L + left Space  = Snap: Windows + arrows
+```
 
-Hold A or ;, then:
-  Left GUI thumb    = Media
-  Left Alt thumb    = Text snippets
-  Left Space thumb  = Function / System
+```text
+A or ; family: symbols and tools
+
+Hold A or ;            = Symbols
+Hold A/; + left GUI    = Media
+Hold A/; + left Alt    = Text snippets
+Hold A/; + left Space  = Function / System
 ```
 
 ## Base
@@ -50,14 +44,13 @@ MEDIA    Z      X      C      V      B          N      M      ,      .      /   
                          GUI    ALT    SPACE       ENTER  RALT   MENU
 ```
 
-Base special keys:
+Specials:
 
 - `Tab`: tap Tab, hold Escape, double tap Alt+F4.
-- `'`: tap `'`.
 - `/`: tap `/`, hold `\`, double tap `|`.
-- Lower-left corner launches Media Player.
-- Lower-right corner launches Calculator.
-- Right thumb outer key is Menu / context menu.
+- lower-left corner: Media Player.
+- lower-right corner: Calculator.
+- right outer thumb: Menu / context menu.
 
 ## Colemak
 
@@ -68,38 +61,28 @@ MEDIA    Z      X      C      V      B          K      M      ,      .      /   
                          trans  trans  trans       trans  trans  trans
 ```
 
-Colemak special keys:
+Colemak uses the same lower-corner launchers and `/` tap dance as Base.
 
-- `'`: tap `'`.
-- `/`: tap `/`, hold `\`, double tap `|`.
-- Lower-left corner launches Media Player.
-- Lower-right corner launches Calculator.
-
-## Numbers / Commands
+## Numbers
 
 Access: hold `S` or `L`.
 
 ```text
 `        1      2      3      4      5          6      7      8      9      0      -
 ---      ---    ---    ---    SYM    ---        ---    4      5      6      =      ---
----      ---    ---    ---    ---    ---        ---    1      2 , <  3 . >  /      ---
+---      ---    ---    ---    ---    ---        ---    1      2      3      /      ---
                          NAV    EXT    SNP         trans  trans  trans
 ```
 
-Useful combinations from Numbers / Commands:
+Number-pad tap dances:
 
-- Hold `S` or `L` + left GUI thumb = Navigation.
-- Hold `S` or `L` + left Alt thumb = Extremes.
-- Hold `S` or `L` + left Space thumb = Snap.
-- Hold `S` or `L` + the `F` position = shifted-number Symbols.
-- On the right-hand pad, `2` taps `2`, holds `,`, and double-taps `<`.
-- On the right-hand pad, `3` taps `3`, holds `.`, and double-taps `>`.
+- right-hand `2`: tap `2`, hold `,`, double tap `<`.
+- right-hand `3`: tap `3`, hold `.`, double tap `>`.
+- hold the `F` position while in Numbers to reach shifted-number Symbols.
 
 ## Symbols
 
-Access: hold `A` or `;` on Base, or hold `A` or `O` on Colemak.
-Also available from Numbers by holding the `F` position while `S` or `L` is
-held.
+Access: hold `A` or `;`. Also available from Numbers by holding `F`.
 
 ```text
 ~        !      @      #      $      %          ^      &      *      (      )      _
@@ -108,19 +91,15 @@ held.
                          MED    TEXT   SYS         trans  trans  trans
 ```
 
-Symbols bracket keys:
+Bracket tap dances:
 
 - `(` key: tap `(`, hold `[`, double tap `{`.
 - `)` key: tap `)`, hold `]`, double tap `}`.
+- `?` is still Shift + `/`, not a Symbols-layer key.
 
-Symbols is currently a trial surface for shifted-number memory. The top row
-keeps the normal shifted number row; the right-hand lower rows mirror the
-Numbers pad with shifted equivalents. `?` is intentionally absent here because
-it is reached from Base/Colemak with Shift plus `/`, not through Symbols.
+## Movement Layers
 
-## Navigation
-
-Access: hold `S` or `L`, then hold left GUI thumb.
+Navigation: hold `S` or `L`, then hold left GUI.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    UP     ---    ---    DEL
@@ -129,11 +108,7 @@ Access: hold `S` or `L`, then hold left GUI thumb.
                          trans  ---    ---         ---    ---    ---
 ```
 
-Use plain `CTRL` and `SHIFT` positions on the left side with arrows when needed.
-
-## Extremes
-
-Access: hold `S` or `L`, then hold left Alt thumb.
+Extremes: hold `S` or `L`, then hold left Alt.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    PG UP  ---    ---    DEL
@@ -142,11 +117,7 @@ Access: hold `S` or `L`, then hold left Alt thumb.
                          ---    trans  ---         ---    ---    ---
 ```
 
-Use plain `CTRL` and `SHIFT` positions on the left side with Home/End/Page keys when needed.
-
-## Snap
-
-Access: hold `S` or `L`, then hold left Space thumb.
+Snap: hold `S` or `L`, then hold left Space.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    G-UP   ---    ---    DEL
@@ -155,11 +126,11 @@ Access: hold `S` or `L`, then hold left Space thumb.
                          ---    ---    trans       ---    ---    ---
 ```
 
-`G` means GUI/Windows. Use this for keyboard-only window snapping.
+`G` means GUI / Windows.
 
-## Media
+## A-Family Tools
 
-Access: hold `A` or `;`, then hold left GUI thumb.
+Media: hold `A` or `;`, then hold left GUI.
 
 ```text
 ---      ---    ---    ---    ---    ---        PLAY   ---    VOL+   ---    ---    DEL
@@ -168,11 +139,7 @@ Access: hold `A` or `;`, then hold left GUI thumb.
                          trans  ---    ---         ---    ---    ---
 ```
 
-Known trial note: Play/Pause and Mute worked. Previous/Next may depend on the app.
-
-## Text Snippets
-
-Access: hold `A` or `;`, then hold left Alt thumb.
+Text snippets: hold `A` or `;`, then hold left Alt.
 
 ```text
 ---      ---    ---    ---    ---    ---        HOME   ---    PHONE  ---    ---    DEL
@@ -181,12 +148,7 @@ Access: hold `A` or `;`, then hold left Alt thumb.
                          ---    trans  ---         ---    ---    ---
 ```
 
-Text snippets are compiled from a local private header. Do not commit private
-address values.
-
-## Function / System
-
-Access: hold `A` or `;`, then hold left Space thumb.
+Function / System: hold `A` or `;`, then hold left Space.
 
 ```text
 ---      ---    ---    ---    ---    ---        F12    F7     F8     F9     ---    DEL
@@ -195,9 +157,9 @@ Access: hold `A` or `;`, then hold left Space thumb.
                          ---    ---    trans       ---    ---    ---
 ```
 
-Press quote on this layer to toggle Colemak.
+Press `COLE` to toggle Colemak.
 
-## Tap / Hold / Double Tap Summary
+## Tap / Hold / Double Tap
 
 ```text
 Physical key       Tap       Hold       Double tap
@@ -206,44 +168,38 @@ Tab                Tab       Esc        Alt+F4
 /                  /         \          |
 Symbols (          (         [          {
 Symbols )          )         ]          }
+Numbers 2          2         ,          <
+Numbers 3          3         .          >
 ```
 
-## Timing Trial
+## Current Timing Trial
 
-- `F` and `J` home-row Shift now bypass Flow Tap and become eager holds like the
-  modifier keys. Number/Symbol layer keys stay more deliberate. Test `F + /`
-  for `?`, `F + I` for capital `I`, ordinary words containing `fi`, and normal
-  typing that previously produced accidental numbers.
+- `F` and `J` are home-row Shift keys: tap for `f`/`j`, hold for Shift.
+- Current trial: `F`/`J` do not become Shift immediately just because another
+  key is pressed.
+- Watch normal typing for accidental capitals such as `O` when intending `fo`.
+- Also check intentional Shift use such as `F + /` for `?` and `F + I` for
+  capital `I`.
 
-## RGB Reminders
+## RGB Meanings
 
-- Base/Colemak idle should stay visually quiet.
-- Caps Lock should show whole-board flat red immediately after startup:
-  `#FF0000`.
-- Colemak mode should show whole-board dark purple: `#3C0073`.
-- Numbers is dark blue: `#0A195F`.
-- Symbols is dark amber: `#693C00`.
-- Navigation is cyan: `#00FFFF`.
-- Extremes is yellow: `#FFFF00`.
-- Snap is white: `#FFFFFF`.
-- Media is dark teal: `#052323`.
-- Text snippets are dark pink: `#73142D`.
-- Function/System is fluoro green: `#4B7A16`.
-- Holding only `S`/`L` or `A`/`;` shows the active layer plus future thumb
-  options. The thumb options use the colors of the layers they would open.
-- Once a thumb chord is pressed, unused thumb hints turn off. The active layer,
-  anchor key, and selected thumb key remain lit where the board has working LEDs.
-- Delete lights red only on thumb-refined command layers where the Backspace key
-  has become Delete. Numbers and Symbols do not use the red Delete cue.
-- Function/System uses its own layer color, but the `COLE` toggle key should be
-  Colemak purple.
-- Plain Ctrl/Shift/Alt/GUI no longer have RGB feedback. Global modifier-state
-  lighting was removed because it lit opposite-hand modifiers and was confusing.
-- The leftmost LED columns on the left half may not light on this physical board.
-  Do not rely on those LEDs for chord discovery.
+```text
+Caps Lock          red        #FF0000
+Colemak            purple     #3C0073
+Numbers            blue       #0A195F
+Symbols            amber      #693C00
+Navigation         cyan       #00FFFF
+Extremes           yellow     #FFFF00
+Snap               white      #FFFFFF
+Media              dark teal  #052323
+Text snippets      dark pink  #73142D
+Function/System    green      #4B7A16
+Delete cue         red        Backspace key only on command layers with DEL
+```
 
-## Current Pending Redesign Ideas
+Base and Colemak idle should stay visually quiet. Holding an anchor shows the
+active layer and thumb options. Once a thumb chord is pressed, unused thumb
+hints turn off. Plain Ctrl/Shift/Alt/GUI do not have RGB feedback.
 
-These are documented requirements, not necessarily active firmware:
-
-- Function keys now live in `A + Space`; verify and mark kept after physical trial.
+The leftmost LED columns on the left half may not light on this physical board,
+so do not rely on those LEDs for chord discovery.
