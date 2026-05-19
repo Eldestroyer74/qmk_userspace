@@ -1,5 +1,18 @@
 # ChieftainDots Architecture
 
+## Current Summary
+
+ChieftainDots is currently a Corne-first keyboard project built from
+`keymaps/corne.json`. The current model uses two typing layers, two home-row
+anchor families, explicit command layers, RGB as state feedback, and OLED as a
+display subsystem rather than an owner of key behavior.
+
+- Base and Colemak are the only layers wrapped with `HRM(...)`.
+- `S`/`L` own Numbers, Navigation, Extremes, and Snap.
+- `A`/`;` own Symbols, Media, Text Snippets, and Function/System.
+- Future keyboard ports should add fresh recipes and wrappers around this model.
+- Historical Filterpaper recipes are reference material only.
+
 ## Name Model
 
 - ChieftainDots is the Corne keyboard project identity.
@@ -196,7 +209,7 @@ awareness for OLED/status/future behavior. Keep those sync options explicit in
 `config.h` unless a future feature deliberately accepts the tradeoff.
 
 The current command-layer color vocabulary is deliberately small: Numbers is
-blue, Symbols is cyan, Navigation is cyan, Extremes is yellow, Snap is white,
+blue, Symbols is amber, Navigation is cyan, Extremes is yellow, Snap is white,
 Media is dark teal, Text Snippets is dark pink, Function/System is fluorescent
 green, Colemak is whole-board purple, and Caps is whole-board red. On
 thumb-refined command layers, the Backspace position lights red when it is

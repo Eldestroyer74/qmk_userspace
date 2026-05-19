@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: GPL-2.0+
 
 #include "eldestroyer74.h"
+#include "features/spanish_compose.h"
 #include "features/text_stubs.h"
+
+extern bool process_spanish_compose(uint16_t keycode, keyrecord_t *record);
 
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 static uint_fast16_t tap_timer = 0;
@@ -59,6 +62,10 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 
 
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
+	if (!process_spanish_compose(keycode, record)) {
+		return false;
+	}
+
 	switch (keycode) {
 		case TXT_EMAIL:
 			if (record->event.pressed) {

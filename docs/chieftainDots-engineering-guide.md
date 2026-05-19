@@ -4,10 +4,23 @@ ChieftainDots is the Corne keyboard project. The active implementation lives in
 the `eldestroyer74` QMK userspace, and the Corne build recipe is
 `keymaps/corne.json`.
 
+## Current Summary
+
+- Personal userspace is the source of truth; upstream QMK is the build
+  dependency.
+- Canonical target: `qmk compile users/eldestroyer74/keymaps/corne.json`.
+- Ask before compiling or flashing; only one QMK build should run at a time.
+- Last recorded successful build: 27602 / 28672 bytes, 1070 bytes free.
+- Future keyboard support starts from a fresh current-model recipe and wrapper,
+  not old Filterpaper recipes.
+
 ## Working Model
 
 - Treat `qmk_firmware` as the upstream build dependency.
-- Treat `users/eldestroyer74` as the personal source of truth.
+- Treat ChieftainDots as personal userspace, not an upstream QMK contribution.
+- Treat the personal `qmk_userspace` repository as the intended source of truth.
+- Treat any `users/eldestroyer74` copy inside `qmk_firmware` as a build copy
+  unless Git confirms it is tracked in the intended userspace repository.
 - Treat Filterpaper as ancestry and reference material, not the active identity.
 - Make one feature change at a time and compile before moving on.
 
@@ -40,6 +53,10 @@ Then compile the current baseline:
 ```bash
 qmk compile users/eldestroyer74/keymaps/corne.json
 ```
+
+Ask before compiling. Only one QMK build should run at a time; if a QMK MSYS
+compile is already running, wait for that build to finish before starting
+another.
 
 ## Firmware Checkpoints
 
@@ -141,10 +158,10 @@ because the toolchain mishandled the space in `Program Files`.
 
 ## Size Pressure
 
-The current Corne build after the A-family command layers has about 2126 bytes
-free. Any feature that adds code must include a size-risk check. If a feature
-pushes the firmware over size, optimize that feature or roll it back before
-starting another one.
+The last recorded Corne build succeeded at 27602 / 28672 bytes, leaving 1070
+bytes free. Any feature that adds code must include a size-risk check. If a
+feature pushes the firmware over size, optimize that feature or roll it back
+before starting another one.
 
 ChieftainDots now uses more than eight layers, so `config.h` must use
 `LAYER_STATE_16BIT`. If QMK reports that the number of keymap layers exceeds

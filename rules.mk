@@ -21,7 +21,7 @@ BOOTMAGIC_ENABLE = yes
 
 VPATH += $(USER_PATH)/oled $(USER_PATH)/rgb $(USER_PATH)/features
 OPT_DEFS += -DCAPS_UNLOCK -DINIT_EE_HANDS_$(shell echo ${SPLIT}|tr a-z A-Z)
-SRC += eldestroyer74.c caps_unlock.c
+SRC += eldestroyer74.c caps_unlock.c spanish_compose.c
 # Combo definitions are disabled while ChieftainDots redesigns chords around
 # comfortable finger positions instead of inherited Filterpaper placements.
 # QMK keymap introspection can include only one file. Use an aggregator for
@@ -34,21 +34,8 @@ ifeq ($(strip $(MCU)), atmega32u4)
 	BOOTLOADER = atmel-dfu
 endif
 
-ifeq ($(strip $(KEYBOARD)), cradio)
-#	EEPROM_DRIVER = transient
-	OPT_DEFS += -DAUTO_CORRECT
-	SRC += autocorrect.c
-	DEBOUNCE_TYPE = asym_eager_defer_pk
-	ifeq ($(strip $(CONVERT_TO)), kb2040)
-		RGB_MATRIX_ENABLE = yes
-		RGB_MATRIX_DRIVER = WS2812
-		RGB_MATRIX_CUSTOM_USER = yes
-		SRC += rgb-matrix.c
-	endif
-endif
-
 # RGB boards
-ifeq ($(strip $(KEYBOARD)), $(filter $(KEYBOARD), crkbd/rev1 boardsource/technik_o))
+ifeq ($(strip $(KEYBOARD)), crkbd/rev1)
 	RGB_MATRIX_ENABLE = yes
 	RGB_MATRIX_CUSTOM_USER = yes
 	SRC += rgb-matrix.c

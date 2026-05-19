@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 
 #include "features/tap_dance.h"
+#include "features/spanish_compose.h"
 #include "features/text_stubs.h"
 
 // Home row mod-tap macros
@@ -48,8 +49,8 @@
 	TAB_ESC_CLOSE, KC_Q, KC_W,  KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,   KC_BSPC,    \
 /* Home:   CAPS   A      S      D      F      G        H      J      K      L      ;      '    */\
 	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
-/* Bottom: MEDIA  Z      X      C      V      B        N      M      ,      .      /      CALC */\
-	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, KC_CALC, \
+/* Bottom: ES     Z      X      C      V      B        N      M      ,      .      /      ES   */\
+	ES_COMP,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, ES_COMP, \
 /* Thumbs:                         GUI    ALT    SPACE    ENTER  RALT   MENU */\
 				  				KC_LGUI, KC_LALT, KC_SPC,  		KC_ENT, KC_RALT, KC_APP
 
@@ -58,8 +59,8 @@
 	KC_TAB,   KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,        KC_J,    KC_L,    KC_U,   KC_Y,   KC_QUOT, KC_BSPC, \
 /* Home:   CAPS   A      R      S      T      D        H      N      E      I      O      ;    */\
 	KC_CAPS,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,        KC_H,    KC_N,    KC_E,    KC_I,    KC_O,   KC_SCLN,    \
-/* Bottom: MEDIA  Z      X      C      V      B        K      M      ,      .      /      CALC */\
-	KC_MSEL,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, KC_CALC, \
+/* Bottom: ES     Z      X      C      V      B        K      M      ,      .      /      ES   */\
+	ES_COMP,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, ES_COMP, \
 /* Thumbs:                         trans  trans  trans    trans  trans  trans */\
 	                            _______, _______, _______,     _______, _______, _______
 
