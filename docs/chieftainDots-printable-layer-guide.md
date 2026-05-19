@@ -15,6 +15,7 @@ Hold A                 = Symbols
 Hold S or L            = Numbers
 Hold D / K             = Ctrl
 Hold F / J             = Shift
+Hold either lower corner = Spanish
 ```
 
 ```text
@@ -40,7 +41,7 @@ Hold A/; + left Space  = Function / System
 ```text
 TAB      Q      W      E      R      T          Y      U      I      O      P      BSPC
 CAPS     A      S      D      F      G          H      J      K      L      ;      '
-MEDIA    Z      X      C      V      B          N      M      ,      .      /      CALC
+ES       Z      X      C      V      B          N      M      ,      .      /      ES
                          GUI    ALT    SPACE       ENTER  RALT   MENU
 ```
 
@@ -48,8 +49,7 @@ Specials:
 
 - `Tab`: tap Tab, hold Escape, double tap Alt+F4.
 - `/`: tap `/`, hold `\`, double tap `|`.
-- lower-left corner: Media Player.
-- lower-right corner: Calculator.
+- either lower corner: hold Spanish.
 - right outer thumb: Menu / context menu.
 
 ## Colemak
@@ -57,11 +57,27 @@ Specials:
 ```text
 TAB      Q      W      F      P      G          J      L      U      Y      '      BSPC
 CAPS     A      R      S      T      D          H      N      E      I      O      ;
-MEDIA    Z      X      C      V      B          K      M      ,      .      /      CALC
+ES       Z      X      C      V      B          K      M      ,      .      /      ES
                          trans  trans  trans       trans  trans  trans
 ```
 
-Colemak uses the same lower-corner launchers and `/` tap dance as Base.
+Colemak uses the same Spanish lower corners and `/` tap dance as Base.
+
+## Spanish
+
+Access: hold either lower corner.
+
+```text
+---      ¡      ---    É      ---    ---        ---    Ú      Í      Ó      ---    ---
+---      Á      ---    ---    ---    ---        ---    ---    ---    ---    Ü      ---
+trans    ---    ---    ---    ---    ---        Ñ      ---    ---    ---    ¿      trans
+                         ---    ---    ---         ---    ---    ---
+```
+
+Use Shift first for capitals:
+
+- hold `F` or `J` for Shift, then hold Spanish, then press the vowel.
+- tested uppercase accented vowels: `Á Í É Ó Ú`.
 
 ## Numbers
 

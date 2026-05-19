@@ -42,6 +42,7 @@
 #define MED 7
 #define TXT 8
 #define SYS 9
+#define ESP 10
 
 // Base and Colemak alpha layers. corne.json applies HRM(...) to these layers.
 #define _BASE \
@@ -50,7 +51,7 @@
 /* Home:   CAPS   A      S      D      F      G        H      J      K      L      ;      '    */\
 	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
 /* Bottom: ES     Z      X      C      V      B        N      M      ,      .      /      ES   */\
-	ES_COMP,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, ES_COMP, \
+	MO(ESP),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, MO(ESP), \
 /* Thumbs:                         GUI    ALT    SPACE    ENTER  RALT   MENU */\
 				  				KC_LGUI, KC_LALT, KC_SPC,  		KC_ENT, KC_RALT, KC_APP
 
@@ -60,7 +61,7 @@
 /* Home:   CAPS   A      R      S      T      D        H      N      E      I      O      ;    */\
 	KC_CAPS,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,        KC_H,    KC_N,    KC_E,    KC_I,    KC_O,   KC_SCLN,    \
 /* Bottom: ES     Z      X      C      V      B        K      M      ,      .      /      ES   */\
-	ES_COMP,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, ES_COMP, \
+	MO(ESP),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, MO(ESP), \
 /* Thumbs:                         trans  trans  trans    trans  trans  trans */\
 	                            _______, _______, _______,     _______, _______, _______
 
@@ -150,6 +151,17 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
 /* Thumbs:                         ---    ---    trans    ---    ---    --- */\
 	                            XXXXXXX, XXXXXXX, _______,    XXXXXXX, XXXXXXX, XXXXXXX
+
+// Spanish layer: hold either outside bottom key, then press the matching letter.
+#define _SPAN \
+/* Top:    ---    ¡      ---    É      ---    ---      ---    Ú      Í      Ó      ---    ---  */\
+	XXXXXXX, ES_IEXL, XXXXXXX, ES_E,    XXXXXXX, XXXXXXX,     XXXXXXX, ES_U,    ES_I,    ES_O,    XXXXXXX, XXXXXXX, \
+/* Home:   ---    Á      ---    ---    ---    ---      ---    ---    ---    ---    Ü      ---  */\
+	XXXXXXX, ES_A,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, ES_UDIA, XXXXXXX, \
+/* Bottom: trans  ---    ---    ---    ---    ---      Ñ      ---    ---    ---    ¿      trans */\
+	_______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     ES_N,    XXXXXXX, XXXXXXX, XXXXXXX, ES_IQUE, _______, \
+/* Thumbs:                         ---    ---    ---      ---    ---    --- */\
+	                            XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
 
 // Home-row wrapper. Only Base/Colemak pass through HRM(...) in corne.json;
 // command layers stay plain so held keys compose predictably with thumbs.
