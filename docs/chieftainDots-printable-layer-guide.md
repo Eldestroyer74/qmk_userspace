@@ -16,6 +16,7 @@ Hold S or L            = Numbers
 Hold D / K             = Ctrl
 Hold F / J             = Shift
 Hold either lower corner = Spanish
+Right thumbs on command layers = Enter / RAlt / Menu
 ```
 
 ```text
@@ -71,7 +72,7 @@ Access: hold either lower corner.
 ---      ¡      ---    É      ---    ---        ---    Ú      Í      Ó      ---    ---
 ---      Á      ---    ---    ---    ---        ---    ---    ---    ---    Ü      ---
 trans    ---    ---    ---    ---    ---        Ñ      ---    ---    ---    ¿      trans
-                         ---    ---    ---         ---    ---    ---
+                         ---    ---    ---         trans  trans  trans
 ```
 
 Use Shift first for capitals:
@@ -121,7 +122,7 @@ Navigation: hold `S` or `L`, then hold left GUI.
 ---      ---    ---    ---    ---    ---        ---    ---    UP     ---    ---    DEL
 ---      ---    ---    CTRL   SHIFT  ---        ---    LEFT   DOWN   RIGHT  ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         trans  ---    ---         ---    ---    ---
+                         trans  ---    ---         trans  trans  trans
 ```
 
 Extremes: hold `S` or `L`, then hold left Alt.
@@ -130,7 +131,7 @@ Extremes: hold `S` or `L`, then hold left Alt.
 ---      ---    ---    ---    ---    ---        ---    ---    PG UP  ---    ---    DEL
 ---      ---    ---    CTRL   SHIFT  ---        ---    HOME   PG DN  END    ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    trans  ---         ---    ---    ---
+                         ---    trans  ---         trans  trans  trans
 ```
 
 Snap: hold `S` or `L`, then hold left Space.
@@ -139,7 +140,7 @@ Snap: hold `S` or `L`, then hold left Space.
 ---      ---    ---    ---    ---    ---        ---    ---    G-UP   ---    ---    DEL
 ---      ---    ---    ---    ---    ---        ---    G-LEFT G-DOWN G-RIGHT ---   ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    ---    trans       ---    ---    ---
+                         ---    ---    trans       trans  trans  trans
 ```
 
 `G` means GUI / Windows.
@@ -152,7 +153,7 @@ Media: hold `A` or `;`, then hold left GUI.
 ---      ---    ---    ---    ---    ---        PLAY   ---    VOL+   ---    ---    DEL
 ---      ---    ---    ---    ---    ---        MUTE   PREV   VOL-   NEXT   ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         trans  ---    ---         ---    ---    ---
+                         trans  ---    ---         trans  trans  trans
 ```
 
 Text snippets: hold `A` or `;`, then hold left Alt.
@@ -161,7 +162,7 @@ Text snippets: hold `A` or `;`, then hold left Alt.
 ---      ---    ---    ---    ---    ---        HOME   ---    PHONE  ---    ---    DEL
 ---      ---    ---    ---    ---    ---        WORK   MEET   EMAIL  NAME   ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    trans  ---         ---    ---    ---
+                         ---    trans  ---         trans  trans  trans
 ```
 
 Function / System: hold `A` or `;`, then hold left Space.
@@ -170,7 +171,7 @@ Function / System: hold `A` or `;`, then hold left Space.
 ---      ---    ---    ---    ---    ---        F12    F7     F8     F9     ---    DEL
 ---      ---    ---    ---    ---    ---        F11    F4     F5     F6     ---    COLE
 ---      ---    ---    ---    ---    ---        F10    F1     F2     F3     ---    ---
-                         ---    ---    trans       ---    ---    ---
+                         ---    ---    trans       trans  trans  trans
 ```
 
 Press `COLE` to toggle Colemak.

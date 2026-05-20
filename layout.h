@@ -84,8 +84,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ---    ---      ---    ---    --- */\
-	                            _______, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX
+/* Thumbs:                         trans  ---    ---      trans  trans  trans */\
+	                            _______, XXXXXXX, XXXXXXX,     _______, _______, _______
 
 // S/L + left Space thumb snap: GUI+arrows follow the same I/J/K/L shape.
 #define _SNP \
@@ -95,8 +95,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, G_LF,    G_DN,    G_RI,    XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    ---    trans    ---    ---    --- */\
-	                            XXXXXXX, XXXXXXX, _______,     XXXXXXX, XXXXXXX, XXXXXXX
+/* Thumbs:                         ---    ---    trans    trans  trans  trans */\
+	                            XXXXXXX, XXXXXXX, _______,     _______, _______, _______
 
 // S/L + left Alt thumb extremes: Home/Page movement follows the same shape.
 #define _EXTR \
@@ -106,8 +106,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_HOME, KC_PGDN, KC_END,  XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    trans  ---      ---    ---    --- */\
-	                            XXXXXXX, XXXXXXX, _______,     XXXXXXX, XXXXXXX, XXXXXXX
+/* Thumbs:                         ---    trans  ---      trans  trans  trans */\
+	                            XXXXXXX, XXXXXXX, _______,     _______, _______, _______
 
 #define _SYMB \
 /* Top:    ~      !      @      #      $      %        ^      &      *      (/[/{  )/]/}  _    */\
@@ -127,8 +127,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MUTE, KC_MPRV, KC_VOLD, KC_MNXT, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ---    ---      ---    ---    --- */\
-	                            _______, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
+/* Thumbs:                         trans  ---    ---      trans  trans  trans */\
+	                            _______, XXXXXXX, XXXXXXX,    _______, _______, _______
 
 // Text stubs keep personal snippets in the same right-hand I/J/K/L shape.
 #define _TEXT \
@@ -138,8 +138,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_WORK, TXT_MEET, TXT_EMAIL, TXT_NAME, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    trans  ---      ---    ---    --- */\
-	                            XXXXXXX, _______, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
+/* Thumbs:                         ---    trans  ---      trans  trans  trans */\
+	                            XXXXXXX, _______, XXXXXXX,    _______, _______, _______
 
 // System/function keys mirror the number-pad shape.
 #define _SYST \
@@ -149,8 +149,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX, TG(CMK), \
 /* Bottom: ---    ---    ---    ---    ---    ---      F10    F1     F2     F3     ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    ---    trans    ---    ---    --- */\
-	                            XXXXXXX, XXXXXXX, _______,    XXXXXXX, XXXXXXX, XXXXXXX
+/* Thumbs:                         ---    ---    trans    trans  trans  trans */\
+	                            XXXXXXX, XXXXXXX, _______,    _______, _______, _______
 
 // Spanish layer: hold either outside bottom key, then press the matching letter.
 #define _SPAN \
@@ -160,8 +160,8 @@
 	XXXXXXX, ES_A,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, ES_UDIA, XXXXXXX, \
 /* Bottom: trans  ---    ---    ---    ---    ---      Ñ      ---    ---    ---    ¿      trans */\
 	_______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     ES_N,    XXXXXXX, XXXXXXX, XXXXXXX, ES_IQUE, _______, \
-/* Thumbs:                         ---    ---    ---      ---    ---    --- */\
-	                            XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
+/* Thumbs:                         ---    ---    ---      trans  trans  trans */\
+	                            XXXXXXX, XXXXXXX, XXXXXXX,    _______, _______, _______
 
 // Home-row wrapper. Only Base/Colemak pass through HRM(...) in corne.json;
 // command layers stay plain so held keys compose predictably with thumbs.
