@@ -31,6 +31,12 @@
 #define G_LF G(KC_LEFT)
 #define G_RI G(KC_RIGHT)
 
+// Command layers repeat the Base right thumbs instead of using transparent
+// fallthrough so behavior and RGB stay aligned through the ordinary
+// keymap-driven path. Keep this repetition here instead of adding RGB
+// special cases for inherited thumb keys.
+#define RIGHT_THUMBS KC_ENT, KC_RALT, KC_APP
+
 // Layer ids used by corne.json.
 #define BSE 0
 #define CMK 1
@@ -73,8 +79,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO(SYM), XXXXXXX,     XXXXXXX, KC_4,    KC_5,    KC_6,    KC_EQL,  XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    1      2/,/<  3/./>  /      ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_1,    NUM_TWO_COMMA_LT, NUM_THREE_DOT_GT, KC_SLSH, XXXXXXX, \
-/* Thumbs:                         NAV    EXT    SNP      trans  trans  trans */\
-	                            MO(NAV), MO(EXT), MO(SNP),     _______, _______, _______
+/* Thumbs:                         NAV    EXT    SNP      ENTER  RALT   MENU */\
+	                            MO(NAV), MO(EXT), MO(SNP),     RIGHT_THUMBS
 
 // S/L + left GUI thumb navigation: I/J/K/L form the right-hand arrow shape.
 #define _NAV \
@@ -84,8 +90,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ---    ---      trans  trans  trans */\
-	                            _______, XXXXXXX, XXXXXXX,     _______, _______, _______
+/* Thumbs:                         trans  ---    ---      ENTER  RALT   MENU */\
+	                            _______, XXXXXXX, XXXXXXX,     RIGHT_THUMBS
 
 // S/L + left Space thumb snap: GUI+arrows follow the same I/J/K/L shape.
 #define _SNP \
@@ -95,8 +101,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, G_LF,    G_DN,    G_RI,    XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    ---    trans    trans  trans  trans */\
-	                            XXXXXXX, XXXXXXX, _______,     _______, _______, _______
+/* Thumbs:                         ---    ---    trans    ENTER  RALT   MENU */\
+	                            XXXXXXX, XXXXXXX, _______,     RIGHT_THUMBS
 
 // S/L + left Alt thumb extremes: Home/Page movement follows the same shape.
 #define _EXTR \
@@ -106,8 +112,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_HOME, KC_PGDN, KC_END,  XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    trans  ---      trans  trans  trans */\
-	                            XXXXXXX, XXXXXXX, _______,     _______, _______, _______
+/* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
+	                            XXXXXXX, XXXXXXX, _______,     RIGHT_THUMBS
 
 #define _SYMB \
 /* Top:    ~      !      @      #      $      %        ^      &      *      (/[/{  )/]/}  _    */\
@@ -116,8 +122,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_DLR,  KC_PERC, KC_CIRC, KC_PLUS, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    !      @      #      ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         MED    TEXT   SYS      trans  trans  trans */\
-	                            MO(MED), MO(TXT), MO(SYS),    _______, _______, _______
+/* Thumbs:                         MED    TEXT   SYS      ENTER  RALT   MENU */\
+	                            MO(MED), MO(TXT), MO(SYS),    RIGHT_THUMBS
 // A/; + left-thumb command layers.
 // Media uses the same right-hand I/J/K/L navigation shape for volume and tracks.
 #define _MEDI \
@@ -127,8 +133,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MUTE, KC_MPRV, KC_VOLD, KC_MNXT, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ---    ---      trans  trans  trans */\
-	                            _______, XXXXXXX, XXXXXXX,    _______, _______, _______
+/* Thumbs:                         trans  ---    ---      ENTER  RALT   MENU */\
+	                            _______, XXXXXXX, XXXXXXX,    RIGHT_THUMBS
 
 // Text stubs keep personal snippets in the same right-hand I/J/K/L shape.
 #define _TEXT \
@@ -138,8 +144,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_WORK, TXT_MEET, TXT_EMAIL, TXT_NAME, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    trans  ---      trans  trans  trans */\
-	                            XXXXXXX, _______, XXXXXXX,    _______, _______, _______
+/* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
+	                            XXXXXXX, _______, XXXXXXX,    RIGHT_THUMBS
 
 // System/function keys mirror the number-pad shape.
 #define _SYST \
@@ -149,8 +155,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX, TG(CMK), \
 /* Bottom: ---    ---    ---    ---    ---    ---      F10    F1     F2     F3     ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    ---    trans    trans  trans  trans */\
-	                            XXXXXXX, XXXXXXX, _______,    _______, _______, _______
+/* Thumbs:                         ---    ---    trans    ENTER  RALT   MENU */\
+	                            XXXXXXX, XXXXXXX, _______,    RIGHT_THUMBS
 
 // Spanish layer: hold either outside bottom key, then press the matching letter.
 #define _SPAN \
@@ -160,8 +166,8 @@
 	XXXXXXX, ES_A,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, ES_UDIA, XXXXXXX, \
 /* Bottom: trans  ---    ---    ---    ---    ---      Ñ      ---    ---    ---    ¿      trans */\
 	_______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     ES_N,    XXXXXXX, XXXXXXX, XXXXXXX, ES_IQUE, _______, \
-/* Thumbs:                         ---    ---    ---      trans  trans  trans */\
-	                            XXXXXXX, XXXXXXX, XXXXXXX,    _______, _______, _______
+/* Thumbs:                         ---    ---    ---      ENTER  RALT   MENU */\
+	                            XXXXXXX, XXXXXXX, XXXXXXX,    RIGHT_THUMBS
 
 // Home-row wrapper. Only Base/Colemak pass through HRM(...) in corne.json;
 // command layers stay plain so held keys compose predictably with thumbs.
