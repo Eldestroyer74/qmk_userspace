@@ -35,12 +35,15 @@ static void tap_hold_double_finished(tap_dance_state_t *state, void *user_data) 
 
 static void tab_esc_close_finished(tap_dance_state_t *state, void *user_data) {
 	tab_esc_close_held = false;
+	uint8_t mods = get_mods();
 
 	// Tab is tap, Esc is hold, and Alt+F4 is double-tap on the same key.
 	if (state->count == 1 && state->pressed) {
 		register_code16(KC_ESC);
 		tab_esc_close_held = true;
 	} else if (state->count == 1) {
+		tap_code16(KC_TAB);
+	} else if (mods & (MOD_MASK_ALT | MOD_MASK_GUI)) {
 		tap_code16(KC_TAB);
 	} else {
 		tap_code16(A(KC_F4));
