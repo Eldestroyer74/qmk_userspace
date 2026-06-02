@@ -303,6 +303,10 @@ static void auto_caps_trial_flush(void) {
 	auto_caps_trial_next = KC_NO;
 	auto_caps_trial_applied = false;
 	auto_caps_trial_reset_word();
+}
+
+static void auto_caps_trial_clear_all(void) {
+	auto_caps_trial_flush();
 	auto_caps_context_reset_word();
 }
 
@@ -344,6 +348,19 @@ static void log_shift_trial(uint16_t keycode, keyrecord_t *record) {
 		shift_trial_keycode = KC_NO;
 	}
 }
+
+static void log_thumb_shift_trial(uint16_t keycode, keyrecord_t *record) {
+	if (record->event.pressed || (keycode != THUMB_SPACE_SHIFT && keycode != THUMB_ENTER_SHIFT)) {
+		return;
+	}
+
+	uprintf("thumb_shift key=%u action=%s tap=%u mods=%u layer=%u\n",
+	        keycode,
+	        record->tap.count ? "tap" : "hold",
+	        record->tap.count,
+	        get_mods(),
+	        get_highest_layer(layer_state));
+}
 #endif
 
 static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
@@ -367,7 +384,7 @@ static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 	}
 
 	if (layer_state_is(ESP) && !is_spanish_opening_punctuation(tap_key) && !is_spanish_trial_alpha(tap_key)) {
-		auto_caps_trial_flush();
+		auto_caps_trial_clear_all();
 		return;
 	}
 
@@ -389,7 +406,7 @@ static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 			auto_caps_trial_state = AUTO_CAPS_WAIT_ALPHA;
 			return;
 		} else if (tap_key != KC_ENT) {
-			auto_caps_trial_flush();
+			auto_caps_trial_clear_all();
 		}
 	}
 
@@ -398,14 +415,14 @@ static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 			return;
 		}
 		if (tap_key != KC_SPC && !is_auto_caps_trial_alpha(tap_key)) {
-			auto_caps_trial_flush();
+			auto_caps_trial_clear_all();
 		}
 	}
 
 	if (is_auto_caps_trial_alpha(tap_key)) {
 		if (auto_caps_trial_state == AUTO_CAPS_WAIT_ALPHA) {
 			if (mods & ~MOD_MASK_SHIFT) {
-				auto_caps_trial_flush();
+				auto_caps_trial_clear_all();
 				return;
 			}
 			auto_caps_trial_state = AUTO_CAPS_LOG_WORD;
@@ -430,23 +447,26 @@ static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 			auto_caps_trial_flush();
 			auto_caps_trial_state = AUTO_CAPS_WAIT_ALPHA;
 			auto_caps_trial_punct = punct;
-		} else if (auto_caps_trial_state == AUTO_CAPS_WORD && !auto_caps_context_is_exception()) {
+		} else if (auto_caps_context_is_exception()) {
+			auto_caps_trial_clear_all();
+		} else if (auto_caps_trial_state == AUTO_CAPS_WORD) {
 			auto_caps_trial_state = AUTO_CAPS_WAIT_SPACE;
 			auto_caps_trial_punct = punct;
 		} else {
-			auto_caps_trial_flush();
+			auto_caps_trial_clear_all();
 		}
 		return;
 	}
 
 	if (tap_key != KC_QUOT) {
-		auto_caps_trial_flush();
+		auto_caps_trial_clear_all();
 	}
 }
 
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #ifdef CONSOLE_ENABLE
 	log_shift_trial(keycode, record);
+	log_thumb_shift_trial(keycode, record);
 #endif
 	process_auto_caps_trial(keycode, record);
 

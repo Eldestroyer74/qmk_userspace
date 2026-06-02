@@ -35,7 +35,9 @@
 // fallthrough so behavior and RGB stay aligned through the ordinary
 // keymap-driven path. Keep this repetition here instead of adding RGB
 // special cases for inherited thumb keys.
-#define RIGHT_THUMBS KC_ENT, KC_RALT, KC_APP
+#define THUMB_SPACE_SHIFT LSFT_T(KC_SPC)
+#define THUMB_ENTER_SHIFT RSFT_T(KC_ENT)
+#define RIGHT_THUMBS THUMB_ENTER_SHIFT, KC_RALT, KC_APP
 
 // Layer ids used by corne.json.
 #define BSE 0
@@ -58,8 +60,8 @@
 	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
 /* Bottom: ES     Z      X      C      V      B        N      M      ,      .      /      ES   */\
 	MO(ESP),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, MO(ESP), \
-/* Thumbs:                         GUI    ALT    SPACE    ENTER  RALT   MENU */\
-				  				KC_LGUI, KC_LALT, KC_SPC,  		KC_ENT, KC_RALT, KC_APP
+/* Thumbs:                         GUI    ALT    SPC/SFT  ENT/SFT RALT   MENU */\
+	KC_LGUI, KC_LALT, THUMB_SPACE_SHIFT, THUMB_ENTER_SHIFT, KC_RALT, KC_APP
 
 #define _COLE \
 /* Top:    TAB    Q      W      F      P      G        J      L      U      Y      '      BSPC */\
