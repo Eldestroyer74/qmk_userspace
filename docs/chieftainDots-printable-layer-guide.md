@@ -78,6 +78,9 @@ trans    ---    ---    ---    ---    ---        Ñ      ---    ---    ---    ¿ 
 Use Shift first for capitals:
 
 - hold `F` or `J` for Shift, then hold Spanish, then press the vowel.
+- opening Spanish punctuation starts a capitalized word in the current auto-caps
+  trial: `¿hola` -> `¿Hola`, `¡hola` -> `¡Hola`.
+- accented first letters should also capitalize: `¡ánimo` -> `¡Ánimo`.
 - tested uppercase accented vowels: `Á Í É Ó Ú`.
 
 ## Numbers
@@ -194,6 +197,10 @@ Numbers 3          3         .          >
 - `F` and `J` are home-row Shift keys: tap for `f`/`j`, hold for Shift.
 - Current trial: `F`/`J` do not become Shift immediately just because another
   key is pressed.
+- Auto-caps trial: after a word plus `. `, `? `, or `! `, the next letter is
+  capitalized.
+- Spanish opening punctuation does not need a space: `¿` and `¡` capitalize
+  the next letter immediately.
 - Watch normal typing for accidental capitals such as `O` when intending `fo`.
 - Also check intentional Shift use such as `F + /` for `?` and `F + I` for
   capital `I`.

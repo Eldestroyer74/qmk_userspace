@@ -18,6 +18,7 @@ TAP_DANCE_ENABLE = yes
 EXTRAKEY_ENABLE = yes
 MOUSEKEY_ENABLE = no
 BOOTMAGIC_ENABLE = yes
+OLED_ENABLE = no
 
 VPATH += $(USER_PATH)/oled $(USER_PATH)/rgb $(USER_PATH)/features
 OPT_DEFS += -DCAPS_UNLOCK -DINIT_EE_HANDS_$(shell echo ${SPLIT}|tr a-z A-Z)
@@ -42,7 +43,7 @@ ifeq ($(strip $(KEYBOARD)), crkbd/rev1)
 endif
 
 # OLED
-ifeq ($(strip $(KEYBOARD)), $(filter $(KEYBOARD), crkbd/rev1))
+ifeq ($(strip $(KEYBOARD)), $(filter $(KEYBOARD), ))
 	OLED_ENABLE = yes
 	ifeq ($(strip $(OLED)), LUNA FELIX)
 		OPT_DEFS += -D${OLED}

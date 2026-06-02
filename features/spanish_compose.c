@@ -5,7 +5,7 @@
 #include "spanish_compose.h"
 
 static bool is_shifted(void) {
-	uint8_t mods = get_mods();
+	uint8_t mods = get_mods() | get_weak_mods();
 #ifndef NO_ACTION_ONESHOT
 	mods |= get_oneshot_mods();
 #endif
@@ -20,6 +20,7 @@ static void send_windows_alt_code(const char *code) {
 	uint8_t mods = get_mods();
 
 	clear_mods();
+	clear_weak_mods();
 	send_keyboard_report();
 	register_code(KC_LALT);
 	for (uint8_t i = 0; code[i]; ++i) {
