@@ -20,8 +20,8 @@
 //#define HRMR(k1,k2,k3,k4) LGUI_T(k1),LCTL_T(k2),LALT_T(k3),LSFT_T(k4)
 #define HRMR(k1,k2,k3,k4) LSFT_T(k1),LCTL_T(k2),LT(NUM, k3),LT(SYM, k4)
 
-// Window snap shortcuts. Plain Ctrl/Shift live on NAV and EXT so selection
-// remains composable instead of needing a dedicated selection layer.
+// Window snap and MS Styles shortcuts. Plain Ctrl/Shift live on NAV so
+// selection remains composable instead of needing a dedicated selection layer.
 #define CS_UP C(S(KC_UP))
 #define CS_DN C(S(KC_DOWN))
 #define CS_LF C(S(KC_LEFT))
@@ -30,6 +30,10 @@
 #define G_DN G(KC_DOWN)
 #define G_LF G(KC_LEFT)
 #define G_RI G(KC_RIGHT)
+#define PPT_STYLE_UP A(S(KC_UP))
+#define PPT_STYLE_DN A(S(KC_DOWN))
+#define PPT_STYLE_LF A(S(KC_LEFT))
+#define PPT_STYLE_RI A(S(KC_RIGHT))
 
 // Command layers repeat the Base right thumbs instead of using transparent
 // fallthrough so behavior and RGB stay aligned through the ordinary
@@ -37,6 +41,7 @@
 // special cases for inherited thumb keys.
 #define THUMB_SPACE_SHIFT LSFT_T(KC_SPC)
 #define THUMB_ENTER_SHIFT RSFT_T(KC_ENT)
+#define NUM_SPACE_SYMBOLS LT(SYM, KC_SPC)
 #define RIGHT_THUMBS THUMB_ENTER_SHIFT, KC_RALT, KC_APP
 
 // Layer ids used by corne.json.
@@ -81,15 +86,15 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO(SYM), XXXXXXX,     XXXXXXX, KC_4,    KC_5,    KC_6,    KC_EQL,  XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    1      2/,/<  3/./>  /      ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_1,    NUM_TWO_COMMA_LT, NUM_THREE_DOT_GT, KC_SLSH, XXXXXXX, \
-/* Thumbs:                         NAV    EXT    SNP      ENTER  RALT   MENU */\
-	                            MO(NAV), MO(EXT), MO(SNP),     RIGHT_THUMBS
+/* Thumbs:                         NAV    MS     SPC/SYM  ENTER  RALT   MENU */\
+	                            MO(NAV), MO(EXT), NUM_SPACE_SYMBOLS, RIGHT_THUMBS
 
-// S/L + left GUI thumb navigation: I/J/K/L form the right-hand arrow shape.
+// S/L + left GUI thumb navigation: tap arrows, hold extremes, double-tap-hold snap.
 #define _NAV \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, NAV_UP_DANCE, XXXXXXX, XXXXXXX, KC_DEL,   \
 /* Home:   ---    ---    ---    CTRL   SHIFT  ---      ---    LEFT   DOWN   RIGHT  ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX, \
+	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, NAV_LEFT_DANCE, NAV_DOWN_DANCE, NAV_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         trans  ---    ---      ENTER  RALT   MENU */\
@@ -106,16 +111,16 @@
 /* Thumbs:                         ---    ---    trans    ENTER  RALT   MENU */\
 	                            XXXXXXX, XXXXXXX, _______,     RIGHT_THUMBS
 
-// S/L + left Alt thumb extremes: Home/Page movement follows the same shape.
+// S/L + left Alt thumb MS Styles: PowerPoint paragraph/list level movement.
 #define _EXTR \
-/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    PGUP   ---    ---    DEL  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_PGUP, XXXXXXX, XXXXXXX, KC_DEL,   \
-/* Home:   ---    ---    ---    CTRL   SHIFT  ---      ---    HOME   PGDN   END    ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, KC_HOME, KC_PGDN, KC_END,  XXXXXXX, XXXXXXX, \
+/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    AS-UP  ---    ---    DEL  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, PPT_STYLE_UP, XXXXXXX, XXXXXXX, KC_DEL,   \
+/* Home:   ---    ---    ---    ---    ---    ---      ---    AS-LF  AS-DN  AS-RI  ---    ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, PPT_STYLE_LF, PPT_STYLE_DN, PPT_STYLE_RI, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
-	                            XXXXXXX, XXXXXXX, _______,     RIGHT_THUMBS
+	                            XXXXXXX, _______, XXXXXXX,     RIGHT_THUMBS
 
 #define _SYMB \
 /* Top:    ~      !      @      #      $      %        ^      &      *      (/[/{  )/]/}  _    */\
@@ -124,15 +129,14 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_DLR,  KC_PERC, KC_CIRC, KC_PLUS, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    !      @      #      ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         MED    TEXT   SYS      ENTER  RALT   MENU */\
-	                            MO(MED), MO(TXT), MO(SYS),    RIGHT_THUMBS
-// A/; + left-thumb command layers.
-// Media uses the same right-hand I/J/K/L navigation shape for volume and tracks.
+/* Thumbs:                         MED    SYS    SHIFT    ENTER  RALT   MENU */\
+	                            MO(MED), MO(SYS), THUMB_SPACE_SHIFT, RIGHT_THUMBS
+// A/; + left GUI thumb media: compact arrow-shaped meeting/audio controls.
 #define _MEDI \
-/* Top:    ---    ---    ---    ---    ---    ---      PLAY   ---    VOL+   ---    ---    DEL */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MPLY, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,  \
-/* Home:   ---    ---    ---    ---    ---    ---      MUTE   PREV   VOL-   NEXT   ---    --- */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_MUTE, KC_MPRV, KC_VOLD, KC_MNXT, XXXXXXX, XXXXXXX, \
+/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    VOL+   ---    ---    DEL */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,  \
+/* Home:   ---    ---    ---    ---    ---    ---      ---    MUTE   VOL-   PLAY   ---    --- */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_MUTE, KC_VOLD, KC_MPLY, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         trans  ---    ---      ENTER  RALT   MENU */\
@@ -157,15 +161,15 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX, TG(CMK), \
 /* Bottom: ---    ---    ---    ---    ---    ---      F10    F1     F2     F3     ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    ---    trans    ENTER  RALT   MENU */\
-	                            XXXXXXX, XXXXXXX, _______,    RIGHT_THUMBS
+/* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
+	                            XXXXXXX, _______, XXXXXXX,    RIGHT_THUMBS
 
 // Spanish layer: hold either outside bottom key, then press the matching letter.
 #define _SPAN \
 /* Top:    ---    ¡      ---    É      ---    ---      ---    Ú      Í      Ó      ---    ---  */\
 	XXXXXXX, ES_IEXL, XXXXXXX, ES_E,    XXXXXXX, XXXXXXX,     XXXXXXX, ES_U,    ES_I,    ES_O,    XXXXXXX, XXXXXXX, \
 /* Home:   ---    Á      ---    ---    ---    ---      ---    ---    ---    ---    Ü      ---  */\
-	XXXXXXX, ES_A,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, ES_UDIA, XXXXXXX, \
+	ES_LDAQ, ES_A,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, ES_UDIA, ES_RDAQ, \
 /* Bottom: trans  ---    ---    ---    ---    ---      Ñ      ---    ---    ---    ¿      trans */\
 	_______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     ES_N,    XXXXXXX, XXXXXXX, XXXXXXX, ES_IQUE, _______, \
 /* Thumbs:                         ---    ---    ---      ENTER  RALT   MENU */\

@@ -13,3 +13,5 @@
 #define ES_UDIA QK_USER_12
 #define ES_IQUE QK_USER_13
 #define ES_IEXL QK_USER_14
+#define ES_LDAQ QK_USER_15
+#define ES_RDAQ QK_USER_16

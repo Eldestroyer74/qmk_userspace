@@ -12,6 +12,7 @@
 #define RGB_FLUOR	75, 122, 22
 #define RGB_DAMBER	105, 60, 0
 #define RGB_DBLUE	10, 25, 95
+#define RGB_DGREEN	0, 75, 35
 #define RGB_CAPS	RGB_RED
 #define RGB_NUM		RGB_DBLUE
 #define RGB_SYM		RGB_DAMBER
@@ -22,6 +23,7 @@
 #define RGB_SNP		RGB_WHITE
 #define RGB_MED		RGB_DTEAL
 #define RGB_TXT		RGB_DPINK
+#define RGB_ESP		RGB_DGREEN
 #define RGB_LAYER	RGB_BSTEEL
 
 // Base RGB mode. ChieftainDots paints Caps/Colemak directly in the indicator

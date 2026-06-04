@@ -7,6 +7,7 @@
 
 #ifdef CONSOLE_ENABLE
 #	include "print.h"
+#	define SPACE_PROBE_ENABLE 0
 #endif
 
 extern bool process_spanish_compose(uint16_t keycode, keyrecord_t *record);
@@ -75,6 +76,28 @@ static uint8_t shift_trial_tap;
 static char shift_trial_word[13];
 static uint8_t shift_trial_word_len;
 static bool shift_trial_word_safe = true;
+#if SPACE_PROBE_ENABLE
+static bool space_probe_down;
+static bool space_probe_long_reported;
+static uint16_t space_probe_timer;
+static uint16_t space_probe_count;
+static uint16_t space_probe_quick_count;
+static uint8_t space_probe_keys_since_space;
+static bool space_probe_gap_reported;
+static bool session_probe_reported;
+
+static unsigned long log_ms(void) {
+	return (unsigned long)timer_read32();
+}
+
+static void log_session_probe(void) {
+	if (session_probe_reported) {
+		return;
+	}
+	session_probe_reported = true;
+	uprintf("bt ms=%lu ma=%u lh=%u l=%u m=%u\n", log_ms(), is_keyboard_master(), is_keyboard_left(), get_highest_layer(layer_state), get_mods());
+}
+#endif
 #endif
 
 enum auto_caps_trial_state {
@@ -215,7 +238,7 @@ static void shift_trial_append_word(uint16_t keycode) {
 
 static void shift_trial_flush(void) {
 	if (shift_trial_pending) {
-		uprintf("shift_trial prev=%u next=%u dt=%u mods=%u tap=%u word=%s\n",
+		uprintf("st p=%u n=%u d=%u m=%u t=%u w=%s\n",
 		        shift_trial_keycode,
 		        shift_trial_next,
 		        shift_trial_dt,
@@ -290,7 +313,7 @@ static bool auto_caps_context_is_exception(void) {
 static void auto_caps_trial_flush(void) {
 	if (auto_caps_trial_state == AUTO_CAPS_LOG_WORD) {
 #ifdef CONSOLE_ENABLE
-		uprintf("autocaps_trial punct=%u next=%u mods=%u auto=%u word=%s\n",
+		uprintf("ac p=%u n=%u m=%u a=%u w=%s\n",
 		        auto_caps_trial_punct,
 		        auto_caps_trial_next,
 		        auto_caps_trial_mods,
@@ -354,12 +377,97 @@ static void log_thumb_shift_trial(uint16_t keycode, keyrecord_t *record) {
 		return;
 	}
 
-	uprintf("thumb_shift key=%u action=%s tap=%u mods=%u layer=%u\n",
+	uprintf("ts k=%u a=%s t=%u m=%u l=%u\n",
 	        keycode,
 	        record->tap.count ? "tap" : "hold",
 	        record->tap.count,
 	        get_mods(),
 	        get_highest_layer(layer_state));
+}
+
+#if SPACE_PROBE_ENABLE
+static void log_space_probe(uint16_t keycode, keyrecord_t *record) {
+	log_session_probe();
+
+	uint16_t tap_key = base_tap_keycode(keycode);
+	if (tap_key != KC_SPC && keycode != THUMB_SPACE_SHIFT) {
+		if (record->event.pressed && get_highest_layer(layer_state) <= CMK && tap_key != KC_NO) {
+			if (space_probe_keys_since_space < UINT8_MAX) {
+				space_probe_keys_since_space++;
+			}
+			if (!space_probe_gap_reported && space_probe_keys_since_space >= 16) {
+				space_probe_gap_reported = true;
+				uprintf("sg ms=%lu k=%u s=%u q=%u kc=%u m=%u l=%u ma=%u lh=%u\n",
+				        log_ms(),
+				        space_probe_keys_since_space,
+				        space_probe_count,
+				        space_probe_quick_count,
+				        tap_key,
+				        get_mods(),
+				        get_highest_layer(layer_state),
+				        is_keyboard_master(),
+				        is_keyboard_left());
+			}
+		}
+		return;
+	}
+
+	if (record->event.pressed) {
+		space_probe_down = true;
+		space_probe_long_reported = false;
+		space_probe_timer = timer_read();
+		uprintf("sp ms=%lu e=p kc=%u r=%u c=%u t=%u m=%u l=%u\n",
+		        log_ms(),
+		        keycode,
+		        record->event.key.row,
+		        record->event.key.col,
+		        record->tap.count,
+		        get_mods(),
+		        get_highest_layer(layer_state));
+		return;
+	}
+
+	uint16_t dt = timer_elapsed(space_probe_timer);
+	space_probe_count++;
+	if (dt < 20) {
+		space_probe_quick_count++;
+	}
+	uprintf("sp ms=%lu e=r kc=%u r=%u c=%u a=%c t=%u d=%u m=%u l=%u\n",
+	        log_ms(),
+	        keycode,
+	        record->event.key.row,
+	        record->event.key.col,
+	        record->tap.count ? 't' : 'h',
+	        record->tap.count,
+	        dt,
+	        get_mods(),
+	        get_highest_layer(layer_state));
+	if ((space_probe_count % 25) == 0) {
+		uprintf("ss ms=%lu s=%u q=%u d=%u a=%c m=%u l=%u ma=%u lh=%u\n",
+		        log_ms(),
+		        space_probe_count,
+		        space_probe_quick_count,
+		        dt,
+		        record->tap.count ? 't' : 'h',
+		        get_mods(),
+		        get_highest_layer(layer_state),
+		        is_keyboard_master(),
+		        is_keyboard_left());
+	}
+	space_probe_keys_since_space = 0;
+	space_probe_gap_reported = false;
+	space_probe_down = false;
+}
+#endif
+#endif
+
+#if defined(CONSOLE_ENABLE) && SPACE_PROBE_ENABLE
+void suspend_power_down_user(void) {
+	uprintf("usb ms=%lu e=s l=%u m=%u\n", log_ms(), get_highest_layer(layer_state), get_mods());
+}
+
+void suspend_wakeup_init_user(void) {
+	uprintf("usb ms=%lu e=w l=%u m=%u\n", log_ms(), get_highest_layer(layer_state), get_mods());
 }
 #endif
 
@@ -379,7 +487,7 @@ static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 	if (tap_key == KC_DOT || tap_key == KC_1 || tap_key == KC_SLSH || tap_key == SLASH_PIPE || tap_key == KC_EXLM || tap_key == KC_QUES ||
 	    tap_key == ES_IQUE || tap_key == ES_IEXL || IS_QK_MODS(tap_key)) {
 #ifdef CONSOLE_ENABLE
-		uprintf("punct_probe key=%u tap=%u mods=%u layers=%u punct=%u\n", keycode, tap_key, mods, get_highest_layer(layer_state), punct);
+		uprintf("pp k=%u t=%u m=%u l=%u p=%u\n", keycode, tap_key, mods, get_highest_layer(layer_state), punct);
 #endif
 	}
 
@@ -463,16 +571,125 @@ static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 	}
 }
 
+#define TEXT_MNEMONICS_ENABLE 1
+#define TEXT_MNEMONIC_TERM 250
+
+#if TEXT_MNEMONICS_ENABLE
+static uint16_t text_mnemonic_key = KC_NO;
+static uint16_t text_mnemonic_timer;
+static uint16_t text_mnemonic_pending_key = KC_NO;
+static uint16_t text_mnemonic_pending_timer;
+static const char *text_mnemonic_pending_stub;
+static bool text_mnemonic_pending_sent;
+
+static const char *text_stub_for_mnemonic(uint16_t keycode) {
+	switch (keycode) {
+		case KC_G:
+			return TEXT_STUB_PERSONAL_EMAIL;
+		case KC_H:
+			return TEXT_STUB_HOME;
+		case KC_W:
+			return TEXT_STUB_WORK;
+		case KC_P:
+			return TEXT_STUB_PHONE;
+		case KC_M:
+			return TEXT_STUB_MEETING;
+		case KC_E:
+			return TEXT_STUB_EMAIL;
+		case KC_N:
+			return TEXT_STUB_NAME;
+	}
+	return NULL;
+}
+
+static bool process_text_mnemonic(uint16_t keycode, keyrecord_t *record) {
+	uint16_t tap_key = base_tap_keycode(keycode);
+
+	if (text_mnemonic_pending_key != KC_NO && tap_key != text_mnemonic_pending_key) {
+		if (!text_mnemonic_pending_sent) {
+			tap_code16(text_mnemonic_pending_key);
+		}
+		text_mnemonic_pending_key = KC_NO;
+		text_mnemonic_key = KC_NO;
+	}
+
+	if (text_mnemonic_pending_key != KC_NO && tap_key == text_mnemonic_pending_key && !record->event.pressed) {
+		if (!text_mnemonic_pending_sent) {
+			tap_code16(text_mnemonic_pending_key);
+		}
+		text_mnemonic_pending_key = KC_NO;
+		return false;
+	}
+
+	if (!record->event.pressed || get_highest_layer(layer_state) > CMK || (get_mods() | get_weak_mods())) {
+		return true;
+	}
+
+	const char *stub = text_stub_for_mnemonic(tap_key);
+	if (!stub) {
+		text_mnemonic_key = KC_NO;
+		return true;
+	}
+
+	if (text_mnemonic_key == tap_key && timer_elapsed(text_mnemonic_timer) <= TEXT_MNEMONIC_TERM) {
+		text_mnemonic_key = KC_NO;
+		text_mnemonic_pending_key = tap_key;
+		text_mnemonic_pending_timer = timer_read();
+		text_mnemonic_pending_stub = stub;
+		text_mnemonic_pending_sent = false;
+		return false;
+	}
+
+	text_mnemonic_key = tap_key;
+	text_mnemonic_timer = timer_read();
+	return true;
+}
+#endif
+
+void matrix_scan_user(void) {
+#if TEXT_MNEMONICS_ENABLE
+	if (text_mnemonic_pending_key == KC_NO || text_mnemonic_pending_sent || timer_elapsed(text_mnemonic_pending_timer) < TAPPING_TERM) {
+		goto space_probe_scan;
+	}
+
+	tap_code(KC_BSPC);
+	send_string_with_delay(text_mnemonic_pending_stub, 0);
+	text_mnemonic_pending_sent = true;
+
+space_probe_scan:
+#endif
+#if defined(CONSOLE_ENABLE) && SPACE_PROBE_ENABLE
+	if (space_probe_down && !space_probe_long_reported && timer_elapsed(space_probe_timer) > 1000) {
+		space_probe_long_reported = true;
+		uprintf("sp ms=%lu e=h kc=%u d=%u m=%u l=%u\n",
+		        log_ms(),
+		        THUMB_SPACE_SHIFT,
+		        timer_elapsed(space_probe_timer),
+		        get_mods(),
+		        get_highest_layer(layer_state));
+	}
+#endif
+}
+
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #ifdef CONSOLE_ENABLE
 	log_shift_trial(keycode, record);
 	log_thumb_shift_trial(keycode, record);
+#if SPACE_PROBE_ENABLE
+	log_space_probe(keycode, record);
+#endif
 #endif
 	process_auto_caps_trial(keycode, record);
 
 	if (!process_spanish_compose(keycode, record)) {
 		return false;
 	}
+
+#if TEXT_MNEMONICS_ENABLE
+	if (!process_text_mnemonic(keycode, record)) {
+		return false;
+	}
+#endif
 
 	switch (keycode) {
 		case TXT_EMAIL:

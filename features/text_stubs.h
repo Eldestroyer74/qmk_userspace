@@ -18,6 +18,10 @@
 #	define TEXT_STUB_EMAIL "[email]"
 #endif
 
+#ifndef TEXT_STUB_PERSONAL_EMAIL
+#	define TEXT_STUB_PERSONAL_EMAIL "[personal-email]"
+#endif
+
 #ifndef TEXT_STUB_PHONE
 #	define TEXT_STUB_PHONE "[phone]"
 #endif

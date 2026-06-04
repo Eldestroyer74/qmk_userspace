@@ -4,6 +4,7 @@
 #pragma once
 
 #define TEXT_STUB_EMAIL "you@example.com"
+#define TEXT_STUB_PERSONAL_EMAIL "personal@example.com"
 #define TEXT_STUB_PHONE "0000 000 000"
 #define TEXT_STUB_NAME "Your Name"
 #define TEXT_STUB_MEETING "https://example.com/meeting"

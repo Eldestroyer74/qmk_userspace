@@ -15,17 +15,17 @@ Hold A                 = Symbols
 Hold S or L            = Numbers
 Hold D / K             = Ctrl
 Hold F / J             = Shift
+Hold Base Space / Enter = Shift
 Hold either lower corner = Spanish
-Right thumbs on command layers = Enter / RAlt / Menu
+Right thumbs on command layers = Enter/Shift / RAlt / Menu
 ```
 
 ```text
 S or L family: numbers and movement
 
 Hold S or L            = Numbers
-Hold S/L + left GUI    = Navigation arrows
-Hold S/L + left Alt    = Extremes: Home / Page / End
-Hold S/L + left Space  = Snap: Windows + arrows
+Hold S/L + left GUI    = Navigation: arrows / extremes / snap
+Hold S/L + left Alt    = MS Styles: Alt+Shift+arrows
 ```
 
 ```text
@@ -33,8 +33,8 @@ A or ; family: symbols and tools
 
 Hold A or ;            = Symbols
 Hold A/; + left GUI    = Media
-Hold A/; + left Alt    = Text snippets
-Hold A/; + left Space  = Function / System
+Hold A/; + left Alt    = Function / System
+Double tap-hold mnemonic = Text snippets
 ```
 
 ## Base
@@ -43,7 +43,7 @@ Hold A/; + left Space  = Function / System
 TAB      Q      W      E      R      T          Y      U      I      O      P      BSPC
 CAPS     A      S      D      F      G          H      J      K      L      ;      '
 ES       Z      X      C      V      B          N      M      ,      .      /      ES
-                         GUI    ALT    SPACE       ENTER  RALT   MENU
+                         GUI    ALT    SPC/SFT     ENT/SFT RALT  MENU
 ```
 
 Specials:
@@ -51,6 +51,7 @@ Specials:
 - `Tab`: tap Tab, hold Escape, double tap Alt+F4.
 - `/`: tap `/`, hold `\`, double tap `|`.
 - either lower corner: hold Spanish.
+- Base Space and Enter: tap normally, hold for Shift.
 - right outer thumb: Menu / context menu.
 
 ## Colemak
@@ -77,6 +78,8 @@ trans    ---    ---    ---    ---    ---        Ñ      ---    ---    ---    ¿ 
 
 Use Shift first for capitals:
 
+- Spanish angle quotes are separate keys: `Spanish + Caps = «`,
+  `Spanish + ' = »`.
 - hold `F` or `J` for Shift, then hold Spanish, then press the vowel.
 - opening Spanish punctuation starts a capitalized word in the current auto-caps
   trial: `¿hola` -> `¿Hola`, `¡hola` -> `¡Hola`.
@@ -91,24 +94,25 @@ Access: hold `S` or `L`.
 `        1      2      3      4      5          6      7      8      9      0      -
 ---      ---    ---    ---    SYM    ---        ---    4      5      6      =      ---
 ---      ---    ---    ---    ---    ---        ---    1      2      3      /      ---
-                         NAV    EXT    SNP         trans  trans  trans
+                         NAV    MS     SPC/SYM     trans  trans  trans
 ```
 
 Number-pad tap dances:
 
 - right-hand `2`: tap `2`, hold `,`, double tap `<`.
 - right-hand `3`: tap `3`, hold `.`, double tap `>`.
-- hold the `F` position while in Numbers to reach shifted-number Symbols.
+- hold left Space while in Numbers to reach Symbols; the `F` position also
+  reaches Symbols as a legacy trial path.
 
 ## Symbols
 
-Access: hold `A` or `;`. Also available from Numbers by holding `F`.
+Access: hold `A` or `;`. Also available from Numbers by holding left Space.
 
 ```text
 ~        !      @      #      $      %          ^      &      *      (      )      _
 ---      ---    ---    ---    ---    ---        ---    $      %      ^      +      ---
 ---      ---    ---    ---    ---    ---        ---    !      @      #      ---    ---
-                         MED    TEXT   SYS         trans  trans  trans
+                         MED    SYS    SHIFT       trans  trans  trans
 ```
 
 Bracket tap dances:
@@ -128,73 +132,85 @@ Navigation: hold `S` or `L`, then hold left GUI.
                          trans  ---    ---         trans  trans  trans
 ```
 
-Extremes: hold `S` or `L`, then hold left Alt.
+Navigation key behavior:
 
 ```text
----      ---    ---    ---    ---    ---        ---    ---    PG UP  ---    ---    DEL
----      ---    ---    CTRL   SHIFT  ---        ---    HOME   PG DN  END    ---    ---
+Key      Tap      Hold      Double-tap-hold
+-------------------------------------------
+I        Up       PgUp      GUI+Up
+J        Left     Home      GUI+Left
+K        Down     PgDn      GUI+Down
+L        Right    End       GUI+Right
+```
+
+MS Styles: hold `S` or `L`, then hold left Alt.
+
+```text
+---      ---    ---    ---    ---    ---        ---    ---    AS-UP  ---    ---    DEL
+---      ---    ---    ---    ---    ---        ---    AS-LF  AS-DN  AS-RI  ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
                          ---    trans  ---         trans  trans  trans
 ```
 
-Snap: hold `S` or `L`, then hold left Space.
-
-```text
----      ---    ---    ---    ---    ---        ---    ---    G-UP   ---    ---    DEL
----      ---    ---    ---    ---    ---        ---    G-LEFT G-DOWN G-RIGHT ---   ---
----      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    ---    trans       trans  trans  trans
-```
-
-`G` means GUI / Windows.
+`AS` means Alt+Shift for PowerPoint paragraph/list style movement. `GUI` means
+Windows snap from the Navigation double-tap-hold gesture.
 
 ## A-Family Tools
 
 Media: hold `A` or `;`, then hold left GUI.
 
 ```text
----      ---    ---    ---    ---    ---        PLAY   ---    VOL+   ---    ---    DEL
----      ---    ---    ---    ---    ---        MUTE   PREV   VOL-   NEXT   ---    ---
+---      ---    ---    ---    ---    ---        ---    ---    VOL+   ---    ---    DEL
+---      ---    ---    ---    ---    ---        ---    MUTE   VOL-   PLAY   ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
                          trans  ---    ---         trans  trans  trans
 ```
 
-Text snippets: hold `A` or `;`, then hold left Alt.
-
-```text
----      ---    ---    ---    ---    ---        HOME   ---    PHONE  ---    ---    DEL
----      ---    ---    ---    ---    ---        WORK   MEET   EMAIL  NAME   ---    ---
----      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         ---    trans  ---         trans  trans  trans
-```
-
-Function / System: hold `A` or `;`, then hold left Space.
+Function / System: hold `A` or `;`, then hold left Alt.
 
 ```text
 ---      ---    ---    ---    ---    ---        F12    F7     F8     F9     ---    DEL
 ---      ---    ---    ---    ---    ---        F11    F4     F5     F6     ---    COLE
 ---      ---    ---    ---    ---    ---        F10    F1     F2     F3     ---    ---
-                         ---    ---    trans       trans  trans  trans
+                         ---    trans  ---         trans  trans  trans
 ```
 
 Press `COLE` to toggle Colemak.
 
-## Tap / Hold / Double Tap
+Mnemonic snippets on Base/Colemak: double tap the letter, then hold the second
+tap.
 
 ```text
-Physical key       Tap       Hold       Double tap
---------------------------------------------------
+H = Home
+W = Work
+P = Phone
+M = Meeting
+E = Email
+N = Name
+```
+
+## Tap / Hold / Double-Tap-Hold
+
+```text
+Physical key       Tap       Hold       Double-tap-hold
+-------------------------------------------------------
 Tab                Tab       Esc        Alt+F4
 /                  /         \          |
 Symbols (          (         [          {
 Symbols )          )         ]          }
 Numbers 2          2         ,          <
 Numbers 3          3         .          >
+Navigation I       Up        PgUp       GUI+Up on double-tap-hold
+Navigation J       Left      Home       GUI+Left on double-tap-hold
+Navigation K       Down      PgDn       GUI+Down on double-tap-hold
+Navigation L       Right     End        GUI+Right on double-tap-hold
 ```
 
-## Current Timing Trial
+## Current Physical Trial
 
 - `F` and `J` are home-row Shift keys: tap for `f`/`j`, hold for Shift.
+- Base Space and Enter are Shift keys on hold. In Numbers, left Space holds
+  Symbols while Enter remains Shift.
 - Current trial: `F`/`J` do not become Shift immediately just because another
   key is pressed.
 - Auto-caps trial: after a word plus `. `, `? `, or `! `, the next letter is
@@ -205,6 +221,17 @@ Numbers 3          3         .          >
 - Also check intentional Shift use such as `F + /` for `?` and `F + I` for
   capital `I`.
 
+After flashing, test:
+
+- Space tap = space; Space hold + letter = capital.
+- Enter tap = enter; Enter hold + letter = capital.
+- Navigation `I/J/K/L` tap = arrows.
+- Navigation `I/J/K/L` hold = PgUp/Home/PgDn/End.
+- Navigation `I/J/K/L` double-tap-hold = Windows snap.
+- Media `I/J/K/L` = Volume Up/Mute/Volume Down/Play.
+- `A/; + left Alt` = Function/System.
+- Double-tap-hold `H/W/P/M/E/N` snippets fire only when intended.
+
 ## RGB Meanings
 
 ```text
@@ -213,10 +240,8 @@ Colemak            purple     #3C0073
 Numbers            blue       #0A195F
 Symbols            amber      #693C00
 Navigation         cyan       #00FFFF
-Extremes           yellow     #FFFF00
-Snap               white      #FFFFFF
+MS Styles          yellow     #FFFF00
 Media              dark teal  #052323
-Text snippets      dark pink  #73142D
 Function/System    green      #4B7A16
 Delete cue         red        Backspace key only on command layers with DEL
 ```

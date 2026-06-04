@@ -66,6 +66,12 @@ bool process_spanish_compose(uint16_t keycode, keyrecord_t *record) {
 		case ES_IEXL:
 			send_windows_alt_code("0161");
 			return false;
+		case ES_LDAQ:
+			send_windows_alt_code("0171");
+			return false;
+		case ES_RDAQ:
+			send_windows_alt_code("0187");
+			return false;
 	}
 
 	return true;

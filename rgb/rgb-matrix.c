@@ -36,6 +36,8 @@ static RGB rgb_for_layer(uint8_t layer) {
 			return (RGB){RGB_TXT};
 		case SYS:
 			return (RGB){RGB_SYS};
+		case ESP:
+			return (RGB){RGB_ESP};
 		case CMK:
 			return (RGB){RGB_CMK};
 		default:
@@ -86,6 +88,14 @@ static bool is_left_thumb_space_position(uint8_t row, uint8_t col) {
 	return row == L_THUMB && col == L_INNER;
 }
 
+static bool is_spanish_hold_position(uint8_t row, uint8_t col) {
+	return row == L_BOTTOM && col == L_OUTER;
+}
+
+static bool is_right_spanish_hold_position(uint8_t row, uint8_t col) {
+	return row == R_BOTTOM && col == R_OUTER;
+}
+
 static RGB rgb_dim(RGB rgb) {
 	return (RGB){rgb.r / 5, rgb.g / 5, rgb.b / 5};
 }
@@ -98,18 +108,12 @@ static RGB rgb_for_thumb_hint(uint8_t layer, uint8_t row, uint8_t col) {
 		if (is_left_thumb_alt_position(row, col)) {
 			return (RGB){RGB_EXT};
 		}
-		if (is_left_thumb_space_position(row, col)) {
-			return (RGB){RGB_SNP};
-		}
 	}
 	if (layer == SYM) {
 		if (is_left_thumb_gui_position(row, col)) {
 			return (RGB){RGB_MED};
 		}
 		if (is_left_thumb_alt_position(row, col)) {
-			return (RGB){RGB_TXT};
-		}
-		if (is_left_thumb_space_position(row, col)) {
 			return (RGB){RGB_SYS};
 		}
 	}
@@ -156,7 +160,9 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 		case TXT:
 			return (row == L_HOME && col == L_PINKY) || is_left_thumb_alt_position(row, col);
 		case SYS:
-			return (row == L_HOME && col == L_PINKY) || is_left_thumb_space_position(row, col);
+			return (row == L_HOME && col == L_PINKY) || is_left_thumb_alt_position(row, col);
+		case ESP:
+			return is_spanish_hold_position(row, col) || is_right_spanish_hold_position(row, col);
 		default:
 			return false;
 	}
