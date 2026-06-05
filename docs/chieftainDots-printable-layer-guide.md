@@ -127,7 +127,7 @@ Navigation: hold `D` or `K`, then hold left GUI.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    UP     ---    ---    DEL
----      ---    ---    CTRL   SHIFT  ---        ---    LEFT   DOWN   RIGHT  ---    ---
+---      ---    ---    ---    CTRL   ---        ---    LEFT   DOWN   RIGHT  ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
                          trans  ALT    SHIFT       ENTER  RALT  MENU
 ```

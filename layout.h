@@ -89,8 +89,8 @@
 #define _NAV \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, NAV_UP_DANCE, XXXXXXX, XXXXXXX, KC_DEL,   \
-/* Home:   ---    ---    ---    CTRL   SHIFT  ---      ---    LEFT   DOWN   RIGHT  ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, NAV_LEFT_DANCE, NAV_DOWN_DANCE, NAV_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
+/* Home:   ---    ---    ---    ---    CTRL   ---      ---    LEFT   DOWN   RIGHT  ---    ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, XXXXXXX,     XXXXXXX, NAV_LEFT_DANCE, NAV_DOWN_DANCE, NAV_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
