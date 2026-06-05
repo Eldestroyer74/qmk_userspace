@@ -4,6 +4,7 @@
 #include "eldestroyer74.h"
 #include "features/spanish_compose.h"
 #include "features/text_stubs.h"
+#include "features/user_keycodes.h"
 
 #ifdef CONSOLE_ENABLE
 #	include "print.h"
@@ -36,9 +37,6 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef FLOW_TAP_TERM
 uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_keycode) {
-	if (keycode == HM_F || keycode == HM_J) {
-		return 0;
-	}
 	return is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode) ? FLOW_TAP_TERM : 0;
 }
 #endif
@@ -53,13 +51,8 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 
 
 #ifdef HOLD_ON_OTHER_KEY_PRESS_PER_KEY
-static inline bool is_eager_hold_key(uint16_t keycode) {
-	return keycode == HM_F || keycode == HM_J;
-}
-
-// Keep hold-on-other-key-press disabled for typing keys. Shift mod-taps rely on
-// permissive hold, Flow Tap, and Chordal Hold so ordinary rolls like "fo" do not
-// become accidental shifted letters.
+// Keep hold-on-other-key-press disabled for typing keys; thumb Shift remains
+// deliberate instead of firing on ordinary rolls.
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 	return false;
 }
@@ -119,6 +112,11 @@ static bool auto_caps_trial_word_safe = true;
 static char auto_caps_context_word[9];
 static uint8_t auto_caps_context_word_len;
 static bool auto_caps_context_word_safe = true;
+static bool delayed_alt_pending;
+static bool delayed_alt_registered;
+static bool delayed_alt_blocked;
+static bool delayed_alt_space_blocked;
+extern bool spanish_language_switch_mode;
 
 static uint16_t base_tap_keycode(uint16_t keycode) {
 	if (IS_QK_LAYER_TAP(keycode)) {
@@ -132,6 +130,82 @@ static uint16_t base_tap_keycode(uint16_t keycode) {
 
 static bool is_shift_trial_alpha(uint16_t keycode) {
 	return KC_A <= keycode && keycode <= KC_Z;
+}
+
+static bool is_shift_keycode(uint16_t keycode) {
+	uint16_t tap_key = base_tap_keycode(keycode);
+
+	return keycode == KC_LSFT || keycode == KC_RSFT || keycode == THUMB_SPACE_SHIFT ||
+	       keycode == THUMB_ENTER_SHIFT || tap_key == KC_LSFT || tap_key == KC_RSFT;
+}
+
+static bool is_space_keycode(uint16_t keycode) {
+	return base_tap_keycode(keycode) == KC_SPC;
+}
+
+static void register_delayed_alt(void) {
+	if (!delayed_alt_registered) {
+		register_code(KC_LALT);
+		delayed_alt_registered = true;
+	}
+}
+
+static void unregister_delayed_alt(void) {
+	if (delayed_alt_registered) {
+		unregister_code(KC_LALT);
+	}
+	delayed_alt_registered = false;
+	delayed_alt_pending = false;
+	delayed_alt_blocked = false;
+	delayed_alt_space_blocked = false;
+}
+
+static bool process_delayed_alt(uint16_t keycode, keyrecord_t *record) {
+	if (keycode == DELAYED_LALT) {
+		if (record->event.pressed) {
+			delayed_alt_pending = true;
+			delayed_alt_registered = false;
+			delayed_alt_blocked = false;
+			delayed_alt_space_blocked = false;
+		} else {
+			if (delayed_alt_pending && !delayed_alt_registered && !delayed_alt_blocked) {
+				tap_code(KC_LALT);
+			}
+			unregister_delayed_alt();
+		}
+		return false;
+	}
+
+	if (delayed_alt_pending && !delayed_alt_registered && record->event.pressed && is_space_keycode(keycode)) {
+		delayed_alt_blocked = true;
+		delayed_alt_space_blocked = true;
+		return true;
+	}
+
+	if (delayed_alt_pending && !delayed_alt_registered && record->event.pressed && is_shift_keycode(keycode)) {
+		delayed_alt_blocked = true;
+		return true;
+	}
+
+	if (delayed_alt_pending && !delayed_alt_registered && record->event.pressed && !delayed_alt_space_blocked) {
+		register_delayed_alt();
+	}
+	return true;
+}
+
+static bool is_language_switch_traverse_key(keyrecord_t *record, uint16_t keycode) {
+	return is_space_keycode(keycode) || (record->event.key.row == 5 && record->event.key.col == 3);
+}
+
+static bool process_spanish_language_switch(uint16_t keycode, keyrecord_t *record) {
+	if (!spanish_language_switch_mode || !is_language_switch_traverse_key(record, keycode)) {
+		return true;
+	}
+
+	if (record->event.pressed) {
+		tap_code(KC_SPC);
+	}
+	return false;
 }
 
 static bool is_spanish_trial_alpha(uint16_t keycode) {
@@ -334,13 +408,17 @@ static void auto_caps_trial_clear_all(void) {
 }
 
 #ifdef CONSOLE_ENABLE
+static bool is_home_row_shift_trial_key(uint16_t keycode) {
+	return false;
+}
+
 static void log_shift_trial(uint16_t keycode, keyrecord_t *record) {
 	if (!record->event.pressed) {
 		return;
 	}
 
 	uint16_t tap_key = base_tap_keycode(keycode);
-	if (keycode == HM_F || keycode == HM_J) {
+	if (is_home_row_shift_trial_key(keycode)) {
 		if (shift_trial_pending) {
 			shift_trial_flush();
 		}
@@ -682,6 +760,14 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 	process_auto_caps_trial(keycode, record);
 
 	if (!process_spanish_compose(keycode, record)) {
+		return false;
+	}
+
+	if (!process_delayed_alt(keycode, record)) {
+		return false;
+	}
+
+	if (!process_spanish_language_switch(keycode, record)) {
 		return false;
 	}
 

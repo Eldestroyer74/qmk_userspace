@@ -3,6 +3,9 @@
 
 #include "rgb-matrix.h"
 
+extern bool spanish_language_switch_mode;
+extern uint8_t spanish_language_switch_source;
+
 // Assign left and right keys to KB2040 LEDs on each side
 #ifdef CONVERT_TO_KB2040
 led_config_t g_led_config = { {
@@ -96,8 +99,18 @@ static bool is_right_spanish_hold_position(uint8_t row, uint8_t col) {
 	return row == R_BOTTOM && col == R_OUTER;
 }
 
-static RGB rgb_dim(RGB rgb) {
-	return (RGB){rgb.r / 5, rgb.g / 5, rgb.b / 5};
+static bool is_navigation_down_position(uint8_t row, uint8_t col) {
+	return row == R_HOME && col == R_MIDDLE;
+}
+
+static bool is_active_spanish_language_source(uint8_t row, uint8_t col) {
+	if (spanish_language_switch_source == 1) {
+		return is_spanish_hold_position(row, col);
+	}
+	if (spanish_language_switch_source == 2) {
+		return is_right_spanish_hold_position(row, col);
+	}
+	return false;
 }
 
 static RGB rgb_for_thumb_hint(uint8_t layer, uint8_t row, uint8_t col) {
@@ -105,23 +118,30 @@ static RGB rgb_for_thumb_hint(uint8_t layer, uint8_t row, uint8_t col) {
 		if (is_left_thumb_gui_position(row, col)) {
 			return (RGB){RGB_NAV};
 		}
-		if (is_left_thumb_alt_position(row, col)) {
-			return (RGB){RGB_EXT};
-		}
 	}
 	if (layer == SYM) {
 		if (is_left_thumb_gui_position(row, col)) {
-			return (RGB){RGB_MED};
+			return (RGB){RGB_EXT};
 		}
-		if (is_left_thumb_alt_position(row, col)) {
-			return (RGB){RGB_SYS};
+	}
+	if (layer == SYS) {
+		if (is_left_thumb_gui_position(row, col)) {
+			return (RGB){RGB_MED};
 		}
 	}
 	return (RGB){RGB_OFF};
 }
 
-static bool is_number_symbol_shift_position(uint8_t row, uint8_t col) {
-	return row == L_HOME && col == L_INDEX;
+static bool is_left_number_anchor_position(uint8_t row, uint8_t col) {
+	return row == L_HOME && col == L_MIDDLE;
+}
+
+static bool is_left_symbol_anchor_position(uint8_t row, uint8_t col) {
+	return row == L_HOME && col == L_RING;
+}
+
+static bool is_left_function_anchor_position(uint8_t row, uint8_t col) {
+	return row == L_HOME && col == L_PINKY;
 }
 
 static uint16_t keycode_at_position(uint8_t layer, uint8_t row, uint8_t col) {
@@ -148,19 +168,18 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 
 	switch (layer) {
 		case NAV:
-			// Completed S/L chords keep the anchor and selected thumb lit.
-			return (row == L_HOME && col == L_INDEX) || is_left_thumb_gui_position(row, col);
+			// Completed anchor+GUI chords keep the anchor and selected thumb lit.
+			return is_left_number_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case SNP:
-			return (row == L_HOME && col == L_INDEX) || is_left_thumb_space_position(row, col);
+			return is_left_thumb_gui_position(row, col);
 		case EXT:
-			return (row == L_HOME && col == L_INDEX) || is_left_thumb_alt_position(row, col);
+			return is_left_symbol_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case MED:
-			// Completed A/; chords keep the anchor and selected thumb lit.
-			return (row == L_HOME && col == L_PINKY) || is_left_thumb_gui_position(row, col);
+			return is_left_function_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case TXT:
-			return (row == L_HOME && col == L_PINKY) || is_left_thumb_alt_position(row, col);
+			return is_left_symbol_anchor_position(row, col) || is_left_thumb_alt_position(row, col);
 		case SYS:
-			return (row == L_HOME && col == L_PINKY) || is_left_thumb_alt_position(row, col);
+			return is_left_function_anchor_position(row, col) || is_left_thumb_alt_position(row, col);
 		case ESP:
 			return is_spanish_hold_position(row, col) || is_right_spanish_hold_position(row, col);
 		default:
@@ -181,11 +200,14 @@ static RGB rgb_for_position(uint8_t layer, uint8_t row, uint8_t col) {
 	RGB rgb = (RGB){RGB_OFF};
 	uint16_t keycode = keycode_at_position(layer, row, col);
 
+	if (spanish_language_switch_mode &&
+	    (is_active_spanish_language_source(row, col) || is_navigation_down_position(row, col) || is_left_thumb_space_position(row, col))) {
+		return (RGB){RGB_ESP};
+	}
+
 	if (layer > CMK && rgb_should_light_command_key(layer, row, col, keycode)) {
 		rgb = rgb_for_layer(layer);
-		if (layer == NUM && is_number_symbol_shift_position(row, col)) {
-			rgb = rgb_dim((RGB){RGB_SYM});
-		} else if (layer != NUM && layer != SYM && is_delete_key(keycode)) {
+		if (layer != NUM && layer != SYM && is_delete_key(keycode)) {
 			rgb = (RGB){RGB_CAPS};
 		} else if (is_colemak_toggle_key(keycode)) {
 			rgb = (RGB){RGB_CMK};

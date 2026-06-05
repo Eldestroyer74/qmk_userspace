@@ -4,32 +4,25 @@
 #include "features/tap_dance.h"
 #include "features/spanish_compose.h"
 #include "features/text_stubs.h"
+#include "features/user_keycodes.h"
 
 // Home row mod-tap macros
 #define HM_A	/*LSFT_T(KC_A) LGUI_T(KC_A)*/ LT(SYM, KC_A) // SYMBOL
 #define HM_S	/*LALT_T(KC_S)*/ LT(NUM, KC_S) // NUMBERS
 #define HM_D	LCTL_T(KC_D)
-#define HM_F	/*LGUI_T(KC_F)*/ LSFT_T(KC_F) 
-#define HM_J	/*LGUI_T(KC_J)*/ RSFT_T(KC_J)
+#define HM_F	/*LGUI_T(KC_F)*/ LCTL_T(KC_F)
+#define HM_J	/*LGUI_T(KC_J)*/ RCTL_T(KC_J)
 #define HM_K	RCTL_T(KC_K)
 #define HM_L	/*LALT_T(KC_L)*/ LT(NUM, KC_L) // NUMBERS
 //#define HM_QUOT	/*LSFT_T(KC_QUOT) LGUI_T(KC_QUOT)*/ LT(SYM, KC_QUOT)// SYMBOL
 #define HM_SCLN LT(SYM, KC_SCLN)
 //#define HRML(k1,k2,k3,k4) LSFT_T(k1),LALT_T(k2),LCTL_T(k3),LGUI_T(k4)
-#define HRML(k1,k2,k3,k4) LT(SYM, k1),LT(NUM, k2),LCTL_T(k3),LSFT_T(k4)
+#define HRML(k1,k2,k3,k4) LT(SYS, k1), LT(SYM, k2), LT(NUM, k3), LCTL_T(k4)
 //#define HRMR(k1,k2,k3,k4) LGUI_T(k1),LCTL_T(k2),LALT_T(k3),LSFT_T(k4)
-#define HRMR(k1,k2,k3,k4) LSFT_T(k1),LCTL_T(k2),LT(NUM, k3),LT(SYM, k4)
+#define HRMR(k1,k2,k3,k4) RCTL_T(k1), LT(NUM, k2), LT(SYM, k3), LT(SYS, k4)
 
-// Window snap and MS Styles shortcuts. Plain Ctrl/Shift live on NAV so
-// selection remains composable instead of needing a dedicated selection layer.
-#define CS_UP C(S(KC_UP))
-#define CS_DN C(S(KC_DOWN))
-#define CS_LF C(S(KC_LEFT))
-#define CS_RI C(S(KC_RIGHT))
-#define G_UP G(KC_UP)
-#define G_DN G(KC_DOWN)
-#define G_LF G(KC_LEFT)
-#define G_RI G(KC_RIGHT)
+// MS Styles shortcuts. Navigation/Snap gesture behavior lives in tap_dance.c
+// so the current trial is easy to roll back without reshaping the layer map.
 #define PPT_STYLE_UP A(S(KC_UP))
 #define PPT_STYLE_DN A(S(KC_DOWN))
 #define PPT_STYLE_LF A(S(KC_LEFT))
@@ -42,7 +35,9 @@
 #define THUMB_SPACE_SHIFT LSFT_T(KC_SPC)
 #define THUMB_ENTER_SHIFT RSFT_T(KC_ENT)
 #define NUM_SPACE_SYMBOLS LT(SYM, KC_SPC)
+#define NUM_ENTER_SYMBOLS LT(SYM, KC_ENT)
 #define RIGHT_THUMBS THUMB_ENTER_SHIFT, KC_RALT, KC_APP
+#define NUM_RIGHT_THUMBS NUM_ENTER_SYMBOLS, KC_RALT, KC_APP
 
 // Layer ids used by corne.json.
 #define BSE 0
@@ -64,9 +59,9 @@
 /* Home:   CAPS   A      S      D      F      G        H      J      K      L      ;      '    */\
 	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
 /* Bottom: ES     Z      X      C      V      B        N      M      ,      .      /      ES   */\
-	MO(ESP),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, MO(ESP), \
+	SPANISH_LEFT_DANCE, KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, SPANISH_RIGHT_DANCE, \
 /* Thumbs:                         GUI    ALT    SPC/SFT  ENT/SFT RALT   MENU */\
-	KC_LGUI, KC_LALT, THUMB_SPACE_SHIFT, THUMB_ENTER_SHIFT, KC_RALT, KC_APP
+	BASE_GUI_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, THUMB_ENTER_SHIFT, KC_RALT, KC_APP
 
 #define _COLE \
 /* Top:    TAB    Q      W      F      P      G        J      L      U      Y      '      BSPC */\
@@ -74,22 +69,23 @@
 /* Home:   CAPS   A      R      S      T      D        H      N      E      I      O      ;    */\
 	KC_CAPS,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,        KC_H,    KC_N,    KC_E,    KC_I,    KC_O,   KC_SCLN,    \
 /* Bottom: ES     Z      X      C      V      B        K      M      ,      .      /      ES   */\
-	MO(ESP),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, MO(ESP), \
+	SPANISH_LEFT_DANCE, KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, SPANISH_RIGHT_DANCE, \
 /* Thumbs:                         trans  trans  trans    trans  trans  trans */\
 	                            _______, _______, _______,     _______, _______, _______
 
-// S/L-held command layers: Numbers combines top-row memory with a right-hand pad.
+// D/K-held command layer: Numbers combines top-row memory with a right-hand pad.
 #define _NUMB \
 /* Top:    `      1      2      3      4      5        6      7      8      9      0      -    */\
 	KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,        KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, \
-/* Home:   ---    ---    ---    ---    SYM    ---      ---    4      5      6      =      ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO(SYM), XXXXXXX,     XXXXXXX, KC_4,    KC_5,    KC_6,    KC_EQL,  XXXXXXX, \
-/* Bottom: ---    ---    ---    ---    ---    ---      ---    1      2/,/<  3/./>  /      ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_1,    NUM_TWO_COMMA_LT, NUM_THREE_DOT_GT, KC_SLSH, XXXXXXX, \
-/* Thumbs:                         NAV    MS     SPC/SYM  ENTER  RALT   MENU */\
-	                            MO(NAV), MO(EXT), NUM_SPACE_SYMBOLS, RIGHT_THUMBS
+/* Home:   ---    ---    ---    ---    ---    ---      ---    4      5      6      =      ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_4,    KC_5,    KC_6,    KC_EQL,  XXXXXXX, \
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    1      2/,/<  3/./>  //\//| ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_1,    NUM_TWO_COMMA_LT, NUM_THREE_DOT_GT, SLASH_PIPE, XXXXXXX, \
+/* Thumbs:                         NAV    ALT    SPC/SYM  ENT/SYM RALT   MENU */\
+	                            NUM_GUI_NAV_SNAP, DELAYED_LALT, NUM_SPACE_SYMBOLS, NUM_RIGHT_THUMBS
 
-// S/L + left GUI thumb navigation: tap arrows, hold extremes, double-tap-hold snap.
+// D/K + left GUI thumb navigation: tap arrows, hold extremes,
+// double-tap selection movement, double-tap-hold extreme selection.
 #define _NAV \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, NAV_UP_DANCE, XXXXXXX, XXXXXXX, KC_DEL,   \
@@ -97,21 +93,22 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, KC_LSFT, XXXXXXX,     XXXXXXX, NAV_LEFT_DANCE, NAV_DOWN_DANCE, NAV_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ---    ---      ENTER  RALT   MENU */\
-	                            _______, XXXXXXX, XXXXXXX,     RIGHT_THUMBS
+/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
+	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
-// S/L + left Space thumb snap: GUI+arrows follow the same I/J/K/L shape.
+// Snap is entered by double-tap-holding an exposed GUI key. The gesture keeps
+// GUI held, so this layer sends plain arrows for repeated Windows traversal.
 #define _SNP \
-/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    G-UP   ---    ---    DEL  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, G_UP,    XXXXXXX, XXXXXXX, KC_DEL,   \
-/* Home:   ---    ---    ---    ---    ---    ---      ---    G-LEFT G-DOWN G-RIGHT ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, G_LF,    G_DN,    G_RI,    XXXXXXX, XXXXXXX, \
+/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
+/* Home:   ---    ---    ---    ---    ---    ---      ---    LEFT   DOWN   RIGHT  ---    ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    ---    trans    ENTER  RALT   MENU */\
-	                            XXXXXXX, XXXXXXX, _______,     RIGHT_THUMBS
+/* Thumbs:                         trans  ---    trans    ENTER  RALT   MENU */\
+	                            _______, XXXXXXX, _______,     RIGHT_THUMBS
 
-// S/L + left Alt thumb MS Styles: PowerPoint paragraph/list level movement.
+// Symbols + left GUI thumb MS Styles: PowerPoint paragraph/list level movement.
 #define _EXTR \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    AS-UP  ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, PPT_STYLE_UP, XXXXXXX, XXXXXXX, KC_DEL,   \
@@ -119,19 +116,19 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, PPT_STYLE_LF, PPT_STYLE_DN, PPT_STYLE_RI, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
-	                            XXXXXXX, _______, XXXXXXX,     RIGHT_THUMBS
+/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
+	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
 #define _SYMB \
 /* Top:    ~      !      @      #      $      %        ^      &      *      (/[/{  )/]/}  _    */\
 	KC_TILD,  KC_EXLM, KC_AT,  KC_HASH, KC_DLR,   KC_PERC,    KC_CIRC, KC_AMPR, KC_ASTR, LEFT_BRACKET, RIGHT_BRACKET, KC_UNDS, \
 /* Home:   ---    ---    ---    ---    ---    ---      ---    $      %      ^      +      ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_DLR,  KC_PERC, KC_CIRC, KC_PLUS, XXXXXXX, \
-/* Bottom: ---    ---    ---    ---    ---    ---      ---    !      @      #      ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         MED    SYS    SHIFT    ENTER  RALT   MENU */\
-	                            MO(MED), MO(SYS), THUMB_SPACE_SHIFT, RIGHT_THUMBS
-// A/; + left GUI thumb media: compact arrow-shaped meeting/audio controls.
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    !      @      #      //\//| ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, SLASH_PIPE, XXXXXXX, \
+/* Thumbs:                         MS     ALT    SHIFT    ENTER  RALT   MENU */\
+	                            SYM_GUI_EXT_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
+// Function + left GUI thumb media: compact arrow-shaped meeting/audio controls.
 #define _MEDI \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    VOL+   ---    ---    DEL */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,  \
@@ -139,8 +136,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_MUTE, KC_VOLD, KC_MPLY, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ---    ---      ENTER  RALT   MENU */\
-	                            _______, XXXXXXX, XXXXXXX,    RIGHT_THUMBS
+/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
+	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
 // Text stubs keep personal snippets in the same right-hand I/J/K/L shape.
 #define _TEXT \
@@ -153,16 +150,16 @@
 /* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
 	                            XXXXXXX, _______, XXXXXXX,    RIGHT_THUMBS
 
-// System/function keys mirror the number-pad shape.
+// Function keys mirror the Numbers layer's top row and right-hand pad.
 #define _SYST \
-/* Top:    ---    ---    ---    ---    ---    ---      F12    F7     F8     F9     ---    DEL */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F12,  KC_F7,   KC_F8,   KC_F9,   XXXXXXX, KC_DEL,  \
+/* Top:    TAB    F1     F2     F3     F4     F5       F6     F7     F8     F9     F10    DEL */\
+	TAB_ESC_CLOSE, KC_F1, KC_F2, KC_F3, KC_F4,   KC_F5,       KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_DEL,  \
 /* Home:   ---    ---    ---    ---    ---    ---      F11    F4     F5     F6     ---    COLE */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F11,  KC_F4,   KC_F5,   KC_F6,   XXXXXXX, TG(CMK), \
-/* Bottom: ---    ---    ---    ---    ---    ---      F10    F1     F2     F3     ---    --- */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     KC_F10,  KC_F1,   KC_F2,   KC_F3,   XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
-	                            XXXXXXX, _______, XXXXXXX,    RIGHT_THUMBS
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    F1     F2     F3     F12    --- */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  XXXXXXX, \
+/* Thumbs:                         MED    ALT    SHIFT    ENTER  RALT   MENU */\
+	                            SYS_GUI_MED_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
 // Spanish layer: hold either outside bottom key, then press the matching letter.
 #define _SPAN \

@@ -3,13 +3,17 @@
 ## Current Summary
 
 ChieftainDots is currently a Corne-first keyboard project built from
-`keymaps/corne.json`. The current model uses two typing layers, two home-row
-anchor families, explicit command layers, RGB as state feedback, and OLED as a
+`keymaps/corne.json`. The current compiled trial uses two typing layers, three
+home-row anchors, one GUI child per anchor, RGB as state feedback, and OLED as a
 display subsystem rather than an owner of key behavior.
 
 - Base and Colemak are the only layers wrapped with `HRM(...)`.
-- `S`/`L` own Numbers, Navigation, Extremes, and Snap.
-- `A`/`;` own Symbols, Media, Text Snippets, and Function/System.
+- `D`/`K` own Numbers; `Numbers + GUI` owns Navigation.
+- `S`/`L` own Symbols; `Symbols + GUI` owns MS Styles.
+- `A`/`;` own Function/System; `Function + GUI` owns Media.
+- Text snippets are mnemonic double-tap-hold gestures on Base/Colemak letters,
+  not a daily layer chord.
+- Spanish stays on the lower corners, with double-tap language switching.
 - Future keyboard ports should add fresh recipes and wrappers around this model.
 - Historical Filterpaper recipes are reference material only.
 
@@ -42,25 +46,26 @@ recipes should be created from the current layer model when a real port starts.
   The old right-thumb Function position now sends the Application/context-menu
   key for typo fixes and right-click style menus.
 - Colemak: alternate typing layer toggled from the Apps/System layer.
-- Numbers/Commands: numbers and calculator operators on the right, accessed
-  from `S` or `L`.
-- Symbols: top-row punctuation and shifted symbols, with lower rows transparent
-  so Base/Colemak letters still pass through while symbol access is held.
-- Legacy Function: removed from the active Corne build recipe. Its useful jobs
-  have moved into Numbers/Commands, Media, Text Snippets, Apps/System, and Base
-  Menu.
+- Numbers: number-row memory plus a right-hand number pad, accessed from `D` or
+  `K`. Holding either thumb while in Numbers reaches Symbols.
+- Symbols: top-row punctuation and shifted symbols, accessed from `S` or `L`.
+- Function/System: function keys in a Numbers-like shape, accessed from `A` or
+  `;`.
 - Navigation: arrow movement using the `I/J/K/L` spatial shape, accessed by
-  holding `S` or `L` and the left GUI thumb.
-- Extremes: Home/Page/End movement using the same `I/J/K/L` shape, accessed by
-  holding `S` or `L` and the left Alt thumb.
-- Snap: Windows GUI+Arrow window snapping using the same `I/J/K/L` shape,
-  accessed by holding `S` or `L` and the left Space thumb.
-- Media: volume and track controls, accessed by holding `A` and the left GUI
-  thumb.
-- Text Snippets: safe-to-type personal snippets, accessed by holding `A` and
-  the left Alt thumb. Private string values must live in ignored local files.
-- Apps/System: persistent application/system toggles such as Colemak, accessed
-  by holding `A` and the left Space thumb.
+  holding Numbers and the left GUI thumb. Tap sends arrows, hold sends extremes,
+  double tap sends selection movement, and double-tap-hold sends extreme
+  selection.
+- MS Styles: PowerPoint paragraph/list style movement using `Alt+Shift+Arrow`,
+  accessed by holding Symbols and the left GUI thumb.
+- Media: volume and play controls, accessed by holding Function/System and the
+  left GUI thumb.
+- Snap: Windows snap traversal, accessed by double-tap-holding any exposed GUI
+  key. GUI stays held while `I/J/K/L` send plain arrows.
+- Text Snippets: safe-to-type personal snippets on mnemonic Base/Colemak
+  double-tap-hold letters. Private string values must live in ignored local
+  files.
+- Spanish: accented letters, punctuation, angle quotes, and input-language
+  switching from the lower-corner Spanish keys.
 
 ## Cross-Layer Key Roles
 

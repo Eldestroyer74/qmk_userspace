@@ -17,8 +17,10 @@ The current source of truth is this personal userspace repository, not upstream
 - Active keyboard: `crkbd/rev1`.
 - Active recipe: `keymaps/corne.json`.
 - Active layout wrapper: `LAYOUT_crkbd_w`.
-- Active layer model: Base/Colemak typing layers, S/L Numbers family, A/;
-  Symbols family, RGB as state feedback, and OLED kept for future review.
+- Active layer model: Base/Colemak typing layers plus a compiled three-anchor
+  trial: D/K = Numbers, S/L = Symbols, A/; = Function. Each anchor has one GUI
+  child layer: Navigation, MS Styles, and Media. RGB is state feedback, and OLED
+  is kept for future review.
 - Removed inherited support: stale Cradio and Technik recipes, stale layout
   converters, the old mixed Function layer, Mouse layer, and compiled legacy
   `TH_*` clipboard helpers.
