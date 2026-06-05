@@ -421,7 +421,7 @@ This deliberately treats Play/Pause and Mute like the calculator/media operator
 pair: `Y` carries the positive/additive action and `H` carries the
 negative/suppressing action. Right Shift is unused on this layer.
 
-Implemented Text Snippets layout:
+Historical Text Snippets layer layout:
 
 ```text
 Hold A, then hold left Alt thumb:
@@ -432,6 +432,48 @@ H = Work address   J = Meeting link   K = Email   L = Name
 The committed source must not contain private address values. Local private
 values live in `features/text_stubs_private.h`, which is ignored by git.
 ```
+
+Current mnemonic text snippets:
+
+```text
+Double tap and hold the second tap on Base/Colemak:
+
+G = Personal email
+H = Home address
+W = Work address
+P = Phone
+M = Meeting link
+E = Email
+N = Name
+```
+
+Private snippet values are intentionally split from the committed source:
+
+- Committed source defines the public contract in `features/text_stubs.h`.
+- `features/text_stubs_private.example.h` is the safe template.
+- `features/text_stubs_private.h` is ignored by git and holds the real values.
+- If the ignored file is missing, firmware falls back to placeholders such as
+  `[personal-email]`, `[home-address]`, and `[meeting-link]`.
+
+To recreate the ignored file, copy the example file and replace only the string
+contents with local values:
+
+```c
+#pragma once
+
+#define TEXT_STUB_EMAIL "work@example.com"
+#define TEXT_STUB_PERSONAL_EMAIL "personal@example.com"
+#define TEXT_STUB_PHONE "0000 000 000"
+#define TEXT_STUB_NAME "Your Name"
+#define TEXT_STUB_MEETING "https://example.com/meeting"
+#define TEXT_STUB_WORK "Work address"
+#define TEXT_STUB_HOME "Home address"
+```
+
+Never put real addresses, phone numbers, meeting links, personal email
+addresses, passwords, recovery keys, or private URLs in committed files. Before
+staging text-snippet changes, verify `features/text_stubs_private.h` is still
+ignored and inspect the staged diff for real values.
 
 Implemented Function/System layout:
 
