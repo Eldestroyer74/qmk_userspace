@@ -15,6 +15,8 @@
 extern bool process_spanish_compose(uint16_t keycode, keyrecord_t *record);
 extern void send_windows_alt_code(const char *code);
 
+#define AUTO_CAPS_ENABLE 0
+
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 static uint_fast16_t tap_timer = 0;
 #	define IS_TYPING() (timer_elapsed(tap_timer) < TAPPING_TERM * 1.3)
@@ -95,6 +97,7 @@ static void log_session_probe(void) {
 #endif
 #endif
 
+#if AUTO_CAPS_ENABLE
 enum auto_caps_trial_state {
 	AUTO_CAPS_IDLE,
 	AUTO_CAPS_WORD,
@@ -114,6 +117,7 @@ static bool auto_caps_trial_word_safe = true;
 static char auto_caps_context_word[9];
 static uint8_t auto_caps_context_word_len;
 static bool auto_caps_context_word_safe = true;
+#endif
 static bool delayed_alt_pending;
 static bool delayed_alt_registered;
 static bool delayed_alt_blocked;
@@ -130,9 +134,11 @@ static uint16_t base_tap_keycode(uint16_t keycode) {
 	return keycode;
 }
 
+#if defined(CONSOLE_ENABLE) || AUTO_CAPS_ENABLE
 static bool is_shift_trial_alpha(uint16_t keycode) {
 	return KC_A <= keycode && keycode <= KC_Z;
 }
+#endif
 
 static bool is_shift_keycode(uint16_t keycode) {
 	uint16_t tap_key = base_tap_keycode(keycode);
@@ -241,6 +247,7 @@ static bool process_directional_english_quotes(uint16_t keycode, keyrecord_t *re
 	return true;
 }
 
+#if AUTO_CAPS_ENABLE
 static bool is_spanish_trial_alpha(uint16_t keycode) {
 	return keycode == ES_A || keycode == ES_E || keycode == ES_I || keycode == ES_O || keycode == ES_U || keycode == ES_N ||
 	       keycode == ES_UDIA;
@@ -256,9 +263,11 @@ static bool is_shift_trial_candidate(uint16_t keycode) {
 }
 #endif
 
+#if defined(CONSOLE_ENABLE) || AUTO_CAPS_ENABLE
 static char shift_trial_char(uint16_t keycode) {
 	return 'a' + (keycode - KC_A);
 }
+#endif
 
 static char auto_caps_trial_char(uint16_t keycode) {
 	if (is_shift_trial_alpha(keycode)) {
@@ -281,16 +290,22 @@ static char auto_caps_trial_char(uint16_t keycode) {
 	}
 	return '\0';
 }
+#endif
 
+#if AUTO_CAPS_ENABLE
 static bool is_spanish_opening_punctuation(uint16_t keycode) {
 	return keycode == ES_IQUE || keycode == ES_IEXL;
 }
+#endif
 
+#if defined(CONSOLE_ENABLE) || AUTO_CAPS_ENABLE
 static bool is_shift_trial_boundary(uint16_t keycode) {
 	return keycode == KC_SPC || keycode == KC_ENT || keycode == KC_DOT || keycode == KC_COMM ||
 	       keycode == KC_SCLN || keycode == KC_QUOT || keycode == KC_SLSH || keycode == KC_MINS;
 }
+#endif
 
+#if AUTO_CAPS_ENABLE
 static uint8_t shift_trial_punctuation(uint16_t keycode, uint8_t mods) {
 	if (IS_QK_MODS(keycode)) {
 		mods |= QK_MODS_GET_MODS(keycode);
@@ -322,6 +337,7 @@ static uint8_t shift_trial_punctuation(uint16_t keycode, uint8_t mods) {
 	}
 	return 0;
 }
+#endif
 
 #ifdef CONSOLE_ENABLE
 static void shift_trial_reset_word(void) {
@@ -360,6 +376,7 @@ static void shift_trial_flush(void) {
 }
 #endif
 
+#if AUTO_CAPS_ENABLE
 static void auto_caps_trial_reset_word(void) {
 	auto_caps_trial_word[0] = '\0';
 	auto_caps_trial_word_len = 0;
@@ -439,6 +456,7 @@ static void auto_caps_trial_clear_all(void) {
 	auto_caps_trial_flush();
 	auto_caps_context_reset_word();
 }
+#endif
 
 #ifdef CONSOLE_ENABLE
 static bool is_home_row_shift_trial_key(uint16_t keycode) {
@@ -582,6 +600,7 @@ void suspend_wakeup_init_user(void) {
 }
 #endif
 
+#if AUTO_CAPS_ENABLE
 static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 	if (!record->event.pressed) {
 		return;
@@ -681,6 +700,7 @@ static void process_auto_caps_trial(uint16_t keycode, keyrecord_t *record) {
 		auto_caps_trial_clear_all();
 	}
 }
+#endif
 
 #define TEXT_MNEMONICS_ENABLE 1
 #define TEXT_MNEMONIC_TERM 250
@@ -790,7 +810,9 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 	log_space_probe(keycode, record);
 #endif
 #endif
+#if AUTO_CAPS_ENABLE
 	process_auto_caps_trial(keycode, record);
+#endif
 
 	if (!process_directional_english_quotes(keycode, record)) {
 		return false;

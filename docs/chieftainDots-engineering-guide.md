@@ -10,7 +10,7 @@ the `eldestroyer74` QMK userspace, and the Corne build recipe is
   dependency.
 - Canonical target: `qmk compile users/eldestroyer74/keymaps/corne.json`.
 - Ask before compiling or flashing; only one QMK build should run at a time.
-- Last recorded successful build: 23152 / 28672 bytes, 5520 bytes free.
+- Last recorded successful build: 22392 / 28672 bytes, 6280 bytes free.
 - Future keyboard support starts from a fresh current-model recipe and wrapper,
   not old Filterpaper recipes.
 
@@ -158,7 +158,7 @@ because the toolchain mishandled the space in `Program Files`.
 
 ## Size Pressure
 
-The last recorded Corne build succeeded at 23152 / 28672 bytes, leaving 5520
+The last recorded Corne build succeeded at 22392 / 28672 bytes, leaving 6280
 bytes free. Any feature that adds code must include a size-risk check. If a
 feature pushes the firmware over size, optimize that feature or roll it back
 before starting another one.
