@@ -35,8 +35,6 @@ static RGB rgb_for_layer(uint8_t layer) {
 			return (RGB){RGB_SNP};
 		case MED:
 			return (RGB){RGB_MED};
-		case TXT:
-			return (RGB){RGB_TXT};
 		case SYS:
 			return (RGB){RGB_SYS};
 		case ESP:
@@ -101,6 +99,10 @@ static bool is_right_spanish_hold_position(uint8_t row, uint8_t col) {
 
 static bool is_navigation_down_position(uint8_t row, uint8_t col) {
 	return row == R_HOME && col == R_MIDDLE;
+}
+
+static bool is_navigation_up_position(uint8_t row, uint8_t col) {
+	return row == R_TOP && col == R_MIDDLE;
 }
 
 static bool is_active_spanish_language_source(uint8_t row, uint8_t col) {
@@ -176,8 +178,6 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 			return is_left_symbol_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case MED:
 			return is_left_function_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
-		case TXT:
-			return is_left_symbol_anchor_position(row, col) || is_left_thumb_alt_position(row, col);
 		case SYS:
 			return is_left_function_anchor_position(row, col) || is_left_thumb_alt_position(row, col);
 		case ESP:
@@ -201,7 +201,8 @@ static RGB rgb_for_position(uint8_t layer, uint8_t row, uint8_t col) {
 	uint16_t keycode = keycode_at_position(layer, row, col);
 
 	if (spanish_language_switch_mode &&
-	    (is_active_spanish_language_source(row, col) || is_navigation_down_position(row, col) || is_left_thumb_space_position(row, col))) {
+	    (is_active_spanish_language_source(row, col) || is_navigation_up_position(row, col) || is_navigation_down_position(row, col) ||
+	     is_left_thumb_space_position(row, col))) {
 		return (RGB){RGB_ESP};
 	}
 

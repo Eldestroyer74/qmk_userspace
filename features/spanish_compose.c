@@ -16,7 +16,7 @@ static void tap_windows_alt_digit(char digit) {
 	tap_code(KC_KP_1 + (10 + digit - '1') % 10);
 }
 
-static void send_windows_alt_code(const char *code) {
+void send_windows_alt_code(const char *code) {
 	uint8_t mods = get_mods();
 
 	clear_mods();

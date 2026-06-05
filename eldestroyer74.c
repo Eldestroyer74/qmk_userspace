@@ -3,6 +3,7 @@
 
 #include "eldestroyer74.h"
 #include "features/spanish_compose.h"
+#include "features/tap_dance.h"
 #include "features/text_stubs.h"
 #include "features/user_keycodes.h"
 
@@ -12,6 +13,7 @@
 #endif
 
 extern bool process_spanish_compose(uint16_t keycode, keyrecord_t *record);
+extern void send_windows_alt_code(const char *code);
 
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 static uint_fast16_t tap_timer = 0;
@@ -139,6 +141,14 @@ static bool is_shift_keycode(uint16_t keycode) {
 	       keycode == THUMB_ENTER_SHIFT || tap_key == KC_LSFT || tap_key == KC_RSFT;
 }
 
+static bool has_shift_modifier(void) {
+	uint8_t mods = get_mods() | get_weak_mods();
+#ifndef NO_ACTION_ONESHOT
+	mods |= get_oneshot_mods();
+#endif
+	return mods & MOD_MASK_SHIFT;
+}
+
 static bool is_space_keycode(uint16_t keycode) {
 	return base_tap_keycode(keycode) == KC_SPC;
 }
@@ -193,19 +203,42 @@ static bool process_delayed_alt(uint16_t keycode, keyrecord_t *record) {
 	return true;
 }
 
-static bool is_language_switch_traverse_key(keyrecord_t *record, uint16_t keycode) {
+static bool is_language_switch_forward_key(keyrecord_t *record, uint16_t keycode) {
 	return is_space_keycode(keycode) || (record->event.key.row == 5 && record->event.key.col == 3);
 }
 
+static bool is_language_switch_backward_key(keyrecord_t *record) {
+	return record->event.key.row == 4 && record->event.key.col == 3;
+}
+
 static bool process_spanish_language_switch(uint16_t keycode, keyrecord_t *record) {
-	if (!spanish_language_switch_mode || !is_language_switch_traverse_key(record, keycode)) {
+	if (!spanish_language_switch_mode) {
 		return true;
 	}
 
 	if (record->event.pressed) {
-		tap_code(KC_SPC);
+		if (is_language_switch_backward_key(record)) {
+			tap_code16(S(KC_SPC));
+			return false;
+		}
+		if (is_language_switch_forward_key(record, keycode)) {
+			tap_code(KC_SPC);
+			return false;
+		}
 	}
-	return false;
+	return !(is_language_switch_backward_key(record) || is_language_switch_forward_key(record, keycode));
+}
+
+static bool process_directional_english_quotes(uint16_t keycode, keyrecord_t *record) {
+	if (!record->event.pressed || !has_shift_modifier()) {
+		return true;
+	}
+
+	if (keycode == KC_QUOT) {
+		send_windows_alt_code("0148");
+		return false;
+	}
+	return true;
 }
 
 static bool is_spanish_trial_alpha(uint16_t keycode) {
@@ -759,6 +792,10 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #endif
 	process_auto_caps_trial(keycode, record);
 
+	if (!process_directional_english_quotes(keycode, record)) {
+		return false;
+	}
+
 	if (!process_spanish_compose(keycode, record)) {
 		return false;
 	}
@@ -776,39 +813,6 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 		return false;
 	}
 #endif
-
-	switch (keycode) {
-		case TXT_EMAIL:
-			if (record->event.pressed) {
-				SEND_STRING(TEXT_STUB_EMAIL);
-			}
-			return false;
-		case TXT_PHONE:
-			if (record->event.pressed) {
-				SEND_STRING(TEXT_STUB_PHONE);
-			}
-			return false;
-		case TXT_NAME:
-			if (record->event.pressed) {
-				SEND_STRING(TEXT_STUB_NAME);
-			}
-			return false;
-		case TXT_MEET:
-			if (record->event.pressed) {
-				SEND_STRING(TEXT_STUB_MEETING);
-			}
-			return false;
-		case TXT_WORK:
-			if (record->event.pressed) {
-				SEND_STRING(TEXT_STUB_WORK);
-			}
-			return false;
-		case TXT_HOME:
-			if (record->event.pressed) {
-				SEND_STRING(TEXT_STUB_HOME);
-			}
-			return false;
-	}
 
 	if (record->event.pressed) {
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)

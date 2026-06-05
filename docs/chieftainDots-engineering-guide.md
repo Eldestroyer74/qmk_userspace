@@ -10,7 +10,7 @@ the `eldestroyer74` QMK userspace, and the Corne build recipe is
   dependency.
 - Canonical target: `qmk compile users/eldestroyer74/keymaps/corne.json`.
 - Ask before compiling or flashing; only one QMK build should run at a time.
-- Last recorded successful build: 27602 / 28672 bytes, 1070 bytes free.
+- Last recorded successful build: 23152 / 28672 bytes, 5520 bytes free.
 - Future keyboard support starts from a fresh current-model recipe and wrapper,
   not old Filterpaper recipes.
 
@@ -158,7 +158,7 @@ because the toolchain mishandled the space in `Program Files`.
 
 ## Size Pressure
 
-The last recorded Corne build succeeded at 27602 / 28672 bytes, leaving 1070
+The last recorded Corne build succeeded at 23152 / 28672 bytes, leaving 5520
 bytes free. Any feature that adds code must include a size-risk check. If a
 feature pushes the firmware over size, optimize that feature or roll it back
 before starting another one.
@@ -166,6 +166,14 @@ before starting another one.
 ChieftainDots now uses more than eight layers, so `config.h` must use
 `LAYER_STATE_16BIT`. If QMK reports that the number of keymap layers exceeds
 `LAYER_STATE_(8|16|32)BIT`, check the layer count before changing behavior.
+
+Good practice is part of size discipline, but it must be measured. Prefer
+cleanup that clarifies ownership and exposes unused compiled behavior: remove
+unreachable layer tables, remove handler paths that no active keycode can call,
+centralize shared constants, and derive feedback from the keymap where practical.
+Do not count comments, docs, ignored private files, archived files, or
+preprocessor-only aliases as firmware savings unless a compile proves a size
+change.
 
 ## OLED Lessons
 

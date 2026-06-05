@@ -128,6 +128,10 @@ Examples:
   deliberately differs from the key behavior.
 - Size optimizations should first look for duplicated concepts, stale helpers,
   and custom code that QMK already provides before cutting useful behavior.
+- Shared constants that must be visible to both preprocessor code and C feature
+  modules should live in a small shared header, not in duplicated numeric
+  literals. For example, layer ids belong in `features/layers.h` so `layout.h`,
+  Tap Dance, RGB, and OLED can all refer to the same names.
 
 ### Byte Is King For Unused Code
 
@@ -141,6 +145,21 @@ when the active Corne layout does not use it, the compile still succeeds, and
 the expected physical behavior is unchanged. If the feature is behavior-visible,
 such as OLED, RGB, Caps Unlock, app launchers, text snippets, or split-hand
 recovery, treat it as a design decision rather than a cleanup.
+
+Good practice can save bytes, but only indirectly. The useful pattern is:
+
+1. Make ownership clearer.
+2. Remove or centralize duplicated structure.
+3. Re-run the build.
+4. Keep the change only if behavior is preserved and the byte result is known.
+
+Do not assume a readability cleanup saves firmware space. Preprocessor aliases,
+comments, ignored files, archived files, and source that is not included in the
+active build usually cost attention rather than flash. They may still be worth
+cleaning, but they should not be recorded as byte wins unless a compile proves
+it. The best byte-saving cleanups usually expose compiled dead behavior, such as
+an unreachable layer table, an unused handler path, an enabled QMK feature flag,
+or custom state that duplicates a simpler keymap or QMK mechanism.
 
 ### Do Not Double Up Clean Windows Shortcuts
 

@@ -3,11 +3,16 @@
 // Disables caps lock automatically on a "non-word" keycode.
 
 #include QMK_KEYBOARD_H
+#include "tap_dance.h"
+
+extern bool chieftaindots_long_caps_mode;
 
 bool process_caps_unlock(uint16_t keycode, keyrecord_t *record) {
 	// Skip caps or one-shot key, or if caps lock is off
 	if (host_keyboard_led_state().caps_lock == false
+	|| chieftaindots_long_caps_mode
 	|| (uint8_t)keycode == KC_CAPS
+	|| keycode == CAPS_LONG_DANCE
 #ifndef NO_ACTION_ONESHOT
 	|| (QK_ONE_SHOT_MOD <= keycode && keycode <= QK_ONE_SHOT_MOD_MAX)
 #endif

@@ -92,6 +92,7 @@ Current source ownership:
 | --- | --- | --- |
 | `keymaps/corne.json` | Corne build recipe and layer order. | Key behavior details or feature logic. |
 | future `keymaps/*.json` recipes | Keyboard-specific recipe, wrapper layout, and deliberate layer list for a tested port. | Inherited stale layers or behavior copied without compile/testing. |
+| `features/layers.h` | Shared numeric layer IDs used by layout, feature modules, RGB, and OLED when they need to reference layers in C/preprocessor code. | Key placement, layer contents, or behavior. |
 | `layout.h` | Layer tables, home-row wrappers, aliases, and cross-layer placement concepts. | RGB/OLED drawing rules or private string values. |
 | `eldestroyer74.c` | Userspace hook coordination, timing callbacks, Caps Unlock call, OLED tap timer, and text snippet dispatch. | Large feature-specific state machines when a feature module would be clearer. |
 | `features/` | Reusable behavior: Tap Dance, text snippets, Caps Unlock, disabled combos, and future macros. | Physical layer ownership beyond named keycodes exposed to `layout.h`. |
@@ -131,12 +132,12 @@ Example for a slightly smaller keyboard:
     [ "SMALL(HRM(_COLE))" ],
     [ "SMALL(_NUMB)" ],
     [ "SMALL(_SYMB)" ],
+    [ "SMALL(_SYST)" ],
     [ "SMALL(_NAV)" ],
     [ "SMALL(_EXTR)" ],
-    [ "SMALL(_SNP)" ],
     [ "SMALL(_MEDI)" ],
-    [ "SMALL(_TEXT)" ],
-    [ "SMALL(_SYST)" ]
+    [ "SMALL(_SNP)" ],
+    [ "SMALL(_SPAN)" ]
   ]
 }
 ```
@@ -156,12 +157,12 @@ Example for a slightly larger keyboard:
     [ "LARGE(HRM(_COLE))" ],
     [ "LARGE(_NUMB)" ],
     [ "LARGE(_SYMB)" ],
+    [ "LARGE(_SYST)" ],
     [ "LARGE(_NAV)" ],
     [ "LARGE(_EXTR)" ],
-    [ "LARGE(_SNP)" ],
     [ "LARGE(_MEDI)" ],
-    [ "LARGE(_TEXT)" ],
-    [ "LARGE(_SYST)" ]
+    [ "LARGE(_SNP)" ],
+    [ "LARGE(_SPAN)" ]
   ]
 }
 ```

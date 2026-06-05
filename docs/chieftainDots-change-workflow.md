@@ -141,6 +141,34 @@ answer is "nothing in the current Corne build," disable or remove it and measure
 the byte difference. Git history and the roadmap are the archive; compiled
 firmware should not carry dormant experiments.
 
+Good practice can create byte savings by making dead compiled behavior visible.
+Run this as a repeatable audit, not as a broad refactor:
+
+1. Pick one ownership problem: duplicated layer ids, stale layer tables,
+   repeated handler paths, enabled-but-unused QMK features, or custom code that
+   duplicates a simpler keymap/QMK mechanism.
+2. Identify the active source of truth before editing.
+3. Separate clarity-only cleanup from compiled behavior. Comments,
+   preprocessor-only aliases, ignored private files, archived code, and docs
+   usually do not change firmware size.
+4. Make the smallest behavior-preserving cleanup.
+5. Compile with the canonical QMK MSYS path and record the exact firmware size.
+6. Call it a byte win only if the compile proves it. Otherwise record it as
+   readability or maintainability cleanup.
+
+Useful repeat candidates:
+
+- remove unreachable layer tables only after confirming no active recipe names
+  them
+- remove unused `process_record_user()` branches only after confirming no
+  active keycode can call them
+- centralize shared constants so feature modules stop carrying hardcoded
+  numeric copies
+- prefer deriving RGB/OLED feedback from the keymap where practical instead of
+  maintaining parallel maps
+- disable QMK feature flags only when their visible behavior is not part of the
+  current trial
+
 Do not treat visible features as free cleanup. OLED, RGB, Caps Unlock, text
 snippets, Tap Dance, Extra Keys, and split recovery settings may be expensive,
 but they are design choices unless the user explicitly decides they are no

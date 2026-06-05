@@ -3,8 +3,8 @@
 
 #include "features/tap_dance.h"
 #include "features/spanish_compose.h"
-#include "features/text_stubs.h"
 #include "features/user_keycodes.h"
+#include "features/layers.h"
 
 // Home row mod-tap macros
 #define HM_A	/*LSFT_T(KC_A) LGUI_T(KC_A)*/ LT(SYM, KC_A) // SYMBOL
@@ -21,13 +21,6 @@
 //#define HRMR(k1,k2,k3,k4) LGUI_T(k1),LCTL_T(k2),LALT_T(k3),LSFT_T(k4)
 #define HRMR(k1,k2,k3,k4) RCTL_T(k1), LT(NUM, k2), LT(SYM, k3), LT(SYS, k4)
 
-// MS Styles shortcuts. Navigation/Snap gesture behavior lives in tap_dance.c
-// so the current trial is easy to roll back without reshaping the layer map.
-#define PPT_STYLE_UP A(S(KC_UP))
-#define PPT_STYLE_DN A(S(KC_DOWN))
-#define PPT_STYLE_LF A(S(KC_LEFT))
-#define PPT_STYLE_RI A(S(KC_RIGHT))
-
 // Command layers repeat the Base right thumbs instead of using transparent
 // fallthrough so behavior and RGB stay aligned through the ordinary
 // keymap-driven path. Keep this repetition here instead of adding RGB
@@ -39,25 +32,12 @@
 #define RIGHT_THUMBS THUMB_ENTER_SHIFT, KC_RALT, KC_APP
 #define NUM_RIGHT_THUMBS NUM_ENTER_SYMBOLS, KC_RALT, KC_APP
 
-// Layer ids used by corne.json.
-#define BSE 0
-#define CMK 1
-#define NUM 2
-#define SYM 3
-#define NAV 4
-#define EXT 5
-#define SNP 6
-#define MED 7
-#define TXT 8
-#define SYS 9
-#define ESP 10
-
 // Base and Colemak alpha layers. corne.json applies HRM(...) to these layers.
 #define _BASE \
 /* Top:    TAB    Q      W      E      R      T        Y      U      I      O      P      BSPC */\
 	TAB_ESC_CLOSE, KC_Q, KC_W,  KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,   KC_BSPC,    \
 /* Home:   CAPS   A      S      D      F      G        H      J      K      L      ;      '    */\
-	KC_CAPS,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
+	CAPS_LONG_DANCE, KC_A, KC_S, KC_D,   KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
 /* Bottom: ES     Z      X      C      V      B        N      M      ,      .      /      ES   */\
 	SPANISH_LEFT_DANCE, KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, SPANISH_RIGHT_DANCE, \
 /* Thumbs:                         GUI    ALT    SPC/SFT  ENT/SFT RALT   MENU */\
@@ -67,7 +47,7 @@
 /* Top:    TAB    Q      W      F      P      G        J      L      U      Y      '      BSPC */\
 	KC_TAB,   KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,        KC_J,    KC_L,    KC_U,   KC_Y,   KC_QUOT, KC_BSPC, \
 /* Home:   CAPS   A      R      S      T      D        H      N      E      I      O      ;    */\
-	KC_CAPS,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,        KC_H,    KC_N,    KC_E,    KC_I,    KC_O,   KC_SCLN,    \
+	CAPS_LONG_DANCE, KC_A, KC_R, KC_S,   KC_T,    KC_D,        KC_H,    KC_N,    KC_E,    KC_I,    KC_O,   KC_SCLN,    \
 /* Bottom: ES     Z      X      C      V      B        K      M      ,      .      /      ES   */\
 	SPANISH_LEFT_DANCE, KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,        KC_K,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, SPANISH_RIGHT_DANCE, \
 /* Thumbs:                         trans  trans  trans    trans  trans  trans */\
@@ -111,9 +91,9 @@
 // Symbols + left GUI thumb MS Styles: PowerPoint paragraph/list level movement.
 #define _EXTR \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    AS-UP  ---    ---    DEL  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, PPT_STYLE_UP, XXXXXXX, XXXXXXX, KC_DEL,   \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, MS_STYLE_UP_DANCE, XXXXXXX, XXXXXXX, KC_DEL,   \
 /* Home:   ---    ---    ---    ---    ---    ---      ---    AS-LF  AS-DN  AS-RI  ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, PPT_STYLE_LF, PPT_STYLE_DN, PPT_STYLE_RI, XXXXXXX, XXXXXXX, \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, MS_STYLE_LEFT_DANCE, MS_STYLE_DOWN_DANCE, MS_STYLE_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
@@ -138,17 +118,6 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
 	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
-
-// Text stubs keep personal snippets in the same right-hand I/J/K/L shape.
-#define _TEXT \
-/* Top:    ---    ---    ---    ---    ---    ---      HOME   ---    PHONE  ---    ---    DEL */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_HOME, XXXXXXX, TXT_PHONE, XXXXXXX, XXXXXXX, KC_DEL,  \
-/* Home:   ---    ---    ---    ---    ---    ---      WORK   MEET   EMAIL  NAME   ---    --- */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     TXT_WORK, TXT_MEET, TXT_EMAIL, TXT_NAME, XXXXXXX, XXXXXXX, \
-/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         ---    trans  ---      ENTER  RALT   MENU */\
-	                            XXXXXXX, _______, XXXXXXX,    RIGHT_THUMBS
 
 // Function keys mirror the Numbers layer's top row and right-hand pad.
 #define _SYST \
