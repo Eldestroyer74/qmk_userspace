@@ -1,6 +1,8 @@
 # ChieftainDots Daily Layer Guide
 
-Print this as the desk-side map for the current Corne firmware.
+Print this as the desk-side map for the future three-anchor command layout.
+This guide is intentionally forward-looking so the whole design can be reviewed
+as one coherent keyboard.
 
 Legend: `---` intentionally blank, `trans` falls through, `DEL` means the
 Backspace key sends Delete.
@@ -25,8 +27,18 @@ Three anchors, one GUI chord each
 
 Hold D/K + left GUI    = Navigation: arrows / selection / extremes
 Hold S/L + left GUI    = MS Styles: tap Alt+Shift+arrows, hold plain arrows
-Hold A/; + left GUI    = Media
+Hold A/; + left GUI    = Media, Teams-first
+Ctrl + GUI chord       = Snap
 Double tap-hold mnemonic = Text snippets
+```
+
+```text
+Command gesture rule
+
+Tap             = direct daily action
+Tap and hold    = sustained / larger / repeated action
+Double tap      = secondary reversible action
+Double tap-hold = empty unless a real need is proven
 ```
 
 ## Base
@@ -161,14 +173,20 @@ MS Styles: hold `S` or `L`, then hold left GUI.
 On MS Styles, tap sends `Alt+Shift+Arrow`; tap-hold reverses to a plain held
 arrow for selected PowerPoint object/group movement.
 
-Snap: double tap and hold any exposed GUI key. While held, GUI stays down and
-`I/J/K/L` send plain arrows for repeated Windows snap traversal.
+Snap: enter with the Ctrl + GUI chord.
 
 ```text
----      ---    ---    ---    ---    ---        ---    ---    UP     ---    ---    DEL
----      ---    ---    ---    ---    ---        ---    LEFT   DOWN   RIGHT  ---    ---
----      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
-                         GUI    ---    trans       ENTER  RALT  MENU
+Tap = snap current window
+      Win+Alt+Up
+Win+Left   Win+Alt+Down   Win+Right
+
+Hold = current-window state or monitor movement
+      Win+Up
+Win+Shift+Left   Win+Down   Win+Shift+Right
+
+Double tap = desktop / workspace
+      Win+Tab
+Win+Ctrl+Left   Win+D   Win+Ctrl+Right
 ```
 
 ## Tools
@@ -181,6 +199,19 @@ Media: hold `A` or `;`, then hold left GUI.
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
                          trans  ALT    SHIFT       ENTER  RALT  MENU
 ```
+
+Media key behavior:
+
+```text
+Key      Tap                   Hold                  Double tap
+----------------------------------------------------------------
+I        Volume Up             hold/repeat Vol+      ---
+J        Teams mic mute        system speaker mute   Previous Track
+K        Volume Down           hold/repeat Vol-      ---
+L        Play/Pause            no-op or Play/Pause   Next Track
+```
+
+Teams mic mute means `Ctrl+Shift+M`. System speaker mute means `KC_MUTE`.
 
 Function / System: hold `A` or `;`.
 
@@ -228,7 +259,14 @@ MS Styles I        Alt+Shift+Up     Up held      ---                 ---
 MS Styles J        Alt+Shift+Left   Left held    ---                 ---
 MS Styles K        Alt+Shift+Down   Down held    ---                 ---
 MS Styles L        Alt+Shift+Right  Right held   ---                 ---
-GUI                GUI              GUI          GUI                 Snap layer
+Snap I             Win+Alt+Up       Win+Up       Win+Tab             ---
+Snap J             Win+Left         Win+Shift+Left Win+Ctrl+Left     ---
+Snap K             Win+Alt+Down     Win+Down     Win+D               ---
+Snap L             Win+Right        Win+Shift+Right Win+Ctrl+Right   ---
+Media I            Volume Up        Volume Up held ---               ---
+Media J            Teams mic mute   KC_MUTE      Previous Track      ---
+Media K            Volume Down      Volume Down held ---             ---
+Media L            Play/Pause       ---          Next Track          ---
 Spanish key        ---              Spanish      Win+Space           Language selector
 Shift+Caps         “                ---          ---                 ---
 Shift+'            ”                ---          ---                 ---
@@ -259,13 +297,13 @@ After flashing, test:
 - Navigation `I/J/K/L` hold = PgUp/Home/PgDn/End.
 - Navigation `I/J/K/L` double tap = selection movement.
 - Navigation `I/J/K/L` double-tap-hold = extreme selection.
-- Any exposed GUI double-tap-hold + `I/J/K/L` = Windows snap traversal.
+- Snap: Ctrl + GUI chord, then `I/J/K/L` use the Snap hierarchy above.
 - Spanish double tap = Windows language switch.
 - Spanish double-tap-hold + `I/K` = traverse the language selector.
 - Avoid pressing `L` while GUI is held unless you intend to lock Windows.
 - Accidental Alt+Shift and Alt+Space should not switch language or open the
   host window menu.
-- Media `I/J/K/L` = Volume Up/Mute/Volume Down/Play.
+- Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = MS Styles.
 - MS Styles tap `I/J/K/L` = Alt+Shift+Arrow; tap-hold = plain arrow held.
