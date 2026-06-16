@@ -58,6 +58,11 @@ static spanish_dance_t spanish_left_dance = {SPANISH_SOURCE_LEFT};
 static spanish_dance_t spanish_right_dance = {SPANISH_SOURCE_RIGHT};
 static bool gui_snap_layer_held;
 static bool gui_snap_gui_held;
+static bool gui_snap_ctrl_suppressed;
+static uint8_t gui_snap_active_layer;
+static uint8_t gui_snap_saved_mods;
+static uint8_t gui_snap_saved_weak_mods;
+uint8_t chieftaindots_snap_mode;
 bool spanish_language_switch_mode;
 uint8_t spanish_language_switch_source;
 static bool spanish_layer_held;
@@ -128,19 +133,45 @@ static void gui_snap_finished(tap_dance_state_t *state, void *user_data) {
 	gui_snap_dance_t *dance = (gui_snap_dance_t *)user_data;
 	gui_snap_layer_held = false;
 	gui_snap_gui_held = false;
+	gui_snap_ctrl_suppressed = false;
+	gui_snap_active_layer = 0;
+	chieftaindots_snap_mode = SNAP_MODE_NONE;
+	uint8_t mods = get_mods();
+	uint8_t weak_mods = get_weak_mods();
+	bool ctrl_down = (mods | weak_mods) & MOD_MASK_CTRL;
 
 	if (state->count > 1 && state->pressed) {
-		register_code(KC_LGUI);
+		if (ctrl_down) {
+			gui_snap_saved_mods = mods;
+			gui_snap_saved_weak_mods = weak_mods;
+			del_mods(MOD_MASK_CTRL);
+			del_weak_mods(MOD_MASK_CTRL);
+			gui_snap_ctrl_suppressed = true;
+		}
 		layer_on(SNP);
-		gui_snap_gui_held = true;
 		gui_snap_layer_held = true;
+		gui_snap_active_layer = SNP;
+		chieftaindots_snap_mode = SNAP_MODE_DESKTOP;
 	} else if (state->count == 1 && state->pressed) {
-		if (dance->real_gui) {
+		if (ctrl_down) {
+			gui_snap_saved_mods = mods;
+			gui_snap_saved_weak_mods = weak_mods;
+			del_mods(MOD_MASK_CTRL);
+			del_weak_mods(MOD_MASK_CTRL);
+			register_code(KC_LGUI);
+			layer_on(SNP);
+			gui_snap_ctrl_suppressed = true;
+			gui_snap_gui_held = true;
+			gui_snap_layer_held = true;
+			gui_snap_active_layer = SNP;
+			chieftaindots_snap_mode = SNAP_MODE_WINDOW;
+		} else if (dance->real_gui) {
 			register_code(KC_LGUI);
 			gui_snap_gui_held = true;
 		} else {
 			layer_on(dance->layer);
 			gui_snap_layer_held = true;
+			gui_snap_active_layer = dance->layer;
 		}
 	} else if (dance->real_gui) {
 		tap_code(KC_LGUI);
@@ -155,9 +186,16 @@ static void gui_snap_reset(tap_dance_state_t *state, void *user_data) {
 		gui_snap_gui_held = false;
 	}
 	if (gui_snap_layer_held) {
-		layer_off(state->count > 1 ? SNP : dance->layer);
+		layer_off(gui_snap_active_layer ? gui_snap_active_layer : (state->count > 1 ? SNP : dance->layer));
 		gui_snap_layer_held = false;
 	}
+	if (gui_snap_ctrl_suppressed) {
+		set_mods(gui_snap_saved_mods);
+		set_weak_mods(gui_snap_saved_weak_mods);
+		gui_snap_ctrl_suppressed = false;
+	}
+	chieftaindots_snap_mode = SNAP_MODE_NONE;
+	gui_snap_active_layer = 0;
 }
 
 static void spanish_dance_finished(tap_dance_state_t *state, void *user_data) {

@@ -4,9 +4,9 @@ Print this as the desk-side map for the future three-anchor command layout.
 This guide is intentionally forward-looking so the whole design can be reviewed
 as one coherent keyboard.
 
-Stable trial note: OLED/screens are on. The current safe OLED slice keeps the
-older, smaller Snap entry logic, makes Navigation movement-only, flattens
-Styles and Media to plain keys, and avoids the newer shared directional
+Stable trial note: OLED/screens are on. The current safe OLED slice makes
+Navigation movement-only, flattens Styles and Media to plain keys, and keeps
+Snap in a small Snap-specific path instead of the newer shared directional
 tap-dance helper that caused phantom modifier reports in QMK key tester.
 
 Legend: `---` intentionally blank, `trans` falls through, `DEL` means the
@@ -33,12 +33,12 @@ Three anchors, one GUI chord each
 Hold D/K + left GUI    = Navigation: movement only
 Hold S/L + left GUI    = Styles: Alt+Shift+Arrow
 Hold A/; + left GUI    = Media, Teams-first
-Double tap-hold GUI    = Snap arrows while GUI is held
+Hold Ctrl + left GUI   = Snap window placement mode
+Double tap-hold GUI    = Snap desktop/workspace mode
 Double tap-hold mnemonic = Text snippets
 ```
 
-The future Ctrl+GUI Snap chord is deferred. Current Snap is the older,
-known-safe double-tap-hold GUI path.
+Snap has no tap-only action. It is entered only as a held mode.
 
 ```text
 Command gesture rule
@@ -49,8 +49,7 @@ Double tap      = secondary reversible action
 Double tap-hold = empty unless a real need is proven
 ```
 
-Styles and Media are tap-only in this build. Snap is mode-only through
-double-tap-hold GUI.
+Styles and Media are tap-only in this build. Snap is mode-only.
 
 ## Chord Layer Hierarchies
 
@@ -97,12 +96,20 @@ Plain keys only in the current RAM experiment:
 Teams mic mute  Volume Down  Play/Pause
 ```
 
-Snap: double tap and hold a GUI key, then press `I/J/K/L`.
+Snap window placement: hold Ctrl, then hold left GUI, then press `I/J/K/L`.
 
 ```text
-Held GUI + arrows
+Held Win + arrows
       Win+Up
 Win+Left  Win+Down  Win+Right
+```
+
+Snap desktop/workspace: double tap and hold GUI, then press `I/J/K/L`.
+
+```text
+Exact shortcuts
+      Win+Tab
+Win+Ctrl+Left  Win+D  Win+Ctrl+Right
 ```
 
 ## Base
@@ -237,27 +244,21 @@ Tap = Alt+Shift+Arrow.
 Hold / double tap / double-tap-hold = intentionally unused for now.
 ```
 
-Current Snap: double tap and hold a GUI key, then use `I/J/K/L`.
+Snap window placement: hold Ctrl, then hold left GUI, then use `I/J/K/L`.
 
 ```text
-GUI is held by the entry gesture.
+Ctrl is suppressed while the mode is active; GUI is held by the entry gesture.
       Up
 Left  Down  Right
 ```
 
-Deferred Snap candidate: Ctrl+GUI mode-only redesign.
+Snap desktop/workspace: double tap and hold GUI, then use `I/J/K/L`.
 
 ```text
-Tap-hold = window snap traversal
-      Win+Up
-Win+Left   Win+Down   Win+Right
-
-Double-tap-hold = desktop / workspace
+Exact shortcuts
       Win+Tab
 Win+Ctrl+Left   Win+D   Win+Ctrl+Right
 ```
-
-Keep this candidate parked until the Ctrl+GUI chord is rebuilt safely.
 
 ## Tools
 
@@ -369,7 +370,8 @@ After flashing, test:
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.
-- double-tap-hold GUI, then `I/J/K/L` = Snap arrows while GUI is held.
+- hold Ctrl + left GUI, then `I/J/K/L` = Snap window placement.
+- double-tap-hold GUI, then `I/J/K/L` = desktop/workspace actions.
 - Double-tap-hold `H/W/P/M/E/G/N` snippets fire only when intended.
 
 Screen check:

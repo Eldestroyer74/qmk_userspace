@@ -14,6 +14,7 @@
 
 extern bool process_spanish_compose(uint16_t keycode, keyrecord_t *record);
 extern void send_windows_alt_code(const char *code);
+extern uint8_t chieftaindots_snap_mode;
 
 #define AUTO_CAPS_ENABLE 0
 
@@ -802,6 +803,38 @@ space_probe_scan:
 #endif
 }
 
+static bool process_snap_desktop_mode(uint16_t keycode, keyrecord_t *record) {
+	if (chieftaindots_snap_mode != SNAP_MODE_DESKTOP) {
+		return true;
+	}
+
+	switch (keycode) {
+		case KC_UP:
+		case KC_LEFT:
+		case KC_DOWN:
+		case KC_RGHT:
+			if (record->event.pressed) {
+				switch (keycode) {
+					case KC_UP:
+						tap_code16(G(KC_TAB));
+						break;
+					case KC_LEFT:
+						tap_code16(G(C(KC_LEFT)));
+						break;
+					case KC_DOWN:
+						tap_code16(G(KC_D));
+						break;
+					case KC_RGHT:
+						tap_code16(G(C(KC_RGHT)));
+						break;
+				}
+			}
+			return false;
+	}
+
+	return true;
+}
+
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #ifdef CONSOLE_ENABLE
 	log_shift_trial(keycode, record);
@@ -827,6 +860,10 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 	}
 
 	if (!process_spanish_language_switch(keycode, record)) {
+		return false;
+	}
+
+	if (!process_snap_desktop_mode(keycode, record)) {
 		return false;
 	}
 
