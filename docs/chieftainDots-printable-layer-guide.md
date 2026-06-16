@@ -96,10 +96,10 @@ Plain keys only in the current RAM experiment:
 Teams mic mute  Volume Down  Play/Pause
 ```
 
-Snap window placement: hold Ctrl, then hold left GUI, then press `I/J/K/L`.
+Snap window placement: hold Ctrl + left GUI, then press `I/J/K/L`.
 
 ```text
-Held Win + arrows
+One-shot shortcuts
       Win+Up
 Win+Left  Win+Down  Win+Right
 ```
@@ -244,10 +244,10 @@ Tap = Alt+Shift+Arrow.
 Hold / double tap / double-tap-hold = intentionally unused for now.
 ```
 
-Snap window placement: hold Ctrl, then hold left GUI, then use `I/J/K/L`.
+Snap window placement: hold Ctrl + left GUI, then use `I/J/K/L`.
 
 ```text
-Ctrl is suppressed while the mode is active; GUI is held by the entry gesture.
+The entry gesture exposes the Snap layer; each arrow sends one Win+Arrow tap.
       Up
 Left  Down  Right
 ```

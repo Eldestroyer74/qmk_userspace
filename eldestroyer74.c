@@ -803,8 +803,8 @@ space_probe_scan:
 #endif
 }
 
-static bool process_snap_desktop_mode(uint16_t keycode, keyrecord_t *record) {
-	if (chieftaindots_snap_mode != SNAP_MODE_DESKTOP) {
+static bool process_snap_mode(uint16_t keycode, keyrecord_t *record) {
+	if (chieftaindots_snap_mode == SNAP_MODE_NONE) {
 		return true;
 	}
 
@@ -814,19 +814,29 @@ static bool process_snap_desktop_mode(uint16_t keycode, keyrecord_t *record) {
 		case KC_DOWN:
 		case KC_RGHT:
 			if (record->event.pressed) {
-				switch (keycode) {
-					case KC_UP:
-						tap_code16(G(KC_TAB));
-						break;
-					case KC_LEFT:
-						tap_code16(G(C(KC_LEFT)));
-						break;
-					case KC_DOWN:
-						tap_code16(G(KC_D));
-						break;
-					case KC_RGHT:
-						tap_code16(G(C(KC_RGHT)));
-						break;
+				if (chieftaindots_snap_mode == SNAP_MODE_WINDOW) {
+					uint8_t mods = get_mods();
+					uint8_t weak_mods = get_weak_mods();
+					del_mods(MOD_MASK_CTRL);
+					del_weak_mods(MOD_MASK_CTRL);
+					tap_code16(G(keycode));
+					set_mods(mods);
+					set_weak_mods(weak_mods);
+				} else {
+					switch (keycode) {
+						case KC_UP:
+							tap_code16(G(KC_TAB));
+							break;
+						case KC_LEFT:
+							tap_code16(G(C(KC_LEFT)));
+							break;
+						case KC_DOWN:
+							tap_code16(G(KC_D));
+							break;
+						case KC_RGHT:
+							tap_code16(G(C(KC_RGHT)));
+							break;
+					}
 				}
 			}
 			return false;
@@ -863,7 +873,7 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 		return false;
 	}
 
-	if (!process_snap_desktop_mode(keycode, record)) {
+	if (!process_snap_mode(keycode, record)) {
 		return false;
 	}
 
