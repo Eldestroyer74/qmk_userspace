@@ -34,11 +34,15 @@ static void render_logo(uint8_t const layer) {
 		0x20, 0xd1, 0xd2, 0xd3, 0x20, 0};
 	static char const nav_label[] PROGMEM = " nav ";
 	static char const styles_label[] PROGMEM = "style";
+	static char const media_label[] PROGMEM = "media";
+	static char const snap_label[] PROGMEM = "snap ";
 
 	oled_write_P(corne_logo, false);
 	switch (layer) {
 		case NAV: oled_write_P(nav_label, false); break;
 		case EXT: oled_write_P(styles_label, false); break;
+		case MED: oled_write_P(media_label, false); break;
+		case SNP: oled_write_P(snap_label, false); break;
 		default:  oled_write_P(layer <= CMK ? katakana : PSTR("corne"), false);
 	}
 }
@@ -59,7 +63,9 @@ static void render_layer_state(uint8_t const state) {
 		0x20, 0xd7, 0xd8, 0xd9, 0x20, 0};
 	switch(state) {
 	case NAV:
-	case EXT: oled_write_P(chord_layer, false); break;
+	case EXT:
+	case MED:
+	case SNP: oled_write_P(chord_layer, false); break;
 		case NUM:
 		case SYM:
 		case SYS: oled_write_P(anchor_layer, false); break;
@@ -140,10 +146,10 @@ void render_mod_status(void) {
 	mods |= get_oneshot_mods();
 #endif
 	uint8_t layer = get_highest_layer(layer_state | default_layer_state);
-	uint8_t fn    = layer_state_is(SYS);
+	uint8_t fn    = layer_state_is(SYS) || layer_state_is(MED);
 	uint8_t sym   = layer_state_is(SYM) || layer_state_is(EXT);
 	uint8_t num   = layer_state_is(NUM) || layer_state_is(NAV);
-	uint8_t ctrl  = mods & MOD_MASK_CTRL;
+	uint8_t ctrl  = (mods & MOD_MASK_CTRL) || layer_state_is(SNP);
 
 	render_logo(layer);
 	oled_set_cursor(0,6);

@@ -86,12 +86,12 @@
 /* Thumbs:                         trans  ---    trans    ENTER  RALT   MENU */\
 	                            _______, XXXXXXX, _______,     RIGHT_THUMBS
 
-// Symbols + left GUI thumb MS Styles: PowerPoint paragraph/list level movement.
+// Symbols + left GUI thumb Styles: PowerPoint/Word structure shortcuts.
 #define _EXTR \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    AS-UP  ---    ---    DEL  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, MS_STYLE_UP_DANCE, XXXXXXX, XXXXXXX, KC_DEL,   \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, A(S(KC_UP)), XXXXXXX, XXXXXXX, KC_DEL,   \
 /* Home:   ---    ---    ---    ---    ---    ---      ---    AS-LF  AS-DN  AS-RI  ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, MS_STYLE_LEFT_DANCE, MS_STYLE_DOWN_DANCE, MS_STYLE_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, A(S(KC_LEFT)), A(S(KC_DOWN)), A(S(KC_RGHT)), XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\

@@ -5,9 +5,9 @@ This guide is intentionally forward-looking so the whole design can be reviewed
 as one coherent keyboard.
 
 Stable trial note: OLED/screens are on. The current safe OLED slice keeps the
-older, smaller Navigation/MS Styles tap-dance logic, flattens Media to plain
-keys, and avoids the newer shared directional tap-dance helper that caused
-phantom modifier reports in QMK key tester.
+older, smaller Snap entry logic, makes Navigation movement-only, flattens
+Styles and Media to plain keys, and avoids the newer shared directional
+tap-dance helper that caused phantom modifier reports in QMK key tester.
 
 Legend: `---` intentionally blank, `trans` falls through, `DEL` means the
 Backspace key sends Delete.
@@ -31,13 +31,14 @@ Right thumbs on command layers = Enter/Shift / RAlt / Menu
 Three anchors, one GUI chord each
 
 Hold D/K + left GUI    = Navigation: movement only
-Hold S/L + left GUI    = Office: arrows / structure / selection
+Hold S/L + left GUI    = Styles: Alt+Shift+Arrow
 Hold A/; + left GUI    = Media, Teams-first
+Double tap-hold GUI    = Snap arrows while GUI is held
 Double tap-hold mnemonic = Text snippets
 ```
 
-Snap is not active in the current stable trial. Keep it as a deferred chord
-candidate, not a daily-use instruction.
+The future Ctrl+GUI Snap chord is deferred. Current Snap is the older,
+known-safe double-tap-hold GUI path.
 
 ```text
 Command gesture rule
@@ -47,6 +48,9 @@ Tap and hold    = sustained / larger / repeated action
 Double tap      = secondary reversible action
 Double tap-hold = empty unless a real need is proven
 ```
+
+Styles and Media are tap-only in this build. Snap is mode-only through
+double-tap-hold GUI.
 
 ## Chord Layer Hierarchies
 
@@ -77,24 +81,12 @@ Double tap-hold: movement extremes
 Home  PgDn  End
 ```
 
-Office: hold `S/L`, then hold left GUI.
+Styles: hold `S/L`, then hold left GUI.
 
 ```text
-Tap: arrow navigation inside Office content
-      Up
-Left  Down  Right
-
-Hold: PowerPoint / Word structure
+Tap: PowerPoint / Word structure
       Alt+Shift+Up
 Alt+Shift+Left  Alt+Shift+Down  Alt+Shift+Right
-
-Double tap: select word / line
-      Shift+Up
-Ctrl+Shift+Left  Shift+Down  Ctrl+Shift+Right
-
-Double tap-hold: select extremes
-      Shift+PgUp
-Shift+Home  Shift+PgDn  Shift+End
 ```
 
 Media: hold `A/;`, then hold left GUI.
@@ -103,6 +95,14 @@ Media: hold `A/;`, then hold left GUI.
 Plain keys only in the current RAM experiment:
       Volume Up
 Teams mic mute  Volume Down  Play/Pause
+```
+
+Snap: double tap and hold a GUI key, then press `I/J/K/L`.
+
+```text
+Held GUI + arrows
+      Win+Up
+Win+Left  Win+Down  Win+Right
 ```
 
 ## Base
@@ -221,7 +221,7 @@ K        Down     Down held Ctrl+Down         PgDn
 L        Right    Right held Ctrl+Right       End
 ```
 
-Office: hold `S` or `L`, then hold left GUI.
+Styles: hold `S` or `L`, then hold left GUI.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    UP     ---    ---    DEL
@@ -230,32 +230,34 @@ Office: hold `S` or `L`, then hold left GUI.
                          trans  ALT    SHIFT       ENTER  RALT  MENU
 ```
 
-Office owns content editing and selection:
+Styles owns PowerPoint/Word structure shortcuts:
 
 ```text
-Tap = plain arrow navigation.
-Hold = Alt+Shift+Arrow for structure.
-Double tap = selection movement.
-Double tap-hold = extreme selection.
+Tap = Alt+Shift+Arrow.
+Hold / double tap / double-tap-hold = intentionally unused for now.
 ```
 
-Deferred Snap candidate: no active entry path in the current stable trial.
+Current Snap: double tap and hold a GUI key, then use `I/J/K/L`.
 
 ```text
-Tap = snap current window
-      Win+Alt+Up
-Win+Left   Win+Alt+Down   Win+Right
+GUI is held by the entry gesture.
+      Up
+Left  Down  Right
+```
 
-Hold = current-window state or monitor movement
+Deferred Snap candidate: Ctrl+GUI mode-only redesign.
+
+```text
+Tap-hold = window snap traversal
       Win+Up
-Win+Shift+Left   Win+Down   Win+Shift+Right
+Win+Left   Win+Down   Win+Right
 
-Double tap = desktop / workspace
+Double-tap-hold = desktop / workspace
       Win+Tab
 Win+Ctrl+Left   Win+D   Win+Ctrl+Right
 ```
 
-Keep this candidate parked until the Ctrl + GUI chord is rebuilt safely.
+Keep this candidate parked until the Ctrl+GUI chord is rebuilt safely.
 
 ## Tools
 
@@ -324,10 +326,10 @@ Navigation I       Up               Up held      Ctrl+Up             PgUp
 Navigation J       Left             Left held    Ctrl+Left           Home
 Navigation K       Down             Down held    Ctrl+Down           PgDn
 Navigation L       Right            Right held   Ctrl+Right          End
-Office I           Up               Alt+Shift+Up Shift+Up            Shift+PgUp
-Office J           Left             Alt+Shift+Left Ctrl+Shift+Left   Shift+Home
-Office K           Down             Alt+Shift+Down Shift+Down        Shift+PgDn
-Office L           Right            Alt+Shift+Right Ctrl+Shift+Right Shift+End
+Styles I           Alt+Shift+Up     ---          ---                 ---
+Styles J           Alt+Shift+Left   ---          ---                 ---
+Styles K           Alt+Shift+Down   ---          ---                 ---
+Styles L           Alt+Shift+Right  ---          ---                 ---
 Media I            Volume Up        ---          ---                 ---
 Media J            Teams mic mute   ---          ---                 ---
 Media K            Volume Down      ---          ---                 ---
@@ -365,8 +367,9 @@ After flashing, test:
   host window menu.
 - Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
 - `D/K + left GUI` = Navigation.
-- `S/L + left GUI` = Office: arrows, structure, selection, extreme selection.
+- `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.
+- double-tap-hold GUI, then `I/J/K/L` = Snap arrows while GUI is held.
 - Double-tap-hold `H/W/P/M/E/G/N` snippets fire only when intended.
 
 Screen check:
@@ -383,7 +386,7 @@ Colemak            purple     #3C0073
 Numbers            blue       #0A195F
 Symbols            amber      #693C00
 Navigation         cyan       #00FFFF
-Office             yellow     #FFFF00
+Styles             yellow     #FFFF00
 Media              dark teal  #052323
 Function/System    green      #4B7A16
 Delete cue         red        Backspace key only on command layers with DEL

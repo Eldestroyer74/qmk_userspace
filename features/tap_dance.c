@@ -22,8 +22,9 @@ typedef struct {
 typedef struct {
 	uint16_t tap;
 	uint16_t hold;
-	uint16_t selection;
-	uint16_t extreme_selection;
+	uint16_t double_tap;
+	uint16_t double_hold;
+	bool held;
 } nav_dance_t;
 
 typedef struct {
@@ -35,12 +36,6 @@ typedef struct {
 	uint8_t source;
 } spanish_dance_t;
 
-typedef struct {
-	uint16_t tap;
-	uint16_t hold;
-	bool held;
-} ms_style_dance_t;
-
 // One pattern powers the small punctuation ladders:
 // tap = common character, hold = related alternate, double-tap = rarer pair.
 static tap_hold_double_t left_bracket_dance = {KC_LPRN, KC_LBRC, KC_LCBR};
@@ -49,21 +44,18 @@ static tap_hold_double_t slash_pipe_dance = {KC_SLSH, KC_BSLS, KC_PIPE};
 static tap_hold_double_t plus_equal_dance = {KC_PLUS, KC_EQL, KC_PLUS};
 static tap_hold_double_t num_two_comma_lt_dance = {KC_2, KC_COMM, KC_LT};
 static tap_hold_double_t num_three_dot_gt_dance = {KC_3, KC_DOT, KC_GT};
-// Older diagnostic path: small, stateless Navigation tap dance.
-static nav_dance_t nav_up_dance = {KC_UP, KC_PGUP, S(KC_UP), S(KC_PGUP)};
-static nav_dance_t nav_left_dance = {KC_LEFT, KC_HOME, C(S(KC_LEFT)), S(KC_HOME)};
-static nav_dance_t nav_down_dance = {KC_DOWN, KC_PGDN, S(KC_DOWN), S(KC_PGDN)};
-static nav_dance_t nav_right_dance = {KC_RGHT, KC_END, C(S(KC_RGHT)), S(KC_END)};
+// Navigation is movement-only: tap arrows, hold arrows, double-tap semantic
+// jumps, and double-tap-hold extremes.
+static nav_dance_t nav_up_dance = {KC_UP, KC_UP, C(KC_UP), KC_PGUP};
+static nav_dance_t nav_left_dance = {KC_LEFT, KC_LEFT, C(KC_LEFT), KC_HOME};
+static nav_dance_t nav_down_dance = {KC_DOWN, KC_DOWN, C(KC_DOWN), KC_PGDN};
+static nav_dance_t nav_right_dance = {KC_RGHT, KC_RGHT, C(KC_RGHT), KC_END};
 static gui_snap_dance_t base_gui_snap_dance = {0, true};
 static gui_snap_dance_t num_gui_nav_snap_dance = {NAV, false};
 static gui_snap_dance_t sym_gui_ext_snap_dance = {EXT, false};
 static gui_snap_dance_t sys_gui_med_snap_dance = {MED, false};
 static spanish_dance_t spanish_left_dance = {SPANISH_SOURCE_LEFT};
 static spanish_dance_t spanish_right_dance = {SPANISH_SOURCE_RIGHT};
-static ms_style_dance_t ms_style_up_dance = {A(S(KC_UP)), KC_UP};
-static ms_style_dance_t ms_style_left_dance = {A(S(KC_LEFT)), KC_LEFT};
-static ms_style_dance_t ms_style_down_dance = {A(S(KC_DOWN)), KC_DOWN};
-static ms_style_dance_t ms_style_right_dance = {A(S(KC_RGHT)), KC_RGHT};
 static bool gui_snap_layer_held;
 static bool gui_snap_gui_held;
 bool spanish_language_switch_mode;
@@ -84,6 +76,7 @@ static void tap_hold_double_finished(tap_dance_state_t *state, void *user_data) 
 
 static void nav_dance_finished(tap_dance_state_t *state, void *user_data) {
 	nav_dance_t *dance = (nav_dance_t *)user_data;
+	dance->held = false;
 #ifdef CONSOLE_ENABLE
 	const char *action = "repeat";
 #endif
@@ -92,7 +85,8 @@ static void nav_dance_finished(tap_dance_state_t *state, void *user_data) {
 #ifdef CONSOLE_ENABLE
 		action = "hold";
 #endif
-		tap_code16(dance->hold);
+		register_code16(dance->hold);
+		dance->held = true;
 	} else if (state->count == 1) {
 #ifdef CONSOLE_ENABLE
 		action = "tap";
@@ -100,14 +94,14 @@ static void nav_dance_finished(tap_dance_state_t *state, void *user_data) {
 		tap_code16(dance->tap);
 	} else if (state->pressed) {
 #ifdef CONSOLE_ENABLE
-		action = "extsel";
+		action = "extreme";
 #endif
-		tap_code16(dance->extreme_selection);
+		tap_code16(dance->double_hold);
 	} else {
 #ifdef CONSOLE_ENABLE
-		action = "select";
+		action = "jump";
 #endif
-		tap_code16(dance->selection);
+		tap_code16(dance->double_tap);
 	}
 
 #ifdef CONSOLE_ENABLE
@@ -119,6 +113,15 @@ static void nav_dance_finished(tap_dance_state_t *state, void *user_data) {
 	        get_mods(),
 	        get_highest_layer(layer_state));
 #endif
+}
+
+static void nav_dance_reset(tap_dance_state_t *state, void *user_data) {
+	nav_dance_t *dance = (nav_dance_t *)user_data;
+
+	if (dance->held) {
+		unregister_code16(dance->hold);
+		dance->held = false;
+	}
 }
 
 static void gui_snap_finished(tap_dance_state_t *state, void *user_data) {
@@ -239,27 +242,6 @@ static void caps_long_finished(tap_dance_state_t *state, void *user_data) {
 	}
 }
 
-static void ms_style_finished(tap_dance_state_t *state, void *user_data) {
-	ms_style_dance_t *dance = (ms_style_dance_t *)user_data;
-	dance->held = false;
-
-	if (state->count == 1 && state->pressed) {
-		register_code16(dance->hold);
-		dance->held = true;
-	} else {
-		tap_code16(dance->tap);
-	}
-}
-
-static void ms_style_reset(tap_dance_state_t *state, void *user_data) {
-	ms_style_dance_t *dance = (ms_style_dance_t *)user_data;
-
-	if (dance->held) {
-		unregister_code16(dance->hold);
-		dance->held = false;
-	}
-}
-
 tap_dance_action_t tap_dance_actions[] = {
 	[TD_TAB_ESC_CLOSE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, tab_esc_close_finished, tab_esc_close_reset),
 	[TD_LEFT_BRACKET] = {
@@ -287,19 +269,19 @@ tap_dance_action_t tap_dance_actions[] = {
 		.user_data = &num_three_dot_gt_dance,
 	},
 	[TD_NAV_UP] = {
-		.fn = {NULL, nav_dance_finished, NULL, NULL},
+		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
 		.user_data = &nav_up_dance,
 	},
 	[TD_NAV_LEFT] = {
-		.fn = {NULL, nav_dance_finished, NULL, NULL},
+		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
 		.user_data = &nav_left_dance,
 	},
 	[TD_NAV_DOWN] = {
-		.fn = {NULL, nav_dance_finished, NULL, NULL},
+		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
 		.user_data = &nav_down_dance,
 	},
 	[TD_NAV_RIGHT] = {
-		.fn = {NULL, nav_dance_finished, NULL, NULL},
+		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
 		.user_data = &nav_right_dance,
 	},
 	[TD_BASE_GUI_SNAP] = {
@@ -327,20 +309,4 @@ tap_dance_action_t tap_dance_actions[] = {
 		.user_data = &spanish_right_dance,
 	},
 	[TD_CAPS_LONG] = ACTION_TAP_DANCE_FN(caps_long_finished),
-	[TD_MS_STYLE_UP] = {
-		.fn = {NULL, ms_style_finished, ms_style_reset, NULL},
-		.user_data = &ms_style_up_dance,
-	},
-	[TD_MS_STYLE_LEFT] = {
-		.fn = {NULL, ms_style_finished, ms_style_reset, NULL},
-		.user_data = &ms_style_left_dance,
-	},
-	[TD_MS_STYLE_DOWN] = {
-		.fn = {NULL, ms_style_finished, ms_style_reset, NULL},
-		.user_data = &ms_style_down_dance,
-	},
-	[TD_MS_STYLE_RIGHT] = {
-		.fn = {NULL, ms_style_finished, ms_style_reset, NULL},
-		.user_data = &ms_style_right_dance,
-	},
 };
