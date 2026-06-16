@@ -1,0 +1,181 @@
+{
+  "generatedAt": "2026-06-06T10:44:31.630Z",
+  "sources": {
+    "font": "oled/oledfont.c",
+    "icons": "oled/oled-icons.c",
+    "bongocat": "oled/oled-bongocat.c"
+  },
+  "font": {
+    "bytes": 1344,
+    "glyphCount": 224,
+    "customSlots": 96,
+    "usedGlyphsByIcons": 86,
+    "usedCustomGlyphsByIcons": 85,
+    "highestIconGlyphUsed": "0xdc",
+    "theoreticalPackedFontBytes": 1278,
+    "theoreticalPackingSavingBytes": 66
+  },
+  "glyphTransforms": {
+    "horizontalMirrorPairs": [
+      [
+        "0x94",
+        "0x9c"
+      ],
+      [
+        "0x95",
+        "0x9b"
+      ],
+      [
+        "0x96",
+        "0x9a"
+      ],
+      [
+        "0x97",
+        "0x99"
+      ],
+      [
+        "0x9a",
+        "0x9c"
+      ],
+      [
+        "0xb4",
+        "0xb6"
+      ],
+      [
+        "0xb7",
+        "0xb9"
+      ],
+      [
+        "0xba",
+        "0xbc"
+      ],
+      [
+        "0xc7",
+        "0xc9"
+      ],
+      [
+        "0xc8",
+        "0xca"
+      ],
+      [
+        "0xd4",
+        "0xd9"
+      ],
+      [
+        "0xd5",
+        "0xd8"
+      ],
+      [
+        "0xd6",
+        "0xd7"
+      ],
+      [
+        "0xd7",
+        "0xd9"
+      ],
+      [
+        "0xda",
+        "0xdc"
+      ]
+    ],
+    "verticalMirrorPairs": [
+      [
+        "0x85",
+        "0xa5"
+      ],
+      [
+        "0x86",
+        "0xa6"
+      ],
+      [
+        "0x88",
+        "0xa8"
+      ],
+      [
+        "0x8d",
+        "0xad"
+      ],
+      [
+        "0x8e",
+        "0xae"
+      ],
+      [
+        "0x90",
+        "0xb0"
+      ],
+      [
+        "0xc5",
+        "0xc6"
+      ],
+      [
+        "0xc7",
+        "0xc8"
+      ],
+      [
+        "0xc9",
+        "0xca"
+      ],
+      [
+        "0xcb",
+        "0xcc"
+      ]
+    ],
+    "note": "Pairs are exact glyph-byte transforms among custom glyphs referenced by oled-icons.c. Firmware savings require compile measurement because transform code has a byte cost."
+  },
+  "bongocatTransforms": {
+    "horizontalMirrorPairs": [
+      {
+        "right": "idle0",
+        "left": "left_idle0",
+        "mirrorDiffPixels": 0,
+        "rightRleBytes": 144,
+        "leftRleBytes": 142
+      },
+      {
+        "right": "idle1",
+        "left": "left_idle1",
+        "mirrorDiffPixels": 0,
+        "rightRleBytes": 147,
+        "leftRleBytes": 145
+      },
+      {
+        "right": "idle2",
+        "left": "left_idle2",
+        "mirrorDiffPixels": 0,
+        "rightRleBytes": 154,
+        "leftRleBytes": 152
+      },
+      {
+        "right": "idle3",
+        "left": "left_idle3",
+        "mirrorDiffPixels": 0,
+        "rightRleBytes": 140,
+        "leftRleBytes": 138
+      },
+      {
+        "right": "paws",
+        "left": "left_paws",
+        "mirrorDiffPixels": 0,
+        "rightRleBytes": 150,
+        "leftRleBytes": 148
+      },
+      {
+        "right": "tap0",
+        "left": "left_tap0",
+        "mirrorDiffPixels": 0,
+        "rightRleBytes": 180,
+        "leftRleBytes": 178
+      },
+      {
+        "right": "tap1",
+        "left": "left_tap1",
+        "mirrorDiffPixels": 0,
+        "rightRleBytes": 153,
+        "leftRleBytes": 151
+      }
+    ],
+    "duplicatedLeftRleBytes": 1054,
+    "measuredFirmwareSavingBytes": 1260,
+    "note": "The measured firmware saving includes removed left RLE data minus added transform code and compiler effects."
+  }
+}

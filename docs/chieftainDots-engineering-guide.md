@@ -183,6 +183,15 @@ on the secondary side. Do not casually change this to physical-left/physical-
 right behavior; the cat wake/sleep timer and split activity sync need deliberate
 testing if the cat moves away from the master side.
 
+The current status-screen direction is deliberately minimal. Reuse the existing
+logo/text slot, fixed middle tile slot, and bottom 2x2 status stack before
+adding new renderers. Name firmware art by ChieftainDots state, not inherited
+source art: `base_layer`, `anchor_layer`, and `chord_layer`. The middle tile
+should stay fixed while its image changes. The small five-cell text slot may
+show compact lowercase chord names such as `nav` and `style`; avoid full-screen
+raw chord labels unless a compile proves the bytes and refresh cost are worth
+it.
+
 Generated 30x16 outline/filled icon artwork for all concepts is too expensive
 for the current firmware budget. A generated `oledfont_icons.c` trial used glyph
 codes beyond `0xFF`, conflicted with existing font positions, and represented

@@ -9,8 +9,10 @@ display subsystem rather than an owner of key behavior.
 
 - Base and Colemak are the only layers wrapped with `HRM(...)`.
 - `D`/`K` own Numbers; `Numbers + GUI` owns Navigation.
-- `S`/`L` own Symbols; `Symbols + GUI` owns MS Styles.
+- `S`/`L` own Symbols; `Symbols + GUI` owns Office.
 - `A`/`;` own Function/System; `Function + GUI` owns Media.
+- Snap is a Ctrl+GUI chord so it uses the same visible chord grammar as the
+  other command layers.
 - Text snippets are mnemonic double-tap-hold gestures on Base/Colemak letters,
   not a daily layer chord.
 - Spanish stays on the lower corners, with double-tap language switching.
@@ -51,16 +53,21 @@ recipes should be created from the current layer model when a real port starts.
 - Symbols: top-row punctuation and shifted symbols, accessed from `S` or `L`.
 - Function/System: function keys in a Numbers-like shape, accessed from `A` or
   `;`.
-- Navigation: arrow movement using the `I/J/K/L` spatial shape, accessed by
-  holding Numbers and the left GUI thumb. Tap sends arrows, hold sends extremes,
-  double tap sends selection movement, and double-tap-hold sends extreme
-  selection.
-- MS Styles: PowerPoint paragraph/list style movement using `Alt+Shift+Arrow`,
-  accessed by holding Symbols and the left GUI thumb.
-- Media: volume and play controls, accessed by holding Function/System and the
-  left GUI thumb.
-- Snap: Windows snap traversal, accessed by double-tap-holding any exposed GUI
-  key. GUI stays held while `I/J/K/L` send plain arrows.
+- Navigation: movement using the `I/J/K/L` spatial shape, accessed by holding
+  Numbers and the left GUI thumb. Target behavior: tap sends arrows, hold holds
+  arrows, double tap sends semantic jumps, and double-tap-hold sends movement
+  extremes.
+- Office: Office-content editing using the `I/J/K/L` spatial shape, accessed by
+  holding Symbols and the left GUI thumb. Target behavior: tap sends arrows,
+  hold sends `Alt+Shift+Arrow` for PowerPoint/Word structure, double tap sends
+  selection movement, and double-tap-hold sends extreme selection.
+- Media: Teams-first meeting/media controls, accessed from Function/System plus
+  the left GUI thumb. Meeting mute is the main expected use, with global volume
+  and playback controls as secondary behavior.
+- Snap: Windows snap traversal, accessed from the Ctrl+GUI chord so RGB and
+  OLED can explain it consistently with the other command layers. Important
+  displaced Windows virtual-desktop shortcuts live deliberately inside the
+  layer rather than relying on raw pass-through.
 - Text Snippets: safe-to-type personal snippets on mnemonic Base/Colemak
   double-tap-hold letters. Private string values must live in ignored local
   files.
@@ -103,6 +110,31 @@ Current source ownership:
 If a change needs to update more than one owner, name the source of truth first.
 For example, layer behavior starts in `layout.h`; RGB may derive from the
 keymap, and the printable guide should describe the result.
+
+## OLED Status Grammar
+
+OLED belongs to feedback, not behavior. The current direction keeps the
+Filterpaper-style status structure but renames it around ChieftainDots concepts:
+
+- The status panel has a top logo/text slot, a fixed middle layer/state tile,
+  and a bottom 2x2 home-row status stack.
+- The middle tile is named by role, not by historical art source:
+  `base_layer` for resting typing, `anchor_layer` for a held home-row anchor,
+  and `chord_layer` for a completed chord.
+- The tile stays in a fixed position. The image changes; the same Base tile
+  should not slide around the screen to imply depth.
+- The bottom 2x2 stack reuses the old modifier-panel grammar to show the four
+  home-row concepts: Function/System, Symbols, Numbers, and Control.
+- The small text slot where `corne` appears is the cheap state-name slot. Every
+  chorded layer should use the same label grammar once it exists in the active
+  trial: `nav`, `style` for Office, `snap`, and `media` if Media is restored.
+- Avoid full-screen raw label renderers for chord names. The first trial worked
+  but was slow and cost bytes; the small text-slot approach keeps Bongocat from
+  being overwritten and leaves more firmware headroom.
+
+The design brief at `docs/chieftainDots-oled-screen-brief.html` is the
+collaboration surface for screen changes. Update the brief before changing more
+firmware art, then compile-measure the firmware slice.
 
 ## Porting To Other Keyboards
 
@@ -260,14 +292,139 @@ The model:
 - A left thumb position refines that family into a related sub-layer.
 - The right hand performs the command.
 
-### `S` Family: Numbers And Editing
+### Three Anchors And Chords
 
-- Hold `S`: Numbers on the right hand.
-- Hold `S` plus the left GUI thumb position: Arrows.
-- Hold `S` plus the left Alt thumb position: extremes such as Home, End, Page
-  Up, and Page Down.
-- Hold `S` plus the left Space thumb position: snap shortcuts such as
-  GUI+Left and GUI+Right.
+The current trial has evolved from older two-family thumb-refinement language
+to three visible anchors plus one chord per anchor, with Snap as the separate
+Ctrl+GUI command chord:
+
+- Hold `D` or `K`: Numbers. GUI chord: Navigation.
+- Hold `S` or `L`: Symbols. GUI chord: Office.
+- Hold `A` or `;`: Function/System. GUI chord: Media.
+- Hold Control plus GUI: Snap.
+
+When this model changes, update `layout.h`, `keymaps/corne.json`, RGB, OLED
+status, the printable guide, and this section as one design slice.
+
+### Command Chord Hierarchy Requirement
+
+The command layers should use one common gesture vocabulary wherever it makes
+sense:
+
+- Tap: the direct, safest daily action.
+- Tap-and-hold: the related sustained, larger, or repeated action.
+- Double tap: the secondary but still reversible action.
+- Double-tap-and-hold: leave empty until a real need is proven, especially for
+  destructive or broad host-state changes.
+
+Current requirements by layer:
+
+```text
+Navigation, entered from Numbers + GUI
+
+Tap = arrows
+      Up
+Left  Down  Right
+
+Hold = held arrows
+      hold Up
+hold Left  hold Down  hold Right
+
+Double tap = semantic jumps
+      Ctrl+Up
+Ctrl+Left  Ctrl+Down  Ctrl+Right
+
+Double-tap-hold = movement extremes
+      Page Up
+Home  Page Down  End
+```
+
+```text
+Office, entered from Symbols + GUI
+
+Tap = arrow navigation inside Office content
+      Up
+Left  Down  Right
+
+Hold = PowerPoint / Word structure
+      Alt+Shift+Up
+Alt+Shift+Left  Alt+Shift+Down  Alt+Shift+Right
+
+Double tap = select word / line
+      Shift+Up
+Ctrl+Shift+Left  Shift+Down  Ctrl+Shift+Right
+
+Double-tap-hold = select extremes
+      Shift+Page Up
+Shift+Home  Shift+Page Down  Shift+End
+```
+
+```text
+Snap, Ctrl+GUI chord
+
+Tap = snap current window
+      Win+Alt+Up
+Win+Left  Win+Alt+Down  Win+Right
+
+Hold = current-window state or monitor movement
+      Win+Up
+Win+Shift+Left  Win+Down  Win+Shift+Right
+
+Double tap = desktop/workspace manipulation
+      Win+Tab
+Win+Ctrl+Left  Win+D  Win+Ctrl+Right
+
+Double-tap-hold = intentionally empty for the first trial
+```
+
+```text
+Media, Function/System + GUI chord, Teams-first
+
+Tap = daily meeting/media controls
+      Volume Up
+Teams mic mute  Volume Down  Play/Pause
+
+Hold = sustained/system controls
+      hold/repeat Volume Up
+system speaker mute  hold/repeat Volume Down  no-op or Play/Pause
+
+Double tap = track movement
+      ---
+Previous Track  ---  Next Track
+
+Double-tap-hold = intentionally empty
+```
+
+### Current Implementation Notes
+
+- Navigation is implemented as `_NAV` with `NAV_*_DANCE` in
+  `features/tap_dance.c`. It is movement-first: tap arrows, hold held arrows,
+  double-tap semantic jumps, and double-tap-hold movement extremes.
+- Office is implemented on the older `_EXTR` layer id for compatibility with
+  the existing layer stack, but user-facing docs and OLED labels call it
+  `style`. It uses `OFFICE_*_DANCE`: tap plain arrows, hold
+  `Alt+Shift+Arrow`, double-tap selection movement, and double-tap-hold extreme
+  selection.
+- Snap is implemented as `_SNP`, entered by holding the Control anchor and the
+  exposed GUI thumb chord. It uses `SNAP_*_DANCE` so the same right-hand arrow
+  shape can send snap, monitor, and desktop commands.
+- Media is resurrected as `_MEDI`, entered by Function/System plus GUI. It is a
+  deliberately small Teams-first layer: volume up/down, Teams mic mute,
+  system mute, play/pause, and previous/next track.
+
+Settled decisions for the current chord slice:
+
+- Navigation Up/Down semantic jumps use `Ctrl+Up/Down`.
+- Navigation Up/Down movement extremes use `Page Up/Page Down`.
+- Office Up/Down extreme selection uses `Shift+Page Up/Page Down`.
+- Snap lives on the Ctrl+GUI chord.
+- Media returns in this slice to keep four anchors with one visible chord each.
+- Snap includes `Win+Tab`, `Win+Ctrl+Left`, `Win+D`, and `Win+Ctrl+Right`;
+  `Win+Ctrl+F4` is intentionally omitted from the first trial.
+- Navigation, Office, Snap, and Media are implemented together so the physical
+  model, RGB, and OLED status grammar can be tested as one coherent trial.
+
+### Movement And Snap
 
 Directional sub-layers use a right-hand spatial shape:
 
@@ -307,9 +464,33 @@ Navigation and extremes keep `D = Ctrl` and `F = Shift` as plain held modifiers
 for consistency. Selection is now composed from those plain modifiers plus
 Navigation or Extremes, instead of being owned by a dedicated layer.
 
-The Snap layer exists because the left GUI thumb is already used to enter
-Navigation. It provides explicit GUI+Arrow commands without adding double-tap
-timing to ordinary arrow keys.
+The Snap layer is entered with Ctrl+GUI because the left GUI thumb already
+enters the anchor child layers. Ctrl+GUI makes Snap a visible chord instead of
+a hidden GUI double-tap-and-hold mode. Displaced Windows virtual desktop
+shortcuts are added back deliberately inside Snap: Ctrl+GUI+Left/Right for
+switching virtual desktops and Ctrl+GUI+D for showing the desktop. Ctrl+GUI+F4
+is intentionally omitted from the first trial because closing a virtual desktop
+is destructive enough to deserve its own later decision.
+
+Implemented Snap hierarchy:
+
+```text
+Tap = snap current window
+      Win+Alt+Up
+Win+Left   Win+Alt+Down   Win+Right
+
+Hold = current-window state or monitor movement
+      Win+Up
+Win+Shift+Left   Win+Down   Win+Shift+Right
+
+Double tap = desktop/workspace manipulation
+      Win+Tab
+Win+Ctrl+Left   Win+D   Win+Ctrl+Right
+```
+
+Leave double-tap-hold empty in the first Snap-as-chord trial. `Win+Alt+Up/Down`
+depends on Windows Snap Layout support, so top/bottom snap needs a real host
+test before this requirement is marked kept.
 
 First-slice number candidate:
 
@@ -364,7 +545,7 @@ numbered-command layer. The left-hand `F` position enters Symbols while Numbers
 is held, so the layer can mimic shifted number-row symbols without adding a
 second concept to the base number layer.
 
-### `A` Family: Symbols And Tools
+### Symbols, Function, And Media
 
 - Hold `A`: Symbols.
 - Hold `A` plus the left GUI thumb position: Media and volume.
@@ -495,6 +676,28 @@ The System layer intentionally avoids duplicating clean Windows shortcuts and no
 longer acts as a general app-launch layer. Function/System uses a momentary
 command-layer RGB color distinct from persistent whole-board Colemak RGB.
 Calculator and Media Player launch ideas are handled by Base lower-corner keys.
+
+Implemented Media chord:
+
+```text
+Hold Function/System, then chord GUI:
+
+Tap = Teams-first daily controls
+      I = Volume Up
+J = Teams mic mute   K = Volume Down   L = Play/Pause
+
+Hold = sustained/system controls
+      I = hold/repeat Volume Up
+J = system speaker mute   K = hold/repeat Volume Down   L = no-op or Play/Pause
+
+Double tap = track movement
+      ---
+Previous Track   ---   Next Track
+```
+
+Keep Media intentionally small. Do not restore a broad music-player layer unless
+real use proves it is needed. Teams microphone mute should send Teams'
+`Ctrl+Shift+M`; system speaker mute should stay separate as `KC_MUTE`.
 
 ### Spatial Consistency
 

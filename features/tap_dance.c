@@ -49,8 +49,7 @@ static tap_hold_double_t slash_pipe_dance = {KC_SLSH, KC_BSLS, KC_PIPE};
 static tap_hold_double_t plus_equal_dance = {KC_PLUS, KC_EQL, KC_PLUS};
 static tap_hold_double_t num_two_comma_lt_dance = {KC_2, KC_COMM, KC_LT};
 static tap_hold_double_t num_three_dot_gt_dance = {KC_3, KC_DOT, KC_GT};
-// Navigation hierarchy is deliberately data-only for easy rollback:
-// tap = arrow, hold = extreme, double-tap = selection, double-tap-hold = extreme selection.
+// Older diagnostic path: small, stateless Navigation tap dance.
 static nav_dance_t nav_up_dance = {KC_UP, KC_PGUP, S(KC_UP), S(KC_PGUP)};
 static nav_dance_t nav_left_dance = {KC_LEFT, KC_HOME, C(S(KC_LEFT)), S(KC_HOME)};
 static nav_dance_t nav_down_dance = {KC_DOWN, KC_PGDN, S(KC_DOWN), S(KC_PGDN)};

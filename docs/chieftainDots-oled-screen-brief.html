@@ -1,0 +1,1646 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChieftainDots OLED Screen Brief</title>
+  <style>
+    :root {
+      --ink: #111318;
+      --muted: #5b6472;
+      --line: #d8dde6;
+      --paper: #f7f8fb;
+      --panel: #ffffff;
+      --oled: #111318;
+      --pixel: #d7f7ff;
+      --blue: #2457d6;
+      --amber: #a65f00;
+      --green: #257647;
+      --purple: #6241b8;
+      --yellow: #b99100;
+      --cyan: #168da8;
+      --red: #c73434;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    header {
+      margin-bottom: 22px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 28px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 8px;
+    }
+
+    .summary {
+      max-width: 820px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .two {
+      grid-template-columns: 1.1fr .9fr;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .hero {
+      margin-bottom: 16px;
+    }
+
+    .hero svg,
+    .card svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .asset-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .asset {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fbfcfe;
+    }
+
+    .asset strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    code {
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 12px;
+      color: #303844;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    a.pill {
+      text-decoration: none;
+    }
+
+    .oled-comps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .oled-comps article {
+      background: #fbfcfe;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    .oled-device {
+      background: var(--oled);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 8px;
+      width: min(150px, 100%);
+      margin-inline: auto;
+    }
+
+    .oled-screen {
+      width: 100%;
+      aspect-ratio: 1 / 4;
+      background: #080a0d;
+      border: 1px solid #303844;
+      border-radius: 4px;
+      display: block;
+    }
+
+    .oled-icon {
+      image-rendering: pixelated;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .screen-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .screen-row article {
+      background: #fbfcfe;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    .oled-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-items: start;
+      margin-top: 8px;
+    }
+
+    .oled-pair .oled-device {
+      width: 100%;
+      margin-top: 0;
+    }
+
+    .screen-label {
+      margin-top: 6px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .current-oled {
+      width: 100%;
+      aspect-ratio: 1 / 4;
+      background: #080a0d;
+      border: 1px solid #303844;
+      border-radius: 4px;
+      padding: 6px 5px;
+      display: grid;
+      grid-template-rows: repeat(16, 1fr);
+      gap: 2px;
+      color: var(--pixel);
+      font: 8px/1 "Cascadia Mono", "Consolas", monospace;
+      text-transform: uppercase;
+    }
+
+    .current-oled .row {
+      border: 1px solid rgba(215, 247, 255, .16);
+      border-radius: 2px;
+      min-height: 0;
+    }
+
+    .current-oled .mark {
+      border-color: rgba(215, 247, 255, .75);
+      background: rgba(215, 247, 255, .12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 2px;
+    }
+
+    .current-oled .fill {
+      grid-row: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-color: rgba(215, 247, 255, .75);
+      background: rgba(215, 247, 255, .1);
+      text-align: center;
+      padding: 4px;
+    }
+
+    .rendered-oled {
+      image-rendering: pixelated;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .wireframe {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .wireframe svg {
+      background: #080a0d;
+      border: 1px solid #303844;
+      border-radius: 6px;
+    }
+
+    .legend {
+      display: grid;
+      gap: 8px;
+    }
+
+    .legend-item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfe;
+      padding: 9px 10px;
+    }
+
+    .legend-item strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    @media (max-width: 860px) {
+      .two,
+      .three,
+      .oled-comps,
+      .screen-row,
+      .wireframe {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>ChieftainDots OLED Screen Brief</h1>
+      <p class="summary">
+        Collaboration sketch for reusing the OLED framework already in the userspace.
+        Goal: design a compact feature-discovery screen before changing firmware.
+      </p>
+      <div class="pill-row">
+        <span class="pill">Single HTML file</span>
+        <span class="pill">Inline SVG</span>
+        <span class="pill">No firmware bytes</span>
+        <span class="pill">Use existing OLED ideas first</span>
+        <a class="pill" href="chieftainDots-oled-assets-preview.html">Real asset preview</a>
+      </div>
+    </header>
+
+    <section class="card hero">
+      <h2>What We Already Have</h2>
+      <svg viewBox="0 0 1100 420" role="img" aria-label="Visual inventory of existing OLED pieces">
+        <defs>
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".16"/>
+          </filter>
+          <style>
+            .label { font: 14px system-ui, sans-serif; fill: #111318; }
+            .small { font: 11px system-ui, sans-serif; fill: #5b6472; }
+            .mono { font: 11px Consolas, monospace; fill: #5b6472; }
+            .oledText { font: 16px Consolas, monospace; fill: #d7f7ff; }
+            .tinyOled { font: 10px Consolas, monospace; fill: #d7f7ff; }
+            .key { fill: #fff; stroke: #d8dde6; stroke-width: 1; }
+            .line { stroke: #aeb7c5; stroke-width: 1.5; fill: none; }
+            .dot { fill: #2457d6; }
+          </style>
+        </defs>
+
+        <rect x="20" y="28" width="1060" height="360" rx="18" fill="#fff" filter="url(#softShadow)"/>
+
+        <g transform="translate(55 64)">
+          <text class="label" x="0" y="0">Existing split OLED frame</text>
+          <text class="small" x="0" y="20">128 x 32 on each half, already wired for split state.</text>
+
+          <g transform="translate(0 48)">
+            <rect x="0" y="0" width="310" height="92" rx="10" fill="#111318"/>
+            <rect x="12" y="12" width="286" height="68" rx="4" fill="#0b0d11" stroke="#334" />
+            <text class="tinyOled" x="28" y="32">LEFT OLED</text>
+            <text class="oledText" x="28" y="56">Layer: NUM</text>
+            <text class="tinyOled" x="28" y="74">GUI child: NAV</text>
+          </g>
+
+          <g transform="translate(0 160)">
+            <rect x="0" y="0" width="310" height="92" rx="10" fill="#111318"/>
+            <rect x="12" y="12" width="286" height="68" rx="4" fill="#0b0d11" stroke="#334" />
+            <text class="tinyOled" x="28" y="32">RIGHT OLED</text>
+            <text class="oledText" x="28" y="56">Mods: GUI ALT</text>
+            <text class="tinyOled" x="28" y="74">Caps / Colemak / Spanish</text>
+          </g>
+        </g>
+
+        <g transform="translate(405 64)">
+          <text class="label" x="0" y="0">Reusable status renderer</text>
+          <text class="small" x="0" y="20">The current code already draws layer + modifier status.</text>
+
+          <g transform="translate(0 54)">
+            <rect class="key" x="0" y="0" width="70" height="48" rx="6"/>
+            <text class="label" x="18" y="29">NUM</text>
+            <rect class="key" x="84" y="0" width="70" height="48" rx="6"/>
+            <text class="label" x="106" y="29">SYM</text>
+            <rect class="key" x="168" y="0" width="70" height="48" rx="6"/>
+            <text class="label" x="190" y="29">SYS</text>
+            <rect class="key" x="252" y="0" width="70" height="48" rx="6"/>
+            <text class="label" x="275" y="29">ESP</text>
+          </g>
+
+          <g transform="translate(0 130)">
+            <rect x="0" y="0" width="322" height="84" rx="8" fill="#f8fafc" stroke="#d8dde6"/>
+            <circle cx="28" cy="28" r="12" fill="#2457d6"/>
+            <text class="label" x="50" y="32">Layer badge</text>
+            <circle cx="28" cy="58" r="12" fill="#257647"/>
+            <text class="label" x="50" y="62">Modifier badge</text>
+            <text class="mono" x="185" y="32">oled-icons.c</text>
+            <text class="mono" x="185" y="62">oledfont.c</text>
+          </g>
+        </g>
+
+        <g transform="translate(770 64)">
+          <text class="label" x="0" y="0">Reusable engines</text>
+          <text class="small" x="0" y="20">Keep the framework; be careful with the art.</text>
+
+          <g transform="translate(0 52)">
+            <rect x="0" y="0" width="260" height="50" rx="8" fill="#fbfcfe" stroke="#d8dde6"/>
+            <circle class="dot" cx="24" cy="25" r="5"/>
+            <text class="label" x="42" y="23">Tap timer</text>
+            <text class="small" x="42" y="39">recent key activity</text>
+          </g>
+          <g transform="translate(0 116)">
+            <rect x="0" y="0" width="260" height="50" rx="8" fill="#fbfcfe" stroke="#d8dde6"/>
+            <circle class="dot" cx="24" cy="25" r="5"/>
+            <text class="label" x="42" y="23">Animation shell</text>
+            <text class="small" x="42" y="39">Bongocat/Luna structure</text>
+          </g>
+          <g transform="translate(0 180)">
+            <rect x="0" y="0" width="260" height="50" rx="8" fill="#fbfcfe" stroke="#d8dde6"/>
+            <circle class="dot" cx="24" cy="25" r="5"/>
+            <text class="label" x="42" y="23">RLE compression</text>
+            <text class="small" x="42" y="39">only if bitmap art is worth it</text>
+          </g>
+        </g>
+
+        <path class="line" d="M365 158 C390 158 385 118 405 118"/>
+        <path class="line" d="M365 270 C400 270 390 218 405 218"/>
+        <path class="line" d="M732 198 C756 198 748 204 770 204"/>
+      </svg>
+    </section>
+
+    <section class="card hero">
+      <h2>Current Screen Logic</h2>
+      <p class="note">
+        This pairs a schematic master screen with a rendered status screen. The master OLED runs
+        <code>render_bongocat()</code>, shown schematically because it is animated. The non-master OLED is rendered
+        from <code>oledfont.c</code> using the same glyph codes as <code>render_mod_status()</code>: logo at row 0,
+        layer art at row 6, GUI/Alt at row 11, and Ctrl/Shift at row 13. The pairs below assume USB/master on
+        the left; if the right half is master, the roles swap.
+      </p>
+
+      <div class="screen-row">
+        <article>
+          <h3>Base, no mods</h3>
+          <div class="oled-pair">
+            <div>
+              <div class="oled-device">
+                <div class="current-oled">
+                  <div class="fill">render_bongocat()</div>
+                </div>
+              </div>
+              <div class="screen-label">Left: master</div>
+            </div>
+            <div>
+              <div class="oled-device">
+                <canvas class="rendered-oled" data-render-status="base"></canvas>
+              </div>
+              <div class="screen-label">Right: status</div>
+            </div>
+          </div>
+          <p class="note">Logo, Base icon, all modifiers off.</p>
+        </article>
+        <article>
+          <h3>Numbers</h3>
+          <div class="oled-pair">
+            <div>
+              <div class="oled-device">
+                <div class="current-oled">
+                  <div class="fill">render_bongocat()</div>
+                </div>
+              </div>
+              <div class="screen-label">Left: master</div>
+            </div>
+            <div>
+              <div class="oled-device">
+                <canvas class="rendered-oled" data-render-status="num"></canvas>
+              </div>
+              <div class="screen-label">Right: status</div>
+            </div>
+          </div>
+          <p class="note">Only <code>NUM</code> and <code>SYM</code> have distinct layer art today.</p>
+        </article>
+        <article>
+          <h3>Symbols + GUI</h3>
+          <div class="oled-pair">
+            <div>
+              <div class="oled-device">
+                <div class="current-oled">
+                  <div class="fill">render_bongocat()</div>
+                </div>
+              </div>
+              <div class="screen-label">Left: master</div>
+            </div>
+            <div>
+              <div class="oled-device">
+                <canvas class="rendered-oled" data-render-status="sym-gui"></canvas>
+              </div>
+              <div class="screen-label">Right: status</div>
+            </div>
+          </div>
+          <p class="note">GUI/Alt and Ctrl/Shift are still modifier-status art, not chord art.</p>
+        </article>
+        <article>
+          <h3>Other Layers</h3>
+          <div class="oled-pair">
+            <div>
+              <div class="oled-device">
+                <div class="current-oled">
+                  <div class="fill">render_bongocat()</div>
+                </div>
+              </div>
+              <div class="screen-label">Left: master</div>
+            </div>
+            <div>
+              <div class="oled-device">
+                <canvas class="rendered-oled" data-render-status="other"></canvas>
+              </div>
+              <div class="screen-label">Right: status</div>
+            </div>
+          </div>
+          <p class="note">Navigation, Function, Office, Snap, Spanish currently fall back to Base art.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <h2>Two-Screen Wireframe</h2>
+      <p class="note">
+        Shared vocabulary for the minimal update. Put the status/discovery screen on the left OLED because the
+        anchors and chords happen on the left hand. Move Bongocat to the right OLED. Keep the current status screen structure:
+        logo at the top, the existing layer tile in the middle, and a 2x2 bottom stack. The proposed change is
+        to make that bottom stack reflect the home-row concepts instead of the current modifier labels. When a
+        home-row concept is held, its slot appears on and the middle tile changes to the anchor image. When a
+        chord is pressed, the same fixed slot changes to the chord image. The first scaled right-screen label worked, but it was slow; prefer replacing the
+        small <code>corne</code> text slot with lowercase state names such as <code>nav</code>,
+        <code>styles</code>, <code>snap</code>, <code>span</code>, or <code>caps</code>.
+      </p>
+
+      <div class="wireframe">
+        <svg viewBox="0 0 560 420" role="img" aria-label="Two OLED screen wireframe">
+          <style>
+            .wfScreen { fill: #080a0d; stroke: #303844; }
+            .wfBox { fill: none; stroke: #d7f7ff; stroke-width: 2; }
+            .wfThin { fill: none; stroke: rgba(215, 247, 255, .55); stroke-width: 1; }
+            .wfText { font: 12px Consolas, monospace; fill: #d7f7ff; }
+            .wfSmall { font: 10px Consolas, monospace; fill: #d7f7ff; }
+            .wfTitle { font: 12px system-ui, sans-serif; fill: #303844; font-weight: 700; }
+            .wfLine { stroke: #5b6472; stroke-width: 1.5; fill: none; }
+            .wfCall { font: 11px system-ui, sans-serif; fill: #303844; }
+            .wfDot { fill: #d7f7ff; }
+          </style>
+
+          <text class="wfTitle" x="82" y="22">Left: Status</text>
+          <text class="wfTitle" x="268" y="22">Right: Bongo</text>
+          <text class="wfCall" x="398" y="62">Normal:</text>
+          <text class="wfCall" x="398" y="78">Bongocat animates here.</text>
+          <text class="wfCall" x="398" y="128">Hold:</text>
+          <text class="wfCall" x="398" y="144">status changes only.</text>
+          <text class="wfCall" x="398" y="194">Chord:</text>
+          <text class="wfCall" x="398" y="210">status tile changes again;</text>
+          <text class="wfCall" x="398" y="226">text slot names state.</text>
+
+          <rect class="wfScreen" x="82" y="38" width="88" height="352" rx="8"/>
+          <rect class="wfScreen" x="268" y="38" width="88" height="352" rx="8"/>
+
+          <rect class="wfBox" x="94" y="60" width="64" height="46" rx="4"/>
+          <text class="wfSmall" x="110" y="84">Logo</text>
+
+          <rect class="wfBox" x="94" y="144" width="64" height="64" rx="4"/>
+          <text class="wfSmall" x="99" y="172">Layer Tile</text>
+          <text class="wfSmall" x="105" y="186">Base</text>
+
+          <path class="wfLine" d="M94 132 H158"/>
+          <text class="wfSmall" x="96" y="128">hold/chord move tile upward</text>
+
+          <g transform="translate(97 270)">
+            <rect class="wfThin" x="0" y="0" width="26" height="24" rx="2"/>
+            <rect class="wfThin" x="31" y="0" width="26" height="24" rx="2"/>
+            <rect class="wfThin" x="0" y="29" width="26" height="24" rx="2"/>
+            <rect class="wfThin" x="31" y="29" width="26" height="24" rx="2"/>
+            <path class="wfThin" d="M27 12 H31 M27 41 H31"/>
+            <path class="wfThin" d="M13 25 V29 M44 25 V29"/>
+            <text class="wfSmall" x="7" y="15">HR</text>
+            <text class="wfSmall" x="38" y="15">HR</text>
+            <text class="wfSmall" x="7" y="44">HR</text>
+            <text class="wfSmall" x="38" y="44">HR</text>
+          </g>
+
+          <text class="wfSmall" x="92" y="352">same status structure:</text>
+          <text class="wfSmall" x="92" y="365">logo + layer + 2x2 HR</text>
+
+          <rect class="wfBox" x="280" y="60" width="64" height="238" rx="4"/>
+          <text class="wfSmall" x="289" y="168">Bongo</text>
+          <text class="wfSmall" x="294" y="182">Cat</text>
+          <text class="wfSmall" x="281" y="318">Bongo stays on the</text>
+          <text class="wfSmall" x="281" y="332">right/resting screen.</text>
+          <text class="wfSmall" x="281" y="346">No scaled label here.</text>
+
+          <path class="wfLine" d="M170 298 H268"/>
+          <text class="wfCall" x="184" y="288">2x2 home-row state</text>
+          <text class="wfCall" x="184" y="302">lives on status screen</text>
+
+          <path class="wfLine" d="M356 336 H398"/>
+          <text class="wfCall" x="398" y="338">Slow scaled-label path</text>
+          <text class="wfCall" x="398" y="354">is not the next slice.</text>
+        </svg>
+
+        <div class="legend">
+          <div class="legend-item">
+            <strong>Screen Role</strong>
+            <span class="note">Swap the roles: left OLED becomes the status/discovery screen because left-hand anchors and chords drive it; right OLED keeps Bongocat.</span>
+          </div>
+          <div class="legend-item">
+            <strong>Logo Region</strong>
+            <span class="note">Current top logo area. Keep it where it is; held home-row state should make the relevant mark look on.</span>
+          </div>
+          <div class="legend-item">
+            <strong>Layer Tile</strong>
+            <span class="note">Current Base/Numbers/Symbols icon area. It stays in the current position, but the image changes from Base to Anchor to Chord as the state deepens.</span>
+          </div>
+          <div class="legend-item">
+            <strong>Home-Row 2x2 Status Stack</strong>
+            <span class="note">Use the current bottom 2x2 modifier-stack grammar. The labels/concepts change from modifiers to home-row states.</span>
+          </div>
+          <div class="legend-item">
+            <strong>Chord Label</strong>
+            <span class="note">Do not use the slow full-screen scaled label path next. Reuse the existing small text slot where <code>corne</code> appears and show lowercase state names there.</span>
+          </div>
+          <div class="legend-item">
+            <strong>Open Question</strong>
+            <span class="note">Which four home-row concepts map to the 2x2 stack positions, and can their on/off states reuse the existing modifier-stack visual grammar?</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <h2>Actual Layer Tile Images</h2>
+      <p class="note">
+        The firmware does not move one Base image through the states. It has three named image strings in
+        <code>oled/oled-icons.c</code>, and <code>render_layer_state()</code> chooses between them:
+        <code>base_layer</code> for resting typing, <code>anchor_layer</code> for home-row holds, and
+        <code>chord_layer</code> for chorded layers. The slot stays fixed; the image changes.
+      </p>
+
+      <div class="oled-comps">
+        <article>
+          <h3>base_layer</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-render-layer-tile="base"></canvas>
+          </div>
+          <p class="note">Glyphs: <code>9a 9b 9c / ba bb bc / da db dc</code>. Used by default, including Base and Colemak.</p>
+        </article>
+        <article>
+          <h3>anchor_layer</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-render-layer-tile="anchor"></canvas>
+          </div>
+          <p class="note">Glyphs: <code>94 95 96 / b4 b5 b6 / d4 d5 d6</code>. Reused from the old Numbers tile for home-row anchor holds.</p>
+        </article>
+        <article>
+          <h3>chord_layer</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-render-layer-tile="chord"></canvas>
+          </div>
+          <p class="note">Glyphs: <code>97 98 99 / b7 b8 b9 / d7 d8 d9</code>. Reused from the old Symbols tile for chorded layers.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <h2>Draft Layer Tile States</h2>
+      <p class="note">
+        These renders show the whole two-screen concept: left status/discovery, right Bongocat. The layer-tile
+        location remains constant; the image changes from <code>base_layer</code> to <code>anchor_layer</code>
+        or <code>chord_layer</code>. The small text slot is five glyph cells wide, matching <code>corne</code>,
+        so the firmware uses <code>style</code> as the compact display for Styles.
+      </p>
+
+      <div class="oled-comps">
+        <article>
+          <h3>Resting</h3>
+          <div class="oled-pair">
+            <div>
+              <div class="oled-device">
+                <canvas class="rendered-oled" data-render-layer-state="rest"></canvas>
+              </div>
+              <div class="screen-label">Left: status</div>
+            </div>
+            <div>
+              <div class="oled-device">
+                <div class="current-oled">
+                  <div class="fill">render_bongocat()</div>
+                </div>
+              </div>
+              <div class="screen-label">Right: Bongo</div>
+            </div>
+          </div>
+          <p class="note">Base or Colemak typing. The text slot keeps the normal label, the fixed tile slot shows <code>base_layer</code>, and the home-row stack is all off.</p>
+        </article>
+        <article>
+          <h3>Hold</h3>
+          <div class="oled-pair">
+            <div>
+              <div class="oled-device">
+                <canvas class="rendered-oled" data-render-layer-state="hold"></canvas>
+              </div>
+              <div class="screen-label">Left: status</div>
+            </div>
+            <div>
+              <div class="oled-device">
+                <div class="current-oled">
+                  <div class="fill">render_bongocat()</div>
+                </div>
+              </div>
+              <div class="screen-label">Right: Bongo</div>
+            </div>
+          </div>
+          <p class="note">A home-row concept is held. The matching 2x2 slot turns on and the fixed tile slot shows <code>anchor_layer</code>. The small text slot stays normal for this slice.</p>
+        </article>
+        <article>
+          <h3>Chord / Other State</h3>
+          <div class="oled-pair">
+            <div>
+              <div class="oled-device">
+                <canvas class="rendered-oled" data-render-layer-state="chord"></canvas>
+              </div>
+              <div class="screen-label">Left: status</div>
+            </div>
+            <div>
+              <div class="oled-device">
+                <div class="current-oled">
+                  <div class="fill">render_bongocat()</div>
+                </div>
+              </div>
+              <div class="screen-label">Right: Bongo</div>
+            </div>
+          </div>
+          <p class="note">A chord is active. The fixed tile slot shows <code>chord_layer</code>, and the small text slot names the chord: <code>nav</code> or <code>style</code>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <h2>Dismissed Scaled Label Trial</h2>
+      <p class="note">
+        These previews prove the visual idea but are no longer the preferred firmware path. The physical trial
+        worked, but writing a full scaled raw OLED frame felt slow. Keep this section as design evidence only.
+      </p>
+
+      <div class="oled-comps">
+        <article>
+          <h3>NAV</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-chord-label="NAV"></canvas>
+          </div>
+        </article>
+        <article>
+          <h3>STYLES</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-chord-label="STYLES"></canvas>
+          </div>
+        </article>
+        <article>
+          <h3>SNAP</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-chord-label="SNAP"></canvas>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <h2>Home-Row Icon Mockup</h2>
+      <p class="note">
+        First-pass icon vocabulary for the bottom 2x2 status stack. The order follows the active HRM wrapper:
+        top-left <code>Fn</code>, top-right <code>@</code>, bottom-left <code>#</code>, bottom-right existing
+        Control. The mockup creates left and right button slices for <code>Fn</code>, <code>@</code>, and
+        <code>#</code>, then renders them with the same paired status grammar as the current modifier stack.
+        The individual previews show each icon in its real slot, off first and pressed second.
+      </p>
+      <p class="note">
+        Current rendered icon names in the brief: <code>corneLogo</code>, <code>katakana</code>,
+        <code>corneText</code>, <code>baseLayer</code>, <code>anchorLayer</code>, <code>chordLayer</code>,
+        <code>gui</code>, <code>alt</code>, <code>ctrl</code>, <code>shift</code>, connector states
+        <code>offOff</code>, <code>onOff</code>, <code>offOn</code>, <code>onOn</code>, plus the
+        discovery <code>arrows</code> preview.
+      </p>
+
+      <div class="oled-comps">
+        <article>
+          <h3>Fn Off / Pressed</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-render-home-icon="fn"></canvas>
+          </div>
+        </article>
+        <article>
+          <h3>@ Off / Pressed</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-render-home-icon="sym"></canvas>
+          </div>
+        </article>
+        <article>
+          <h3># Off / Pressed</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-render-home-icon="num"></canvas>
+          </div>
+        </article>
+        <article>
+          <h3>Ctrl Off / Pressed</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-render-home-icon="ctrl"></canvas>
+          </div>
+        </article>
+      </div>
+
+      <div class="oled-comps">
+        <article>
+          <h3>All Off</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-home-row="none"></canvas>
+          </div>
+          <p class="note">Resting home-row status stack.</p>
+        </article>
+        <article>
+          <h3>Symbols Held</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-home-row="sym"></canvas>
+          </div>
+          <p class="note"><code>@</code> slot on, matching Symbols.</p>
+        </article>
+        <article>
+          <h3>Numbers Held</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-home-row="num"></canvas>
+          </div>
+          <p class="note"><code>#</code> slot on, matching Numbers.</p>
+        </article>
+        <article>
+          <h3>Function Held</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-home-row="fn"></canvas>
+          </div>
+          <p class="note"><code>Fn</code> slot on, matching System/Function.</p>
+        </article>
+        <article>
+          <h3>Control Held</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-home-row="ctrl"></canvas>
+          </div>
+          <p class="note">Existing Control art reused.</p>
+        </article>
+        <article>
+          <h3>Chord Example</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-home-row="fn-sym"></canvas>
+          </div>
+          <p class="note">Two slots on to test connector readability.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <h2>Anchor/Chord Discovery Screen</h2>
+      <p class="note">
+        Proposed direction: teach the grammar, not the whole keymap, on the Corne's vertical OLEDs. The home
+        row is a compact stacked map with only the three anchors distinguished. The thumb row shows three boxes,
+        and only the active chord thumb gets an icon. Existing layer tiles and arrow glyphs are rendered below
+        from the current OLED font bytes.
+      </p>
+
+      <div class="oled-comps">
+        <article>
+          <h3>Idle Grammar</h3>
+          <svg class="oled-screen" viewBox="0 0 32 128" role="img" aria-label="Idle anchor and thumb grammar on vertical OLED">
+            <style>
+              .pbox { fill: none; stroke: #d7f7ff; stroke-width: 1; }
+              .panchor { fill: none; stroke: #d7f7ff; stroke-width: 2; }
+              .pthumb { fill: none; stroke: #d7f7ff; stroke-width: 1; }
+              .otext { font: 5px Consolas, monospace; fill: #d7f7ff; text-anchor: middle; }
+            </style>
+            <rect x="0" y="0" width="32" height="128" fill="#080a0d"/>
+            <g transform="translate(3 8)">
+              <rect class="panchor" x="0" y="0" width="7" height="8" rx="1"/><text class="otext" x="3.5" y="6">A</text>
+              <rect class="panchor" x="9" y="0" width="7" height="8" rx="1"/><text class="otext" x="12.5" y="6">S</text>
+              <rect class="panchor" x="18" y="0" width="7" height="8" rx="1"/><text class="otext" x="21.5" y="6">D</text>
+              <rect class="pbox" x="0" y="12" width="7" height="8" rx="1"/>
+              <rect class="pbox" x="9" y="12" width="7" height="8" rx="1"/>
+              <rect class="panchor" x="18" y="12" width="7" height="8" rx="1"/><text class="otext" x="21.5" y="18">K</text>
+              <rect class="panchor" x="0" y="24" width="7" height="8" rx="1"/><text class="otext" x="3.5" y="30">L</text>
+            </g>
+            <g transform="translate(4 104)">
+              <rect class="pthumb" x="0" y="0" width="7" height="12" rx="1"/>
+              <rect class="pthumb" x="9" y="0" width="7" height="12" rx="1"/>
+              <rect class="pthumb" x="18" y="0" width="7" height="12" rx="1"/>
+            </g>
+          </svg>
+          <p class="note">Base screen stays quiet: anchors are discoverable, non-anchors are just boxes.</p>
+        </article>
+
+        <article>
+          <h3>Anchor Held</h3>
+          <div class="oled-device">
+            <svg class="oled-screen" viewBox="0 0 32 128" role="img" aria-label="Anchor-held OLED mockup">
+              <rect x="0" y="0" width="32" height="128" fill="#080a0d"/>
+              <rect x="3" y="7" width="7" height="8" rx="1" fill="none" stroke="#d7f7ff"/>
+              <rect x="12" y="7" width="7" height="8" rx="1" fill="none" stroke="#d7f7ff"/>
+              <rect x="21" y="6" width="8" height="10" rx="1" fill="none" stroke="#d7f7ff" stroke-width="2"/>
+              <rect x="3" y="19" width="7" height="8" rx="1" fill="none" stroke="#d7f7ff"/>
+              <foreignObject x="1" y="48" width="30" height="24">
+                <canvas class="oled-icon" data-oled-icon="num" data-oled-cols="5"></canvas>
+              </foreignObject>
+              <rect x="4" y="104" width="7" height="12" rx="1" fill="none" stroke="#d7f7ff"/>
+              <rect x="13" y="104" width="7" height="12" rx="1" fill="none" stroke="#d7f7ff"/>
+              <rect x="22" y="104" width="7" height="12" rx="1" fill="none" stroke="#d7f7ff"/>
+            </svg>
+          </div>
+          <p class="note">Anchor alone: the middle/lower status region shows the current layer icon.</p>
+        </article>
+
+        <article>
+          <h3>Chord Active</h3>
+          <div class="oled-device">
+            <svg class="oled-screen" viewBox="0 0 32 128" role="img" aria-label="Chord-active OLED mockup">
+              <rect x="0" y="0" width="32" height="128" fill="#080a0d"/>
+              <rect x="3" y="7" width="7" height="8" rx="1" fill="none" stroke="#d7f7ff"/>
+              <rect x="12" y="7" width="7" height="8" rx="1" fill="none" stroke="#d7f7ff"/>
+              <rect x="21" y="6" width="8" height="10" rx="1" fill="none" stroke="#d7f7ff" stroke-width="2"/>
+              <rect x="3" y="19" width="7" height="8" rx="1" fill="none" stroke="#d7f7ff"/>
+              <foreignObject x="10" y="46" width="12" height="16">
+                <canvas class="oled-icon" data-oled-icon="arrows" data-oled-cols="2"></canvas>
+              </foreignObject>
+              <rect x="4" y="104" width="7" height="12" rx="1" fill="none" stroke="#d7f7ff"/>
+              <rect x="13" y="103" width="8" height="14" rx="1" fill="none" stroke="#d7f7ff" stroke-width="2"/>
+              <rect x="22" y="104" width="7" height="12" rx="1" fill="none" stroke="#d7f7ff"/>
+            </svg>
+          </div>
+          <p class="note">Chord: only the chord thumb is marked, and action icons appear where they teach movement.</p>
+        </article>
+      </div>
+
+      <div class="oled-comps">
+        <article>
+          <h3>Current Base Tile</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-oled-icon="base" data-oled-cols="5"></canvas>
+          </div>
+          <p class="note">Existing Base/Colemak status art from <code>oledfont.c</code>.</p>
+        </article>
+        <article>
+          <h3>Current Layer Tiles</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-oled-icon="num" data-oled-cols="5"></canvas>
+            <canvas class="oled-icon" data-oled-icon="sym" data-oled-cols="5" style="margin-top:8px"></canvas>
+          </div>
+          <p class="note">Existing Numbers and Symbols art; Function may need a sibling tile if it becomes visible.</p>
+        </article>
+        <article>
+          <h3>Current Arrows</h3>
+          <div class="oled-device">
+            <canvas class="oled-icon" data-oled-icon="arrows" data-oled-cols="2"></canvas>
+          </div>
+          <p class="note">Existing built-in font arrows as a first pass for Navigation, Snap, and Office directions.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <h2>Candidate Screen Model</h2>
+        <svg viewBox="0 0 680 310" role="img" aria-label="OLED candidate model">
+          <style>
+            .screenText { font: 15px Consolas, monospace; fill: #d7f7ff; }
+            .screenSmall { font: 11px Consolas, monospace; fill: #d7f7ff; }
+            .caption { font: 12px system-ui, sans-serif; fill: #5b6472; }
+          </style>
+          <rect x="18" y="18" width="300" height="116" rx="12" fill="#111318"/>
+          <rect x="32" y="32" width="272" height="88" rx="4" fill="#080a0d"/>
+          <text class="screenSmall" x="48" y="52">ACTIVE</text>
+          <text class="screenText" x="48" y="76">NUMBERS</text>
+          <text class="screenSmall" x="48" y="98">GUI -> NAV</text>
+          <text class="screenSmall" x="48" y="112">SPACE -> SYM</text>
+          <text class="caption" x="18" y="156">Left screen: current layer and next available refinements.</text>
+
+          <rect x="362" y="18" width="300" height="116" rx="12" fill="#111318"/>
+          <rect x="376" y="32" width="272" height="88" rx="4" fill="#080a0d"/>
+          <text class="screenSmall" x="392" y="52">STATE</text>
+          <text class="screenText" x="392" y="76">SHIFT ALT</text>
+          <text class="screenSmall" x="392" y="98">CAPS: off</text>
+          <text class="screenSmall" x="392" y="112">MODE: Colemak</text>
+          <text class="caption" x="362" y="156">Right screen: modifiers, toggles, and warnings.</text>
+
+          <g transform="translate(20 205)">
+            <rect x="0" y="0" width="84" height="54" rx="6" fill="#edf3ff" stroke="#9db5f0"/>
+            <text x="18" y="32" font-family="Consolas" font-size="16" fill="#2457d6">NUM</text>
+            <rect x="100" y="0" width="84" height="54" rx="6" fill="#fff5e8" stroke="#e0b678"/>
+            <text x="122" y="32" font-family="Consolas" font-size="16" fill="#a65f00">SYM</text>
+            <rect x="200" y="0" width="84" height="54" rx="6" fill="#effbea" stroke="#a9d78f"/>
+            <text x="226" y="32" font-family="Consolas" font-size="16" fill="#257647">SYS</text>
+            <rect x="300" y="0" width="84" height="54" rx="6" fill="#eaffff" stroke="#8bd6e6"/>
+            <text x="326" y="32" font-family="Consolas" font-size="16" fill="#168da8">NAV</text>
+            <rect x="400" y="0" width="84" height="54" rx="6" fill="#fffbe8" stroke="#ddcc78"/>
+            <text x="426" y="32" font-family="Consolas" font-size="16" fill="#b99100">EXT</text>
+            <rect x="500" y="0" width="84" height="54" rx="6" fill="#eef7ef" stroke="#9ccda2"/>
+            <text x="526" y="32" font-family="Consolas" font-size="16" fill="#257647">ESP</text>
+          </g>
+        </svg>
+      </article>
+
+      <article class="card">
+        <h2>Existing Pieces To Reuse</h2>
+        <div class="asset-list">
+          <div class="asset">
+            <strong>OLED setup</strong>
+            <code>config.h: OLED_TIMEOUT, OLED_BRIGHTNESS, OLED_FONT_H, SPLIT_OLED_ENABLE</code>
+          </div>
+          <div class="asset">
+            <strong>Status renderer</strong>
+            <code>oled/oled-icons.c: render_mod_status()</code>
+          </div>
+          <div class="asset">
+            <strong>Custom icon font</strong>
+            <code>oled/oledfont.c: Corne logo, layer tiles, modifier tiles</code>
+          </div>
+          <div class="asset">
+            <strong>Tap activity signal</strong>
+            <code>eldestroyer74.c: oled_tap_timer</code>
+          </div>
+          <div class="asset">
+            <strong>Animation shells</strong>
+            <code>oled/oled-bongocat.c, oled/oled-luna.c</code>
+          </div>
+          <div class="asset">
+            <strong>Bitmap compression precedent</strong>
+            <code>oled/rle.c</code>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid three" style="margin-top:16px">
+      <article class="card">
+        <h2>Use Now</h2>
+        <p class="note">
+          The status renderer, layer/modifier split, custom font approach, and tap timer are useful immediately.
+          They match the goal: feature discovery without inventing a new firmware architecture.
+        </p>
+      </article>
+      <article class="card">
+        <h2>Use Carefully</h2>
+        <p class="note">
+          Bongocat and Luna prove the animation path, but their art is expensive. Reuse their structure only after
+          a smaller status screen fits.
+        </p>
+      </article>
+      <article class="card">
+        <h2>Design Question</h2>
+        <p class="note">
+          Should the first OLED screen show exact key positions, or should it show the current concept and the next
+          possible gestures? The current evidence points toward concept plus next actions.
+        </p>
+      </article>
+    </section>
+  </main>
+  <script>
+    const oledFont = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x5b, 0x4f, 0x5b, 0x3e, 0x00, 0x3e, 0x6b, 0x4f, 0x6b, 0x3e, 0x00, 0x1c, 0x3e, 0x7c, 0x3e, 0x1c, 0x00, 0x18, 0x3c, 0x7e, 0x3c, 0x18, 0x00, 0x1c, 0x57, 0x7d, 0x57, 0x1c, 0x00, 0x1c, 0x5e, 0x7f, 0x5e, 0x1c, 0x00, 0x00, 0x18, 0x3c, 0x18, 0x00, 0x00, 0xff, 0xe7, 0xc3, 0xe7, 0xff, 0x00, 0x00, 0x18, 0x24, 0x18, 0x00, 0x00, 0xff, 0xe7, 0xdb, 0xe7, 0xff, 0x00, 0x30, 0x48, 0x3a, 0x06, 0x0e, 0x00, 0x26, 0x29, 0x79, 0x29, 0x26, 0x00, 0x40, 0x7f, 0x05, 0x05, 0x07, 0x00, 0x40, 0x7f, 0x05, 0x25, 0x3f, 0x00, 0x5a, 0x3c, 0xe7, 0x3c, 0x5a, 0x00, 0x7f, 0x3e, 0x1c, 0x1c, 0x08, 0x00, 0x08, 0x1c, 0x1c, 0x3e, 0x7f, 0x00, 0x14, 0x22, 0x7f, 0x22, 0x14, 0x00, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x00, 0x06, 0x09, 0x7f, 0x01, 0x7f, 0x00, 0x00, 0x66, 0x89, 0x95, 0x6a, 0x00, 0x60, 0x60, 0x60, 0x60, 0x60, 0x00, 0x94, 0xa2, 0xff, 0xa2, 0x94, 0x00, 0x08, 0x04, 0x7e, 0x04, 0x08, 0x00, 0x10, 0x20, 0x7e, 0x20, 0x10, 0x00, 0x08, 0x08, 0x2a, 0x1c, 0x08, 0x00, 0x08, 0x1c, 0x2a, 0x08, 0x08, 0x00, 0x1e, 0x10, 0x10, 0x10, 0x10, 0x00, 0x0c, 0x1e, 0x0c, 0x1e, 0x0c, 0x00, 0x30, 0x38, 0x3e, 0x38, 0x30, 0x00, 0x06, 0x0e, 0x3e, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5f, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x07, 0x00, 0x00, 0x14, 0x7f, 0x14, 0x7f, 0x14, 0x00, 0x24, 0x2a, 0x7f, 0x2a, 0x12, 0x00, 0x23, 0x13, 0x08, 0x64, 0x62, 0x00, 0x36, 0x49, 0x56, 0x20, 0x50, 0x00, 0x00, 0x08, 0x07, 0x03, 0x00, 0x00, 0x00, 0x1c, 0x22, 0x41, 0x00, 0x00, 0x00, 0x41, 0x22, 0x1c, 0x00, 0x00, 0x2a, 0x1c, 0x7f, 0x1c, 0x2a, 0x00, 0x08, 0x08, 0x3e, 0x08, 0x08, 0x00, 0x00, 0x80, 0x70, 0x30, 0x00, 0x00, 0x08, 0x08, 0x08, 0x08, 0x08, 0x00, 0x00, 0x00, 0x60, 0x60, 0x00, 0x00, 0x20, 0x10, 0x08, 0x04, 0x02, 0x00, 0x3e, 0x51, 0x49, 0x45, 0x3e, 0x00, 0x00, 0x42, 0x7f, 0x40, 0x00, 0x00, 0x72, 0x49, 0x49, 0x49, 0x46, 0x00, 0x21, 0x41, 0x49, 0x4d, 0x33, 0x00, 0x18, 0x14, 0x12, 0x7f, 0x10, 0x00, 0x27, 0x45, 0x45, 0x45, 0x39, 0x00, 0x3c, 0x4a, 0x49, 0x49, 0x31, 0x00, 0x41, 0x21, 0x11, 0x09, 0x07, 0x00, 0x36, 0x49, 0x49, 0x49, 0x36, 0x00, 0x46, 0x49, 0x49, 0x29, 0x1e, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0x40, 0x34, 0x00, 0x00, 0x00, 0x00, 0x08, 0x14, 0x22, 0x41, 0x00, 0x14, 0x14, 0x14, 0x14, 0x14, 0x00, 0x00, 0x41, 0x22, 0x14, 0x08, 0x00, 0x02, 0x01, 0x59, 0x09, 0x06, 0x00, 0x3e, 0x41, 0x5d, 0x59, 0x4e, 0x00, 0x7c, 0x12, 0x11, 0x12, 0x7c, 0x00, 0x7f, 0x49, 0x49, 0x49, 0x36, 0x00, 0x3e, 0x41, 0x41, 0x41, 0x22, 0x00, 0x7f, 0x41, 0x41, 0x41, 0x3e, 0x00, 0x7f, 0x49, 0x49, 0x49, 0x41, 0x00, 0x7f, 0x09, 0x09, 0x09, 0x01, 0x00, 0x3e, 0x41, 0x41, 0x51, 0x73, 0x00, 0x7f, 0x08, 0x08, 0x08, 0x7f, 0x00, 0x00, 0x41, 0x7f, 0x41, 0x00, 0x00, 0x20, 0x40, 0x41, 0x3f, 0x01, 0x00, 0x7f, 0x08, 0x14, 0x22, 0x41, 0x00, 0x7f, 0x40, 0x40, 0x40, 0x40, 0x00, 0x7f, 0x02, 0x1c, 0x02, 0x7f, 0x00, 0x7f, 0x04, 0x08, 0x10, 0x7f, 0x00, 0x3e, 0x41, 0x41, 0x41, 0x3e, 0x00, 0x7f, 0x09, 0x09, 0x09, 0x06, 0x00, 0x3e, 0x41, 0x51, 0x21, 0x5e, 0x00, 0x7f, 0x09, 0x19, 0x29, 0x46, 0x00, 0x26, 0x49, 0x49, 0x49, 0x32, 0x00, 0x03, 0x01, 0x7f, 0x01, 0x03, 0x00, 0x3f, 0x40, 0x40, 0x40, 0x3f, 0x00, 0x1f, 0x20, 0x40, 0x20, 0x1f, 0x00, 0x3f, 0x40, 0x38, 0x40, 0x3f, 0x00, 0x63, 0x14, 0x08, 0x14, 0x63, 0x00, 0x03, 0x04, 0x78, 0x04, 0x03, 0x00, 0x61, 0x59, 0x49, 0x4d, 0x43, 0x00, 0x00, 0x7f, 0x41, 0x41, 0x41, 0x00, 0x02, 0x04, 0x08, 0x10, 0x20, 0x00, 0x00, 0x41, 0x41, 0x41, 0x7f, 0x00, 0x04, 0x02, 0x01, 0x02, 0x04, 0x00, 0x40, 0x40, 0x40, 0x40, 0x40, 0x00, 0x00, 0x03, 0x07, 0x08, 0x00, 0x00, 0x20, 0x54, 0x54, 0x78, 0x40, 0x00, 0x7f, 0x28, 0x44, 0x44, 0x38, 0x00, 0x38, 0x44, 0x44, 0x44, 0x28, 0x00, 0x38, 0x44, 0x44, 0x28, 0x7f, 0x00, 0x38, 0x54, 0x54, 0x54, 0x18, 0x00, 0x00, 0x08, 0x7e, 0x09, 0x02, 0x00, 0x18, 0x24, 0x24, 0x1c, 0x78, 0x00, 0x7f, 0x08, 0x04, 0x04, 0x78, 0x00, 0x00, 0x44, 0x7d, 0x40, 0x00, 0x00, 0x20, 0x40, 0x40, 0x3d, 0x00, 0x00, 0x7f, 0x10, 0x28, 0x44, 0x00, 0x00, 0x00, 0x41, 0x7f, 0x40, 0x00, 0x00, 0x7c, 0x04, 0x78, 0x04, 0x78, 0x00, 0x7c, 0x08, 0x04, 0x04, 0x78, 0x00, 0x38, 0x44, 0x44, 0x44, 0x38, 0x00, 0x7c, 0x18, 0x24, 0x24, 0x18, 0x00, 0x18, 0x24, 0x24, 0x18, 0x7c, 0x00, 0x7c, 0x08, 0x04, 0x04, 0x08, 0x00, 0x48, 0x54, 0x54, 0x54, 0x24, 0x00, 0x04, 0x04, 0x3f, 0x44, 0x24, 0x00, 0x3c, 0x40, 0x40, 0x20, 0x7c, 0x00, 0x1c, 0x20, 0x40, 0x20, 0x1c, 0x00, 0x3c, 0x40, 0x30, 0x40, 0x3c, 0x00, 0x44, 0x28, 0x10, 0x28, 0x44, 0x00, 0x4c, 0x90, 0x90, 0x90, 0x7c, 0x00, 0x44, 0x64, 0x54, 0x4c, 0x44, 0x00, 0x00, 0x08, 0x36, 0x41, 0x00, 0x00, 0x00, 0x00, 0x77, 0x00, 0x00, 0x00, 0x00, 0x41, 0x36, 0x08, 0x00, 0x00, 0x02, 0x01, 0x02, 0x04, 0x02, 0x00, 0x3c, 0x26, 0x23, 0x26, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0xe0, 0xf0, 0xf8, 0xf8, 0x18, 0x00, 0xc0, 0xf0, 0xfc, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7e, 0x00, 0x00, 0x00, 0x00, 0xf8, 0x04, 0x22, 0x52, 0xe2, 0x42, 0x42, 0x42, 0xe2, 0x52, 0x22, 0x22, 0x22, 0x42, 0x82, 0x02, 0x02, 0x22, 0x22, 0x02, 0x04, 0xf8, 0x00, 0x00, 0xf8, 0x04, 0x02, 0x02, 0x82, 0x42, 0x22, 0x42, 0x82, 0x02, 0x02, 0x02, 0x82, 0x42, 0x22, 0x12, 0x22, 0x42, 0x82, 0x02, 0x04, 0xf8, 0x00, 0x00, 0xf8, 0xfc, 0xde, 0xae, 0x1e, 0xbe, 0xbe, 0xbe, 0x1e, 0xae, 0xde, 0xde, 0xde, 0xbe, 0x7e, 0xfe, 0xfe, 0xde, 0xde, 0xfe, 0xfc, 0xf8, 0x00, 0x00, 0xf8, 0xfc, 0xfe, 0xfe, 0x7e, 0xbe, 0xde, 0xbe, 0x7e, 0xfe, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x40, 0x40, 0x20, 0x20, 0x10, 0x10, 0x08, 0x08, 0x10, 0x10, 0x20, 0x20, 0x40, 0x40, 0x80, 0x80, 0x80, 0x80, 0xc0, 0xc0, 0xe0, 0xe0, 0xf0, 0xf0, 0xf8, 0xf8, 0xf0, 0xf0, 0xe0, 0xe0, 0xc0, 0xc0, 0x80, 0x80, 0x80, 0x80, 0x40, 0x40, 0x20, 0x20, 0x10, 0x10, 0x08, 0x08, 0x10, 0x10, 0x20, 0x20, 0x40, 0x40, 0x80, 0x80, 0x80, 0x80, 0x40, 0xc0, 0x60, 0xa0, 0x50, 0xb0, 0x58, 0xa8, 0x50, 0xb0, 0x60, 0xa0, 0x40, 0xc0, 0x80, 0x80, 0x00, 0xf8, 0xfc, 0xfe, 0xff, 0xe0, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x80, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x1f, 0x07, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x20, 0x44, 0x4a, 0x47, 0x42, 0x42, 0x42, 0x47, 0x4a, 0x44, 0x40, 0x40, 0x40, 0x40, 0x41, 0x42, 0x44, 0x44, 0x40, 0x20, 0x1f, 0x00, 0x00, 0x1f, 0x20, 0x40, 0x41, 0x40, 0x40, 0x40, 0x40, 0x40, 0x41, 0x40, 0x41, 0x41, 0x4f, 0x48, 0x48, 0x48, 0x4f, 0x41, 0x41, 0x20, 0x1f, 0x00, 0x00, 0x1f, 0x3f, 0x7b, 0x75, 0x78, 0x7d, 0x7d, 0x7d, 0x78, 0x75, 0x7b, 0x7f, 0x7f, 0x7f, 0x7f, 0x7e, 0x7d, 0x7b, 0x7b, 0x7f, 0x3f, 0x1f, 0x00, 0x00, 0x1f, 0x3f, 0x7f, 0x7e, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7e, 0x7f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x88, 0x88, 0x5d, 0x5d, 0x3e, 0x3e, 0x7c, 0x7c, 0xf8, 0xf8, 0x7c, 0x7c, 0x3e, 0x3e, 0x5d, 0x5d, 0x88, 0x88, 0x88, 0x88, 0x55, 0x55, 0x23, 0x23, 0x47, 0x47, 0x8f, 0x8f, 0x47, 0x47, 0x23, 0x23, 0x55, 0x55, 0x88, 0x88, 0x88, 0x88, 0xd5, 0xd5, 0xe2, 0xe2, 0xc4, 0xc4, 0x88, 0x88, 0xc4, 0xc4, 0xe2, 0xe2, 0xd5, 0xd5, 0x88, 0x88, 0x88, 0x88, 0x5d, 0xd5, 0x6b, 0xb6, 0x6d, 0xd6, 0xad, 0xda, 0x6d, 0xd6, 0x6b, 0xb6, 0x5d, 0xd5, 0x88, 0x88, 0x00, 0x03, 0x0f, 0x1f, 0x3f, 0x3f, 0x3f, 0x3f, 0x1f, 0x1f, 0x3f, 0x3f, 0x7f, 0x7f, 0x7f, 0x3f, 0x3f, 0x1f, 0x3f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7c, 0x78, 0x78, 0x38, 0x1c, 0x0f, 0x00, 0x04, 0xf8, 0x00, 0x00, 0xf8, 0x04, 0x20, 0x1f, 0x00, 0x00, 0x1f, 0x20, 0xfc, 0xf8, 0x00, 0x00, 0xf8, 0x04, 0x3f, 0x1f, 0x00, 0x00, 0x1f, 0x20, 0x04, 0xf8, 0x00, 0x00, 0xf8, 0xfc, 0x20, 0x1f, 0x00, 0x00, 0x1f, 0x3f, 0xfc, 0xf8, 0x00, 0x00, 0xf8, 0xfc, 0x3f, 0x1f, 0x00, 0x00, 0x1f, 0x3f, 0xfe, 0x7e, 0xbe, 0xde, 0xee, 0xde, 0xbe, 0x7e, 0xfe, 0xfc, 0xf8, 0x00, 0x7e, 0x7e, 0x70, 0x77, 0x77, 0x77, 0x70, 0x7e, 0x7e, 0x3f, 0x1f, 0x00, 0x22, 0x22, 0x22, 0x22, 0x3e, 0x00, 0x20, 0x1e, 0x00, 0x3e, 0x10, 0x00, 0x22, 0x12, 0x7b, 0x0a, 0x16, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x04, 0x04, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x04, 0x04, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07, 0x0f, 0x0f, 0x07, 0x07, 0x03, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x02, 0x05, 0x06, 0x0d, 0x0a, 0x05, 0x06, 0x03, 0x02, 0x01, 0x01, 0x00, 0x00];
+
+    const oledIcons = {
+      base: [0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x80, 0x80, 0x80, 0x80, 0x40, 0x40, 0x20, 0x20, 0x10, 0x10, 0x08, 0x08, 0x10, 0x10, 0x20, 0x20, 0x40, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x55, 0x88, 0x88, 0x88, 0x88, 0xd5, 0xd5, 0xe2, 0xe2, 0xc4, 0xc4, 0x88, 0x88, 0xc4, 0xc4, 0xe2, 0xe2, 0xd5, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07, 0x0f, 0x0f, 0x07, 0x07, 0x03, 0x03, 0x01, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00],
+      num: [0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x40, 0x40, 0x20, 0x20, 0x10, 0x10, 0x08, 0x08, 0x10, 0x10, 0x20, 0x20, 0x40, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x88, 0x88, 0x5d, 0x5d, 0x3e, 0x3e, 0x7c, 0x7c, 0xf8, 0xf8, 0x7c, 0x7c, 0x3e, 0x3e, 0x5d, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x16, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x04, 0x04, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00],
+      sym: [0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80, 0x80, 0x80, 0x80, 0xc0, 0xc0, 0xe0, 0xe0, 0xf0, 0xf0, 0xf8, 0xf8, 0xf0, 0xf0, 0xe0, 0xe0, 0xc0, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x5d, 0x88, 0x88, 0x88, 0x88, 0x55, 0x55, 0x23, 0x23, 0x47, 0x47, 0x8f, 0x8f, 0x47, 0x47, 0x23, 0x23, 0x55, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x04, 0x04, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00],
+      arrows: [0xa2, 0x94, 0x00, 0x08, 0x04, 0x7e, 0x1c, 0x08, 0x00, 0x08, 0x1c, 0x2a, 0x04, 0x08, 0x00, 0x10, 0x20, 0x7e, 0x20, 0x10, 0x00, 0x08, 0x08, 0x2a]
+    };
+
+    function drawOledIcon(canvas, bytes, glyphColumns) {
+      const scale = 2;
+      const glyphCount = bytes.length / 6;
+      const columns = glyphColumns || glyphCount;
+      const rows = Math.ceil(glyphCount / columns);
+      const width = columns * 6 * scale;
+      const height = rows * 8 * scale;
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#d7f7ff";
+      for (let glyphIndex = 0; glyphIndex < glyphCount; glyphIndex += 1) {
+        const glyphX = (glyphIndex % columns) * 6 * scale;
+        const glyphY = Math.floor(glyphIndex / columns) * 8 * scale;
+        for (let col = 0; col < 6; col += 1) {
+          const byte = bytes[glyphIndex * 6 + col];
+          for (let row = 0; row < 8; row += 1) {
+            if (byte & (1 << row)) {
+              ctx.fillRect(glyphX + col * scale, glyphY + row * scale, scale, scale);
+            }
+          }
+        }
+      }
+    }
+
+    const statusGlyphs = {
+      corneLogo: [0x80, 0x81, 0x82, 0x83, 0x84, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4],
+      katakana: [0x20, 0xd1, 0xd2, 0xd3, 0x20],
+      corneText: [..."corne"].map((char) => char.charCodeAt(0)),
+      baseLayer: [0x20, 0x9a, 0x9b, 0x9c, 0x20, 0x20, 0xba, 0xbb, 0xbc, 0x20, 0x20, 0xda, 0xdb, 0xdc, 0x20],
+      anchorLayer: [0x20, 0x94, 0x95, 0x96, 0x20, 0x20, 0xb4, 0xb5, 0xb6, 0x20, 0x20, 0xd4, 0xd5, 0xd6, 0x20],
+      chordLayer: [0x20, 0x97, 0x98, 0x99, 0x20, 0x20, 0xb7, 0xb8, 0xb9, 0x20, 0x20, 0xd7, 0xd8, 0xd9, 0x20],
+      guiOff1: [0x85, 0x86],
+      guiOff2: [0xa5, 0xa6],
+      guiOn1: [0x8d, 0x8e],
+      guiOn2: [0xad, 0xae],
+      altOff1: [0x87, 0x88],
+      altOff2: [0xa7, 0xa8],
+      altOn1: [0x8f, 0x90],
+      altOn2: [0xaf, 0xb0],
+      ctrlOff1: [0x89, 0x8a],
+      ctrlOff2: [0xa9, 0xaa],
+      ctrlOn1: [0x91, 0x92],
+      ctrlOn2: [0xb1, 0xb2],
+      shiftOff1: [0x8b, 0x8c],
+      shiftOff2: [0xab, 0xac],
+      shiftOn1: [0xcd, 0xce],
+      shiftOn2: [0xcf, 0xd0],
+      offOff1: [0xc5],
+      offOff2: [0xc6],
+      onOff1: [0xc7],
+      onOff2: [0xc8],
+      offOn1: [0xc9],
+      offOn2: [0xca],
+      onOn1: [0xcb],
+      onOn2: [0xcc]
+    };
+
+    const statusScenarios = {
+      base: { layer: "base", baseLabel: true, gui: false, alt: false, ctrl: false, shift: false },
+      num: { layer: "num", baseLabel: false, gui: false, alt: false, ctrl: false, shift: false },
+      "sym-gui": { layer: "sym", baseLabel: false, gui: true, alt: false, ctrl: false, shift: false },
+      other: { layer: "base", baseLabel: false, gui: false, alt: false, ctrl: false, shift: false }
+    };
+
+    function glyphBytes(code) {
+      const start = code * 6;
+      return oledFont.slice(start, start + 6);
+    }
+
+    function writeCodes(buffer, cursor, codes) {
+      const columns = 5;
+      codes.forEach((code) => {
+        const glyph = glyphBytes(code);
+        glyph.forEach((byte, col) => {
+          const x = cursor.x * 6 + col;
+          if (x < 32 && cursor.y < 16) {
+            buffer[cursor.y * 32 + x] = byte;
+          }
+        });
+        cursor.x += 1;
+        if (cursor.x >= columns) {
+          cursor.x = 0;
+          cursor.y += 1;
+        }
+      });
+      return cursor;
+    }
+
+    function connectorCodes(left, right, bottom) {
+      if (left && right) return statusGlyphs[bottom ? "onOn2" : "onOn1"];
+      if (left) return statusGlyphs[bottom ? "onOff2" : "onOff1"];
+      if (right) return statusGlyphs[bottom ? "offOn2" : "offOn1"];
+      return statusGlyphs[bottom ? "offOff2" : "offOff1"];
+    }
+
+    function writeModifierPair(buffer, row, leftTop, leftBottom, rightTop, rightBottom, leftOn, rightOn) {
+      const cursor = { x: 0, y: row };
+      writeCodes(buffer, cursor, leftTop);
+      writeCodes(buffer, cursor, connectorCodes(leftOn, rightOn, false));
+      writeCodes(buffer, cursor, rightTop);
+      writeCodes(buffer, cursor, leftBottom);
+      writeCodes(buffer, cursor, connectorCodes(leftOn, rightOn, true));
+      writeCodes(buffer, cursor, rightBottom);
+    }
+
+    const leftTileOutline = [
+      "............",
+      "...XXXXXXXXX",
+      "..X.........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      ".X..........",
+      "..X.........",
+      "...XXXXXXXXX",
+      "............"
+    ];
+
+    const leftTileFill = [
+      "............",
+      "...XXXXXXXXX",
+      "..XXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      ".XXXXXXXXXXX",
+      "..XXXXXXXXXX",
+      "...XXXXXXXXX",
+      "............"
+    ];
+
+    function mirrorRows(rows) {
+      return rows.map((row) => row.split("").reverse().join(""));
+    }
+
+    function blankRows() {
+      return Array.from({ length: 16 }, () => "............");
+    }
+
+    function mergeRows(...rowSets) {
+      return rowSets[0].map((row, y) => {
+        return row.split("").map((cell, x) => {
+          return rowSets.some((rows) => rows[y][x] !== ".") ? "X" : ".";
+        }).join("");
+      });
+    }
+
+    function subtractRows(baseRows, cutoutRows) {
+      return baseRows.map((row, y) => {
+        return row.split("").map((cell, x) => {
+          return cutoutRows[y][x] !== "." ? "." : cell;
+        }).join("");
+      });
+    }
+
+    function glyphRows(char) {
+      const bytes = glyphBytes(char.charCodeAt(0));
+      return Array.from({ length: 8 }, (_, y) => {
+        return bytes.map((byte) => (byte & (1 << y)) ? "X" : ".").join("");
+      });
+    }
+
+    function placeBitmap(rows, bitmap, x, y) {
+      bitmap.forEach((bitmapRow, by) => {
+        bitmapRow.split("").forEach((cell, bx) => {
+          const px = x + bx;
+          const py = y + by;
+          if (cell !== "." && px >= 0 && px < 12 && py >= 0 && py < 16) {
+            const row = rows[py].split("");
+            row[px] = "X";
+            rows[py] = row.join("");
+          }
+        });
+      });
+      return rows;
+    }
+
+    function placeGlyph(rows, char, x, y) {
+      const glyph = glyphRows(char);
+      glyph.forEach((glyphRow, gy) => {
+        glyphRow.split("").forEach((cell, gx) => {
+          const px = x + gx;
+          const py = y + gy;
+          if (cell !== "." && px >= 0 && px < 12 && py >= 0 && py < 16) {
+            const row = rows[py].split("");
+            row[px] = "X";
+            rows[py] = row.join("");
+          }
+        });
+      });
+      return rows;
+    }
+
+    function glyphPagesToRows(top, bottom) {
+      const bytes = [...top, ...bottom];
+      return Array.from({ length: 16 }, (_, y) => {
+        const page = y < 8 ? 0 : 1;
+        const bit = y % 8;
+        return bytes.slice(page * 12, page * 12 + 12).map((byte) => (byte & (1 << bit)) ? "X" : ".").join("");
+      });
+    }
+
+    function iconContent(name, side = "left") {
+      const rows = blankRows();
+      if (name === "fn") {
+        placeBitmap(rows, [
+          "XXXX....",
+          "X.......",
+          "XXX.....",
+          "X...XX..",
+          "X..X..X.",
+          "X..X..X.",
+          "X..X..X."
+        ], side === "left" ? 4 : 2, 5);
+      } else if (name === "sym") {
+        placeGlyph(rows, "@", side === "left" ? 5 : 2, 5);
+      } else if (name === "num") {
+        placeGlyph(rows, "#", side === "left" ? 5 : 2, 5);
+      } else if (name === "ctrl") {
+        placeGlyph(rows, "^", side === "left" ? 3 : 4, 6);
+      }
+      return rows;
+    }
+
+    function buildHomeIcon(name, side, pressed) {
+      const outline = side === "left" ? leftTileOutline : mirrorRows(leftTileOutline);
+      const fill = side === "left" ? leftTileFill : mirrorRows(leftTileFill);
+      const content = iconContent(name, side);
+      return pressed ? subtractRows(fill, content) : mergeRows(outline, content);
+    }
+
+    function rowsToGlyphPages(rows) {
+      const pages = [[], []];
+      for (let page = 0; page < 2; page += 1) {
+        for (let col = 0; col < 12; col += 1) {
+          let byte = 0;
+          for (let bit = 0; bit < 8; bit += 1) {
+            const row = page * 8 + bit;
+            if (rows[row][col] !== ".") {
+              byte |= 1 << bit;
+            }
+          }
+          pages[page].push(byte);
+        }
+      }
+      return { top: pages[0], bottom: pages[1] };
+    }
+
+    const homeIcons = {
+      fn: {
+        left: {
+          off: rowsToGlyphPages(buildHomeIcon("fn", "left", false)),
+          on: rowsToGlyphPages(buildHomeIcon("fn", "left", true))
+        },
+        right: {
+          off: rowsToGlyphPages(buildHomeIcon("fn", "right", false)),
+          on: rowsToGlyphPages(buildHomeIcon("fn", "right", true))
+        }
+      },
+      sym: {
+        left: {
+          off: rowsToGlyphPages(buildHomeIcon("sym", "left", false)),
+          on: rowsToGlyphPages(buildHomeIcon("sym", "left", true))
+        },
+        right: {
+          off: rowsToGlyphPages(buildHomeIcon("sym", "right", false)),
+          on: rowsToGlyphPages(buildHomeIcon("sym", "right", true))
+        }
+      },
+      num: {
+        left: {
+          off: rowsToGlyphPages(buildHomeIcon("num", "left", false)),
+          on: rowsToGlyphPages(buildHomeIcon("num", "left", true))
+        },
+        right: {
+          off: rowsToGlyphPages(buildHomeIcon("num", "right", false)),
+          on: rowsToGlyphPages(buildHomeIcon("num", "right", true))
+        }
+      },
+      ctrl: {
+        left: {
+          off: {
+            top: [...glyphBytes(0x89), ...glyphBytes(0x8a)],
+            bottom: [...glyphBytes(0xa9), ...glyphBytes(0xaa)]
+          },
+          on: {
+            top: [...glyphBytes(0x91), ...glyphBytes(0x92)],
+            bottom: [...glyphBytes(0xb1), ...glyphBytes(0xb2)]
+          }
+        },
+        right: {
+          off: rowsToGlyphPages(mirrorRows(glyphPagesToRows(
+            [...glyphBytes(0x89), ...glyphBytes(0x8a)],
+            [...glyphBytes(0xa9), ...glyphBytes(0xaa)]
+          ))),
+          on: rowsToGlyphPages(mirrorRows(glyphPagesToRows(
+            [...glyphBytes(0x91), ...glyphBytes(0x92)],
+            [...glyphBytes(0xb1), ...glyphBytes(0xb2)]
+          )))
+        }
+      }
+    };
+
+    function drawRawBytes(buffer, glyphX, page, bytes) {
+      bytes.forEach((byte, index) => {
+        const x = glyphX * 6 + index;
+        if (x < 32 && page < 16) {
+          buffer[page * 32 + x] = byte;
+        }
+      });
+    }
+
+    function drawHomePair(buffer, row, leftIcon, rightIcon, leftOn, rightOn) {
+      const left = homeIcons[leftIcon].left[leftOn ? "on" : "off"];
+      const right = homeIcons[rightIcon].right[rightOn ? "on" : "off"];
+      drawRawBytes(buffer, 0, row, left.top);
+      writeCodes(buffer, { x: 2, y: row }, connectorCodes(leftOn, rightOn, false));
+      drawRawBytes(buffer, 3, row, right.top);
+      drawRawBytes(buffer, 0, row + 1, left.bottom);
+      writeCodes(buffer, { x: 2, y: row + 1 }, connectorCodes(leftOn, rightOn, true));
+      drawRawBytes(buffer, 3, row + 1, right.bottom);
+    }
+
+    function paintBuffer(canvas, buffer, scale = 3) {
+      canvas.width = 32 * scale;
+      canvas.height = 128 * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#080a0d";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#d7f7ff";
+      for (let x = 0; x < 32; x += 1) {
+        for (let page = 0; page < 16; page += 1) {
+          const byte = buffer[page * 32 + x];
+          for (let bit = 0; bit < 8; bit += 1) {
+            if (byte & (1 << bit)) {
+              ctx.fillRect(x * scale, (page * 8 + bit) * scale, scale, scale);
+            }
+          }
+        }
+      }
+    }
+
+    function drawHomeRowStatus(canvas, active) {
+      const activeSet = new Set(active === "none" ? [] : active.split("-"));
+      const buffer = new Uint8Array(32 * 16);
+      const logoCursor = { x: 0, y: 0 };
+      writeCodes(buffer, logoCursor, statusGlyphs.corneLogo);
+      writeCodes(buffer, logoCursor, statusGlyphs.katakana);
+      writeCodes(buffer, { x: 0, y: 6 }, statusGlyphs.baseLayer);
+      drawHomePair(buffer, 11, "fn", "sym", activeSet.has("fn"), activeSet.has("sym"));
+      drawHomePair(buffer, 13, "num", "ctrl", activeSet.has("num"), activeSet.has("ctrl"));
+      paintBuffer(canvas, buffer);
+    }
+
+    function drawLayerTilePreview(canvas, name) {
+      const tile = {
+        base: statusGlyphs.baseLayer,
+        anchor: statusGlyphs.anchorLayer,
+        chord: statusGlyphs.chordLayer
+      }[name] || statusGlyphs.baseLayer;
+      const scale = 4;
+      const width = 5 * 6 * scale;
+      const height = 3 * 8 * scale;
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#080a0d";
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = "#d7f7ff";
+
+      tile.forEach((code, glyphIndex) => {
+        const bytes = glyphBytes(code);
+        const glyphX = glyphIndex % 5;
+        const glyphY = Math.floor(glyphIndex / 5);
+        bytes.forEach((byte, byteX) => {
+          for (let bit = 0; bit < 8; bit += 1) {
+            if (byte & (1 << bit)) {
+              ctx.fillRect((glyphX * 6 + byteX) * scale, (glyphY * 8 + bit) * scale, scale, scale);
+            }
+          }
+        });
+      });
+    }
+
+    function textSlotCodes(label) {
+      return label.padEnd(5, " ").slice(0, 5).split("").map((char) => char.charCodeAt(0));
+    }
+
+    function drawBaseLayerTileState(canvas, state) {
+      const scenarios = {
+        rest: {
+          labelCodes: statusGlyphs.katakana,
+          tileCodes: statusGlyphs.baseLayer,
+          active: "none"
+        },
+        hold: {
+          labelCodes: statusGlyphs.corneText,
+          tileCodes: statusGlyphs.anchorLayer,
+          active: "sym"
+        },
+        chord: {
+          labelCodes: textSlotCodes("nav"),
+          tileCodes: statusGlyphs.chordLayer,
+          active: "num-ctrl"
+        }
+      };
+      const scenario = scenarios[state] || scenarios.rest;
+      const activeSet = new Set(scenario.active === "none" ? [] : scenario.active.split("-"));
+      const buffer = new Uint8Array(32 * 16);
+      const logoCursor = { x: 0, y: 0 };
+      writeCodes(buffer, logoCursor, statusGlyphs.corneLogo);
+      writeCodes(buffer, logoCursor, scenario.labelCodes);
+      writeCodes(buffer, { x: 0, y: 6 }, scenario.tileCodes);
+      drawHomePair(buffer, 11, "fn", "sym", activeSet.has("fn"), activeSet.has("sym"));
+      drawHomePair(buffer, 13, "num", "ctrl", activeSet.has("num"), activeSet.has("ctrl"));
+      paintBuffer(canvas, buffer);
+    }
+
+    function drawHomeIconStates(canvas, name) {
+      const icon = homeIcons[name];
+      const scale = 4;
+      canvas.width = 31 * scale;
+      canvas.height = 18 * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#080a0d";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#d7f7ff";
+
+      const slotSide = { fn: "left", sym: "right", num: "left", ctrl: "right" }[name];
+      const drawSlotIcon = (xOffset, state) => {
+        const buffer = new Uint8Array(12 * 2);
+        const tile = icon[slotSide][state];
+        [...tile.top, ...tile.bottom].forEach((byte, index) => {
+          buffer[index] = byte;
+        });
+
+        for (let x = 0; x < 12; x += 1) {
+          for (let page = 0; page < 2; page += 1) {
+            const byte = buffer[page * 12 + x];
+            for (let bit = 0; bit < 8; bit += 1) {
+              if (byte & (1 << bit)) {
+                ctx.fillRect((xOffset + x) * scale, (page * 8 + bit + 1) * scale, scale, scale);
+              }
+            }
+          }
+        }
+      };
+
+      drawSlotIcon(2, "off");
+      drawSlotIcon(17, "on");
+    }
+
+    function drawChordLabel(canvas, label) {
+      const displayScale = 3;
+      const fontScale = 3;
+      const sourceWidth = label.length * 6;
+      const sourceHeight = 8;
+      const rotatedWidth = sourceHeight * fontScale;
+      const rotatedHeight = sourceWidth * fontScale;
+      const xOffset = Math.floor((32 - rotatedWidth) / 2) + 2;
+      const yOffset = Math.floor((128 - rotatedHeight) / 2);
+
+      canvas.width = 32 * displayScale;
+      canvas.height = 128 * displayScale;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#080a0d";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#d7f7ff";
+
+      label.split("").forEach((char, charIndex) => {
+        const bytes = glyphBytes(char.charCodeAt(0));
+        bytes.forEach((byte, glyphX) => {
+          for (let glyphY = 0; glyphY < 8; glyphY += 1) {
+            if (byte & (1 << glyphY)) {
+              const sourceX = charIndex * 6 + glyphX;
+              const sourceY = glyphY;
+              const rotatedX = sourceY;
+              const rotatedY = sourceWidth - 1 - sourceX;
+              ctx.fillRect(
+                (xOffset + rotatedX * fontScale) * displayScale,
+                (yOffset + rotatedY * fontScale) * displayScale,
+                fontScale * displayScale,
+                fontScale * displayScale
+              );
+            }
+          }
+        });
+      });
+    }
+
+    function drawRenderedStatus(canvas, scenario) {
+      const scale = 3;
+      const buffer = new Uint8Array(32 * 16);
+      const layerCodes = scenario.layer === "num" ? statusGlyphs.anchorLayer : scenario.layer === "sym" ? statusGlyphs.chordLayer : statusGlyphs.baseLayer;
+      const logoCursor = { x: 0, y: 0 };
+
+      writeCodes(buffer, logoCursor, statusGlyphs.corneLogo);
+      writeCodes(buffer, logoCursor, scenario.baseLabel ? statusGlyphs.katakana : statusGlyphs.corneText);
+      writeCodes(buffer, { x: 0, y: 6 }, layerCodes);
+      writeModifierPair(
+        buffer,
+        11,
+        scenario.gui ? statusGlyphs.guiOn1 : statusGlyphs.guiOff1,
+        scenario.gui ? statusGlyphs.guiOn2 : statusGlyphs.guiOff2,
+        scenario.alt ? statusGlyphs.altOn1 : statusGlyphs.altOff1,
+        scenario.alt ? statusGlyphs.altOn2 : statusGlyphs.altOff2,
+        scenario.gui,
+        scenario.alt
+      );
+      writeModifierPair(
+        buffer,
+        13,
+        scenario.ctrl ? statusGlyphs.ctrlOn1 : statusGlyphs.ctrlOff1,
+        scenario.ctrl ? statusGlyphs.ctrlOn2 : statusGlyphs.ctrlOff2,
+        scenario.shift ? statusGlyphs.shiftOn1 : statusGlyphs.shiftOff1,
+        scenario.shift ? statusGlyphs.shiftOn2 : statusGlyphs.shiftOff2,
+        scenario.ctrl,
+        scenario.shift
+      );
+
+      paintBuffer(canvas, buffer, scale);
+    }
+
+    document.querySelectorAll("[data-oled-icon]").forEach((canvas) => {
+      drawOledIcon(canvas, oledIcons[canvas.dataset.oledIcon], Number(canvas.dataset.oledCols || 0));
+    });
+
+    document.querySelectorAll("[data-render-status]").forEach((canvas) => {
+      drawRenderedStatus(canvas, statusScenarios[canvas.dataset.renderStatus]);
+    });
+
+    document.querySelectorAll("[data-render-home-row]").forEach((canvas) => {
+      drawHomeRowStatus(canvas, canvas.dataset.renderHomeRow);
+    });
+
+    document.querySelectorAll("[data-render-layer-tile]").forEach((canvas) => {
+      drawLayerTilePreview(canvas, canvas.dataset.renderLayerTile);
+    });
+
+    document.querySelectorAll("[data-render-layer-state]").forEach((canvas) => {
+      drawBaseLayerTileState(canvas, canvas.dataset.renderLayerState);
+    });
+
+    document.querySelectorAll("[data-render-home-icon]").forEach((canvas) => {
+      drawHomeIconStates(canvas, canvas.dataset.renderHomeIcon);
+    });
+
+    document.querySelectorAll("[data-render-chord-label]").forEach((canvas) => {
+      drawChordLabel(canvas, canvas.dataset.renderChordLabel);
+    });
+
+  </script>
+</body>
+</html>

@@ -64,8 +64,7 @@
 /* Thumbs:                         NAV    ALT    SPC/SYM  ENT/SYM RALT   MENU */\
 	                            NUM_GUI_NAV_SNAP, DELAYED_LALT, NUM_SPACE_SYMBOLS, NUM_RIGHT_THUMBS
 
-// D/K + left GUI thumb navigation: tap arrows, hold extremes,
-// double-tap selection movement, double-tap-hold extreme selection.
+// D/K + left GUI thumb navigation: movement only.
 #define _NAV \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, NAV_UP_DANCE, XXXXXXX, XXXXXXX, KC_DEL,   \
@@ -76,8 +75,7 @@
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
 	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
-// Snap is entered by double-tap-holding an exposed GUI key. The gesture keeps
-// GUI held, so this layer sends plain arrows for repeated Windows traversal.
+// Snap diagnostic path: GUI is held by the entry dance, so this sends arrows.
 #define _SNP \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
@@ -108,17 +106,6 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, SLASH_PIPE, XXXXXXX, \
 /* Thumbs:                         MS     ALT    SHIFT    ENTER  RALT   MENU */\
 	                            SYM_GUI_EXT_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
-// Function + left GUI thumb media: compact arrow-shaped meeting/audio controls.
-#define _MEDI \
-/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    VOL+   ---    ---    DEL */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,  \
-/* Home:   ---    ---    ---    ---    ---    ---      ---    MUTE   VOL-   PLAY   ---    --- */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_MUTE, KC_VOLD, KC_MPLY, XXXXXXX, XXXXXXX, \
-/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    --- */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
-	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
-
 // Function keys mirror the Numbers layer's top row and right-hand pad.
 #define _SYST \
 /* Top:    TAB    F1     F2     F3     F4     F5       F6     F7     F8     F9     F10    DEL */\
@@ -129,6 +116,17 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  XXXXXXX, \
 /* Thumbs:                         MED    ALT    SHIFT    ENTER  RALT   MENU */\
 	                            SYS_GUI_MED_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
+
+// Function/System + left GUI thumb Media: plain keys only while RAM is tight.
+#define _MEDI \
+/* Top:    ---    ---    ---    ---    ---    ---      ---    ---    VOL+   ---    ---    DEL  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,   \
+/* Home:   ---    ---    ---    ---    ---    ---      ---    MUTE   VOL-   PLAY   ---    ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, C(S(KC_M)), KC_VOLD, KC_MPLY, XXXXXXX, XXXXXXX, \
+/* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
+/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
+	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
 // Spanish layer: hold either outside bottom key, then press the matching letter.
 #define _SPAN \

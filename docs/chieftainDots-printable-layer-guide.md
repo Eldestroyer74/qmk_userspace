@@ -4,6 +4,11 @@ Print this as the desk-side map for the future three-anchor command layout.
 This guide is intentionally forward-looking so the whole design can be reviewed
 as one coherent keyboard.
 
+Stable trial note: OLED/screens are on. The current safe OLED slice keeps the
+older, smaller Navigation/MS Styles tap-dance logic, flattens Media to plain
+keys, and avoids the newer shared directional tap-dance helper that caused
+phantom modifier reports in QMK key tester.
+
 Legend: `---` intentionally blank, `trans` falls through, `DEL` means the
 Backspace key sends Delete.
 
@@ -25,12 +30,14 @@ Right thumbs on command layers = Enter/Shift / RAlt / Menu
 ```text
 Three anchors, one GUI chord each
 
-Hold D/K + left GUI    = Navigation: arrows / selection / extremes
-Hold S/L + left GUI    = MS Styles: tap Alt+Shift+arrows, hold plain arrows
+Hold D/K + left GUI    = Navigation: movement only
+Hold S/L + left GUI    = Office: arrows / structure / selection
 Hold A/; + left GUI    = Media, Teams-first
-Ctrl + GUI chord       = Snap
 Double tap-hold mnemonic = Text snippets
 ```
+
+Snap is not active in the current stable trial. Keep it as a deferred chord
+candidate, not a daily-use instruction.
 
 ```text
 Command gesture rule
@@ -39,6 +46,63 @@ Tap             = direct daily action
 Tap and hold    = sustained / larger / repeated action
 Double tap      = secondary reversible action
 Double tap-hold = empty unless a real need is proven
+```
+
+## Chord Layer Hierarchies
+
+Read each map as `I/J/K/L` in the right-hand arrow cluster:
+
+```text
+      I
+J     K     L
+```
+
+Navigation: hold `D/K`, then hold left GUI.
+
+```text
+Tap: arrows
+      Up
+Left  Down  Right
+
+Hold: held arrows
+      Up held
+Left held  Down held  Right held
+
+Double tap: semantic jumps
+      Ctrl+Up
+Ctrl+Left  Ctrl+Down  Ctrl+Right
+
+Double tap-hold: movement extremes
+      PgUp
+Home  PgDn  End
+```
+
+Office: hold `S/L`, then hold left GUI.
+
+```text
+Tap: arrow navigation inside Office content
+      Up
+Left  Down  Right
+
+Hold: PowerPoint / Word structure
+      Alt+Shift+Up
+Alt+Shift+Left  Alt+Shift+Down  Alt+Shift+Right
+
+Double tap: select word / line
+      Shift+Up
+Ctrl+Shift+Left  Shift+Down  Ctrl+Shift+Right
+
+Double tap-hold: select extremes
+      Shift+PgUp
+Shift+Home  Shift+PgDn  Shift+End
+```
+
+Media: hold `A/;`, then hold left GUI.
+
+```text
+Plain keys only in the current RAM experiment:
+      Volume Up
+Teams mic mute  Volume Down  Play/Pause
 ```
 
 ## Base
@@ -89,9 +153,6 @@ Use Shift first for capitals:
 - Spanish angle quotes are separate keys: `Spanish + Caps = «`,
   `Spanish + ' = »`.
 - hold Space or Enter for Shift, then hold Spanish, then press the vowel.
-- opening Spanish punctuation starts a capitalized word in the current auto-caps
-  trial: `¿hola` -> `¿Hola`, `¡hola` -> `¡Hola`.
-- accented first letters should also capitalize: `¡ánimo` -> `¡Ánimo`.
 - tested uppercase accented vowels: `Á Í É Ó Ú`.
 
 Language switch:
@@ -128,7 +189,7 @@ Access: hold `S` or `L`. Also available from Numbers by holding either Space or 
 ~        !      @      #      $      %          ^      &      *      (      )      _
 ---      ---    ---    ---    ---    ---        ---    $      %      ^      +      ---
 ---      ---    ---    ---    ---    ---        ---    !      @      #      /      ---
-                         MS     ALT    SHIFT       ENTER  RALT  MENU
+                         style  ALT    SHIFT       ENTER  RALT  MENU
 ```
 
 Bracket tap dances:
@@ -154,26 +215,31 @@ Navigation key behavior:
 ```text
 Key      Tap      Hold      Double tap        Double-tap-hold
 -------------------------------------------------------------
-I        Up       PgUp      Shift+Up          Shift+PgUp
-J        Left     Home      Ctrl+Shift+Left   Shift+Home
-K        Down     PgDn      Shift+Down        Shift+PgDn
-L        Right    End       Ctrl+Shift+Right  Shift+End
+I        Up       Up held   Ctrl+Up           PgUp
+J        Left     Left held Ctrl+Left         Home
+K        Down     Down held Ctrl+Down         PgDn
+L        Right    Right held Ctrl+Right       End
 ```
 
-MS Styles: hold `S` or `L`, then hold left GUI.
+Office: hold `S` or `L`, then hold left GUI.
 
 ```text
----      ---    ---    ---    ---    ---        ---    ---    AS-UP  ---    ---    DEL
----      ---    ---    ---    ---    ---        ---    AS-LF  AS-DN  AS-RI  ---    ---
+---      ---    ---    ---    ---    ---        ---    ---    UP     ---    ---    DEL
+---      ---    ---    ---    ---    ---        ---    LEFT   DOWN   RIGHT  ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
                          trans  ALT    SHIFT       ENTER  RALT  MENU
 ```
 
-`AS` means Alt+Shift for the PowerPoint style shortcut.
-On MS Styles, tap sends `Alt+Shift+Arrow`; tap-hold reverses to a plain held
-arrow for selected PowerPoint object/group movement.
+Office owns content editing and selection:
 
-Snap: enter with the Ctrl + GUI chord.
+```text
+Tap = plain arrow navigation.
+Hold = Alt+Shift+Arrow for structure.
+Double tap = selection movement.
+Double tap-hold = extreme selection.
+```
+
+Deferred Snap candidate: no active entry path in the current stable trial.
 
 ```text
 Tap = snap current window
@@ -189,6 +255,8 @@ Double tap = desktop / workspace
 Win+Ctrl+Left   Win+D   Win+Ctrl+Right
 ```
 
+Keep this candidate parked until the Ctrl + GUI chord is rebuilt safely.
+
 ## Tools
 
 Media: hold `A` or `;`, then hold left GUI.
@@ -203,15 +271,16 @@ Media: hold `A` or `;`, then hold left GUI.
 Media key behavior:
 
 ```text
-Key      Tap                   Hold                  Double tap
-----------------------------------------------------------------
-I        Volume Up             hold/repeat Vol+      ---
-J        Teams mic mute        system speaker mute   Previous Track
-K        Volume Down           hold/repeat Vol-      ---
-L        Play/Pause            no-op or Play/Pause   Next Track
+Key      Action
+---------------------------
+I        Volume Up
+J        Teams mic mute
+K        Volume Down
+L        Play/Pause
 ```
 
-Teams mic mute means `Ctrl+Shift+M`. System speaker mute means `KC_MUTE`.
+Teams mic mute means `Ctrl+Shift+M`. Media hold and double-tap behaviors are
+disabled in this RAM experiment.
 
 Function / System: hold `A` or `;`.
 
@@ -251,22 +320,18 @@ Numbers 2          2                ,            <                   <
 Numbers 3          3                .            >                   >
 Numbers /          /                \            |                   |
 Symbols /          /                \            |                   |
-Navigation I       Up               PgUp         Shift+Up            Shift+PgUp
-Navigation J       Left             Home         Ctrl+Shift+Left     Shift+Home
-Navigation K       Down             PgDn         Shift+Down          Shift+PgDn
-Navigation L       Right            End          Ctrl+Shift+Right    Shift+End
-MS Styles I        Alt+Shift+Up     Up held      ---                 ---
-MS Styles J        Alt+Shift+Left   Left held    ---                 ---
-MS Styles K        Alt+Shift+Down   Down held    ---                 ---
-MS Styles L        Alt+Shift+Right  Right held   ---                 ---
-Snap I             Win+Alt+Up       Win+Up       Win+Tab             ---
-Snap J             Win+Left         Win+Shift+Left Win+Ctrl+Left     ---
-Snap K             Win+Alt+Down     Win+Down     Win+D               ---
-Snap L             Win+Right        Win+Shift+Right Win+Ctrl+Right   ---
-Media I            Volume Up        Volume Up held ---               ---
-Media J            Teams mic mute   KC_MUTE      Previous Track      ---
-Media K            Volume Down      Volume Down held ---             ---
-Media L            Play/Pause       ---          Next Track          ---
+Navigation I       Up               Up held      Ctrl+Up             PgUp
+Navigation J       Left             Left held    Ctrl+Left           Home
+Navigation K       Down             Down held    Ctrl+Down           PgDn
+Navigation L       Right            Right held   Ctrl+Right          End
+Office I           Up               Alt+Shift+Up Shift+Up            Shift+PgUp
+Office J           Left             Alt+Shift+Left Ctrl+Shift+Left   Shift+Home
+Office K           Down             Alt+Shift+Down Shift+Down        Shift+PgDn
+Office L           Right            Alt+Shift+Right Ctrl+Shift+Right Shift+End
+Media I            Volume Up        ---          ---                 ---
+Media J            Teams mic mute   ---          ---                 ---
+Media K            Volume Down      ---          ---                 ---
+Media L            Play/Pause       ---          ---                 ---
 Spanish key        ---              Spanish      Win+Space           Language selector
 Shift+Caps         “                ---          ---                 ---
 Shift+'            ”                ---          ---                 ---
@@ -280,10 +345,6 @@ Shift+'            ”                ---          ---                 ---
   same red RGB as normal Caps.
 - In Numbers, both Space and Enter hold Symbols.
 - In Symbols and Function, Space and Enter hold Shift.
-- Auto-caps trial: after a word plus `. `, `? `, or `! `, the next letter is
-  capitalized.
-- Spanish opening punctuation does not need a space: `¿` and `¡` capitalize
-  the next letter immediately.
 - Watch normal typing for accidental thumb Shift, especially on Space.
 - Also check intentional Shift use such as Space/Enter + `/` for `?`.
 
@@ -294,10 +355,9 @@ After flashing, test:
 - Caps tap = normal Caps; Caps double tap = Long Caps; Caps double tap again =
   Caps off.
 - Navigation `I/J/K/L` tap = arrows.
-- Navigation `I/J/K/L` hold = PgUp/Home/PgDn/End.
-- Navigation `I/J/K/L` double tap = selection movement.
-- Navigation `I/J/K/L` double-tap-hold = extreme selection.
-- Snap: Ctrl + GUI chord, then `I/J/K/L` use the Snap hierarchy above.
+- Navigation `I/J/K/L` hold = held arrows.
+- Navigation `I/J/K/L` double tap = semantic jumps.
+- Navigation `I/J/K/L` double-tap-hold = movement extremes.
 - Spanish double tap = Windows language switch.
 - Spanish double-tap-hold + `I/K` = traverse the language selector.
 - Avoid pressing `L` while GUI is held unless you intend to lock Windows.
@@ -305,10 +365,15 @@ After flashing, test:
   host window menu.
 - Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
 - `D/K + left GUI` = Navigation.
-- `S/L + left GUI` = MS Styles.
-- MS Styles tap `I/J/K/L` = Alt+Shift+Arrow; tap-hold = plain arrow held.
+- `S/L + left GUI` = Office: arrows, structure, selection, extreme selection.
 - `A/; + left GUI` = Media.
 - Double-tap-hold `H/W/P/M/E/G/N` snippets fire only when intended.
+
+Screen check:
+
+- Screens should draw cleanly on both halves.
+- If display corruption or phantom key reports return, suspect RAM pressure or
+  the newer shared directional tap-dance helper before blaming the keymap.
 
 ## RGB Meanings
 
@@ -318,7 +383,7 @@ Colemak            purple     #3C0073
 Numbers            blue       #0A195F
 Symbols            amber      #693C00
 Navigation         cyan       #00FFFF
-MS Styles          yellow     #FFFF00
+Office             yellow     #FFFF00
 Media              dark teal  #052323
 Function/System    green      #4B7A16
 Delete cue         red        Backspace key only on command layers with DEL

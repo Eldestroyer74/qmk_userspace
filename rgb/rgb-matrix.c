@@ -146,6 +146,10 @@ static bool is_left_function_anchor_position(uint8_t row, uint8_t col) {
 	return row == L_HOME && col == L_PINKY;
 }
 
+static bool is_left_control_anchor_position(uint8_t row, uint8_t col) {
+	return row == L_HOME && col == L_INDEX;
+}
+
 static uint16_t keycode_at_position(uint8_t layer, uint8_t row, uint8_t col) {
 	return keymap_key_to_keycode(layer, MAKE_KEYPOS(row, col));
 }
@@ -173,7 +177,7 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 			// Completed anchor+GUI chords keep the anchor and selected thumb lit.
 			return is_left_number_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case SNP:
-			return is_left_thumb_gui_position(row, col);
+			return is_left_control_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case EXT:
 			return is_left_symbol_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case MED:
