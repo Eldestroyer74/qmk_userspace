@@ -12,6 +12,14 @@ The current source of truth is this personal userspace repository, not upstream
 
 ![A Corne split keyboard with a Chieftain42 case and GMK Dots keycaps](imgs/ChieftainDots.jpg)
 
+## Printable Layout
+
+![Printable ChieftainDots Corne layer guide](imgs/chieftainDots-corne.png)
+
+The rendered guide is generated from userspace tooling and is meant as the
+quick visual entry point for the current Corne layout. The detailed desk-side
+map lives in [the printable layer guide](docs/chieftainDots-printable-layer-guide.md).
+
 ## Current State
 
 - Active keyboard: `crkbd/rev1`.
