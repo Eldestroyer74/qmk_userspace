@@ -147,14 +147,18 @@ static void gui_snap_finished(tap_dance_state_t *state, void *user_data) {
 	chieftaindots_snap_mode = SNAP_MODE_NONE;
 	uint8_t mods = get_mods();
 	uint8_t weak_mods = get_weak_mods();
-	bool ctrl_down = ((mods | weak_mods) & MOD_MASK_CTRL) || snap_ctrl_source_held();
+	bool physical_ctrl_down = snap_ctrl_source_held();
+	bool host_ctrl_down = (mods | weak_mods) & MOD_MASK_CTRL;
 
 	if (state->count >= 1 && state->pressed) {
-		if (ctrl_down) {
+		if (physical_ctrl_down) {
 			layer_on(SNP);
 			gui_snap_layer_held = true;
 			gui_snap_active_layer = SNP;
 			chieftaindots_snap_mode = SNAP_MODE_WINDOW;
+		} else if (host_ctrl_down) {
+			// Do not leak a live Ctrl+GUI hold to Windows if Ctrl timing was
+			// visible to the host but not confirmed from the physical source.
 		} else if (dance->real_gui) {
 			register_code(KC_LGUI);
 			gui_snap_gui_held = true;

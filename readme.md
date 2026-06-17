@@ -27,6 +27,9 @@ The current source of truth is this personal userspace repository, not upstream
 
 ## Daily Docs
 
+- For a new session or handoff, read this README first, then start from
+  **Current Focus** in the roadmap and the Session Resume Protocol in the change
+  workflow.
 - [Printable layer guide](docs/chieftainDots-printable-layer-guide.md):
   desk-side map for normal use.
 - [Architecture](docs/chieftainDots-architecture.md): current layer model,

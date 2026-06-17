@@ -7,10 +7,71 @@ intended for one feature at a time.
 
 - Treat questions as questions: explain first, then edit only after approval.
 - Work one feature at a time from roadmap idea to physical trial.
+- On a fresh session, start from the roadmap Current Focus before reading long
+  history.
 - Check Git state before editing, especially userspace source-of-truth state.
 - Ask before compiling or flashing.
 - Do not stage, commit, or push without explicit approval.
 - Check for private values before staging text-snippet work.
+
+## Session Resume Protocol
+
+Use this when moving to a new chat, returning after time away, or recovering
+from a long experimental thread. The goal is to rebuild context from stable
+project documents instead of guessing from memory.
+
+Start with these sources, in this order:
+
+1. `README.md`: quick project identity, build target, active architecture shape,
+   and daily-doc index.
+2. `docs/chieftainDots-roadmap.md`, especially **Current Focus**: authoritative
+   resume point, current trial, latest measurements, rollback notes, and parked
+   decisions.
+3. `docs/chieftainDots-change-workflow.md`: process rules for research,
+   approval, compiling, flashing, staging, private data, and session handoff.
+4. `docs/chieftainDots-architecture.md`: current layer model, ownership
+   boundaries, and stable principles before code changes.
+5. `docs/chieftainDots-printable-layer-guide.md`: current user-facing physical
+   behavior and test map.
+6. Topic-specific docs only when needed: the OLED screen brief and asset audit
+   for OLED work, the shift trial log for typing-timing work, or Git history for
+   old Filterpaper reference material.
+
+Before editing in a resumed session:
+
+1. Run Git status inside the personal userspace repository, not only the outer
+   QMK checkout.
+2. Identify the latest accepted commit and any uncommitted trial files.
+3. Identify whether the current request is a question, a requirement discussion,
+   an implementation request, or a cleanup request.
+4. Confirm the active trial and rollback point from **Current Focus**.
+5. If behavior changed physically since the docs were last updated, update the
+   roadmap before treating the old notes as current truth.
+
+At the end of a session or before switching threads, leave enough context for
+the next session:
+
+1. Update **Current Focus** with the active trial, compile result, flash/test
+   state, firmware bytes, and rollback commit or tag.
+2. Update the printable guide when user-facing key behavior changed.
+3. Update architecture or principles when a decision changes the model, not just
+   one key.
+4. Record dismissed experiments with the reason and measured byte result when
+   relevant, then remove dead code unless it is intentionally behind a small
+   named switch.
+5. State the nested userspace Git status, including staged and unstaged files.
+6. Do not stage, commit, compile, or flash merely to make the handoff tidy; those
+   still require explicit approval.
+
+Decision locations:
+
+- Roadmap: active focus, requirements, trial status, evidence, dismissed ideas,
+  and rollback references.
+- Architecture: stable layer model, ownership boundaries, and design rules.
+- Change workflow: collaboration protocol and safety gates.
+- Printable guide: daily physical behavior, not speculative future design.
+- Git commits and tags: exact return points for accepted slices and preserved
+  experiments.
 
 ## Required Loop
 
@@ -53,6 +114,25 @@ No second feature starts until the current feature is marked Kept or Rolled Back
 
 ChieftainDots is personal userspace. It should not be prepared as a contribution
 to upstream `qmk/qmk_firmware` unless that goal is explicitly changed.
+
+Use Git from the ChieftainDots userspace root:
+
+```bash
+cd users/eldestroyer74
+git status --short --branch
+```
+
+Do not use the outer `qmk_firmware` Git status as the source of truth for
+ChieftainDots decisions. The outer checkout is mainly the QMK build dependency;
+it may report `users/eldestroyer74` as untracked, ignored, or nested, even when
+the userspace itself has its own real history. Commits, tags, staging, diffs,
+and rollback points for ChieftainDots belong to the nested userspace repository
+unless the task explicitly says otherwise.
+
+When reporting state, name which repository was checked:
+
+- `userspace git`: the project history for ChieftainDots work.
+- `outer qmk_firmware git`: the upstream firmware dependency and build checkout.
 
 Use this source-of-truth model:
 

@@ -24,8 +24,9 @@
 #include QMK_KEYBOARD_H
 #include "../features/layers.h"
 
+extern bool chieftaindots_long_caps_mode;
 
-static void render_logo(uint8_t const layer) {
+static void render_logo(uint8_t const layer, bool const caps_active) {
 	static char const corne_logo[] PROGMEM = {
 		0x80, 0x81, 0x82, 0x83, 0x84,
 		0xa0, 0xa1, 0xa2, 0xa3, 0xa4,
@@ -35,7 +36,10 @@ static void render_logo(uint8_t const layer) {
 	static char const nav_label[] PROGMEM = " nav ";
 	static char const styles_label[] PROGMEM = "style";
 	static char const media_label[] PROGMEM = "media";
-	static char const snap_label[] PROGMEM = "snap ";
+	static char const snap_label[] PROGMEM = " snap";
+	static char const spanish_label[] PROGMEM = "spnsh";
+	static char const caps_label[] PROGMEM = " caps";
+	static char const colemak_label[] PROGMEM = " clmk";
 
 	oled_write_P(corne_logo, false);
 	switch (layer) {
@@ -43,12 +47,14 @@ static void render_logo(uint8_t const layer) {
 		case EXT: oled_write_P(styles_label, false); break;
 		case MED: oled_write_P(media_label, false); break;
 		case SNP: oled_write_P(snap_label, false); break;
-		default:  oled_write_P(layer <= CMK ? katakana : PSTR("corne"), false);
+		case ESP: oled_write_P(spanish_label, false); break;
+		case CMK: oled_write_P(caps_active ? caps_label : colemak_label, false); break;
+		default:  oled_write_P(caps_active ? caps_label : (layer <= CMK ? katakana : PSTR("corne")), false);
 	}
 }
 
 
-static void render_layer_state(uint8_t const state) {
+static void render_layer_state(uint8_t const state, bool const caps_active) {
 	static char const base_layer[] PROGMEM = {
 		0x20, 0x9a, 0x9b, 0x9c, 0x20,
 		0x20, 0xba, 0xbb, 0xbc, 0x20,
@@ -62,14 +68,22 @@ static void render_layer_state(uint8_t const state) {
 		0x20, 0xb7, 0xb8, 0xb9, 0x20,
 		0x20, 0xd7, 0xd8, 0xd9, 0x20, 0};
 	switch(state) {
-	case NAV:
-	case EXT:
-	case MED:
-	case SNP: oled_write_P(chord_layer, false); break;
+		case NAV:
+		case EXT:
+		case MED:
+		case SNP: oled_write_P(chord_layer, false); break;
+		case CMK:
 		case NUM:
 		case SYM:
-		case SYS: oled_write_P(anchor_layer, false); break;
-		default:  oled_write_P(base_layer, false);
+		case SYS:
+		case ESP: oled_write_P(anchor_layer, false); break;
+		default:
+			if (caps_active) {
+				oled_write_P(anchor_layer, false);
+			} else {
+				oled_write_P(base_layer, false);
+			}
+			break;
 	}
 }
 
@@ -146,14 +160,15 @@ void render_mod_status(void) {
 	mods |= get_oneshot_mods();
 #endif
 	uint8_t layer = get_highest_layer(layer_state | default_layer_state);
+	bool caps_active = host_keyboard_led_state().caps_lock || chieftaindots_long_caps_mode;
 	uint8_t fn    = layer_state_is(SYS) || layer_state_is(MED);
 	uint8_t sym   = layer_state_is(SYM) || layer_state_is(EXT);
 	uint8_t num   = layer_state_is(NUM) || layer_state_is(NAV);
 	uint8_t ctrl  = (mods & MOD_MASK_CTRL) || layer_state_is(SNP);
 
-	render_logo(layer);
+	render_logo(layer, caps_active);
 	oled_set_cursor(0,6);
-	render_layer_state(layer);
+	render_layer_state(layer, caps_active);
 
 	oled_set_cursor(0,11);
 	render_home_row_status(fn, sym, num, ctrl);

@@ -25,7 +25,8 @@ Hold D / K             = Numbers
 Hold F / J             = Ctrl
 Hold Base Space / Enter = Shift
 Hold either lower corner = Spanish
-Right thumbs on command layers = Enter/Shift / RAlt / Menu
+Right thumbs: Numbers uses Enter/Symbols; Symbols and Function use Enter/Shift;
+RAlt and Menu stay available.
 ```
 
 ```text
@@ -34,11 +35,13 @@ Three anchors, one GUI chord each
 Hold D/K + left GUI    = Navigation: movement only
 Hold S/L + left GUI    = Styles: Alt+Shift+Arrow
 Hold A/; + left GUI    = Media, Teams-first
-Hold Ctrl + left GUI   = Snap window placement mode
+Hold home-row Ctrl + left GUI = Snap window placement mode
 Double tap-hold mnemonic = Text snippets
 ```
 
-Snap has no tap-only action. It is entered only as a held mode.
+Snap has no tap-only action. It is entered only as a held mode from the
+physical home-row Ctrl source plus the left GUI thumb. During Snap, firmware
+sends one-shot `Win+Arrow` taps; Windows should not see a live `Ctrl+Win` hold.
 Double tap-hold GUI has no separate action in this build; it behaves like the
 ordinary GUI/anchor hold path.
 
@@ -98,7 +101,7 @@ Plain keys only in the current RAM experiment:
 Teams mic mute  Volume Down  Play/Pause
 ```
 
-Snap window placement: hold Ctrl + left GUI, then press `I/J/K/L`.
+Snap window placement: hold home-row Ctrl + left GUI, then press `I/J/K/L`.
 
 ```text
 One-shot shortcuts
@@ -238,10 +241,11 @@ Tap = Alt+Shift+Arrow.
 Hold / double tap / double-tap-hold = intentionally unused for now.
 ```
 
-Snap window placement: hold Ctrl + left GUI, then use `I/J/K/L`.
+Snap window placement: hold home-row Ctrl + left GUI, then use `I/J/K/L`.
 
 ```text
-The entry gesture exposes the Snap layer; each arrow sends one Win+Arrow tap.
+The entry gesture exposes the Snap layer. Each arrow sends one Win+Arrow tap,
+with Ctrl masked so Windows does not see Ctrl+Win+Arrow.
       Up
 Left  Down  Right
 ```
@@ -355,7 +359,9 @@ After flashing, test:
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.
-- hold Ctrl + left GUI, then `I/J/K/L` = Snap window placement.
+- hold home-row Ctrl + left GUI, then `I/J/K/L` = Snap window placement.
+- Snap should move windows predictably without opening Snap Assist layouts or
+  desktop/workspace traversal.
 - double-tap-hold GUI = no separate action; ordinary GUI/anchor hold behavior.
 - Double-tap-hold `H/W/P/M/E/G/N` snippets fire only when intended.
 

@@ -3,9 +3,6 @@
 
 #include "rgb-matrix.h"
 
-extern bool spanish_language_switch_mode;
-extern uint8_t spanish_language_switch_source;
-
 // Assign left and right keys to KB2040 LEDs on each side
 #ifdef CONVERT_TO_KB2040
 led_config_t g_led_config = { {
@@ -85,36 +82,6 @@ static bool is_left_thumb_alt_position(uint8_t row, uint8_t col) {
 	return row == L_THUMB && col == L_INDEX;
 }
 
-static bool is_left_thumb_space_position(uint8_t row, uint8_t col) {
-	return row == L_THUMB && col == L_INNER;
-}
-
-static bool is_spanish_hold_position(uint8_t row, uint8_t col) {
-	return row == L_BOTTOM && col == L_OUTER;
-}
-
-static bool is_right_spanish_hold_position(uint8_t row, uint8_t col) {
-	return row == R_BOTTOM && col == R_OUTER;
-}
-
-static bool is_navigation_down_position(uint8_t row, uint8_t col) {
-	return row == R_HOME && col == R_MIDDLE;
-}
-
-static bool is_navigation_up_position(uint8_t row, uint8_t col) {
-	return row == R_TOP && col == R_MIDDLE;
-}
-
-static bool is_active_spanish_language_source(uint8_t row, uint8_t col) {
-	if (spanish_language_switch_source == 1) {
-		return is_spanish_hold_position(row, col);
-	}
-	if (spanish_language_switch_source == 2) {
-		return is_right_spanish_hold_position(row, col);
-	}
-	return false;
-}
-
 static RGB rgb_for_thumb_hint(uint8_t layer, uint8_t row, uint8_t col) {
 	if (layer == NUM) {
 		if (is_left_thumb_gui_position(row, col)) {
@@ -184,8 +151,6 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 			return is_left_function_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case SYS:
 			return is_left_function_anchor_position(row, col) || is_left_thumb_alt_position(row, col);
-		case ESP:
-			return is_spanish_hold_position(row, col) || is_right_spanish_hold_position(row, col);
 		default:
 			return false;
 	}
@@ -204,10 +169,8 @@ static RGB rgb_for_position(uint8_t layer, uint8_t row, uint8_t col) {
 	RGB rgb = (RGB){RGB_OFF};
 	uint16_t keycode = keycode_at_position(layer, row, col);
 
-	if (spanish_language_switch_mode &&
-	    (is_active_spanish_language_source(row, col) || is_navigation_up_position(row, col) || is_navigation_down_position(row, col) ||
-	     is_left_thumb_space_position(row, col))) {
-		return (RGB){RGB_ESP};
+	if (layer == ESP) {
+		return rgb;
 	}
 
 	if (layer > CMK && rgb_should_light_command_key(layer, row, col, keycode)) {

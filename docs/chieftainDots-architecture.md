@@ -125,9 +125,22 @@ Filterpaper-style status structure but renames it around ChieftainDots concepts:
   should not slide around the screen to imply depth.
 - The bottom 2x2 stack reuses the old modifier-panel grammar to show the four
   home-row concepts: Function/System, Symbols, Numbers, and Control.
+- Filterpaper-style button art is composed from small font tiles, not drawn as
+  standalone buttons: left 12x16 tile, connector tile, and right 12x16 tile.
+  New `Fn`, `@`, `#`, and reused Control art should fit that grammar so the
+  preview and firmware can share the same mental model.
 - The small text slot where `corne` appears is the cheap state-name slot. Every
   chorded layer should use the same label grammar once it exists in the active
   trial: `nav`, `style` for Office, `snap`, and `media` if Media is restored.
+- The text slot names semantic surfaces, not raw modifier state. A semantic
+  surface is a state that changes what the keyboard is offering: `nav`, `style`,
+  `media`, `snap`, `spnsh`, `caps `, or the typing-layer exception `clmk `.
+  Raw Ctrl, Alt, and GUI are mechanical ingredients and should not replace the
+  label unless they have formed a named surface such as Snap.
+- Label priority follows meaning: chord/mode labels win over supporting
+  modifiers; named typing or writing states such as Colemak and Caps win over
+  the default `corne`/katakana text; plain Base remains the default resting
+  label.
 - Avoid full-screen raw label renderers for chord names. The first trial worked
   but was slow and cost bytes; the small text-slot approach keeps Bongocat from
   being overwritten and leaves more firmware headroom.
@@ -232,6 +245,9 @@ keyboard state without becoming another place where key behavior is defined.
 - Momentary command layers light their usable command surface. The mask should
   follow the active keymap where possible, with explicit visual exceptions for
   chord anchors, future thumb hints, and the Delete cue.
+- Momentary character palettes do not automatically need RGB. Spanish compose is
+  self-confirming because the typed character proves the layer was active, so it
+  stays visually quiet unless a future problem shows RGB would prevent mistakes.
 - Pressed global modifier RGB is currently disabled. It was removed because it
   lit ambiguous opposite-hand positions and did not clearly identify the
   physical key being held.

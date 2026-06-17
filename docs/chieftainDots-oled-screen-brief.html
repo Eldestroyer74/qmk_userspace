@@ -775,6 +775,59 @@
     </section>
 
     <section class="card hero">
+      <h2>Bongocat State Logic Proposal</h2>
+      <p class="note">
+        Design-only proposal for the animation side. The status screen remains the source of exact labels and
+        layer tiles. Bongocat becomes a coarse physical-feedback mirror: calm while idle, pressing while an
+        anchor or chord is held, and a larger press while a directional/action key is held inside that mode.
+        This should reuse the existing Bongocat frames before adding new art.
+      </p>
+
+      <div class="oled-comps">
+        <article>
+          <h3>Idle / Typing Rest</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-cat-frame="paws"></canvas>
+          </div>
+          <p class="note">Fallback frame: current <code>paws</code>. Firmware can keep the existing idle animation cycle for true rest.</p>
+        </article>
+        <article>
+          <h3>Anchor Or Chord Held</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-cat-frame="tap1"></canvas>
+          </div>
+          <p class="note">Candidate frame: <code>tap1</code>. Use when an anchor or completed chord is held but no arrow/action key is currently held.</p>
+        </article>
+        <article>
+          <h3>Arrow / Action Held</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-cat-frame="tap0"></canvas>
+          </div>
+          <p class="note">Candidate frame: <code>tap0</code>. Use for the "big press" while an arrow/action key is held within Navigation, Styles, Media, or Snap.</p>
+        </article>
+      </div>
+
+      <div class="asset-list" style="margin-top:14px">
+        <div class="asset">
+          <strong>Suggested State Rule</strong>
+          <span class="note">
+            Rest: keep existing idle animation. Anchor/chord held: show a stable pressing frame. Direction/action
+            key held inside that mode: show the big press frame until that key is released. Tap-only actions can
+            briefly reuse the existing timer-driven tap animation.
+          </span>
+        </div>
+        <div class="asset">
+          <strong>Implementation Boundary</strong>
+          <span class="note">
+            Do not make Bongocat decide layer meaning. Firmware should expose a small animation intent such as
+            <code>CAT_IDLE</code>, <code>CAT_HELD_MODE</code>, or <code>CAT_BIG_PRESS</code>; the status renderer
+            remains responsible for semantic labels like <code>nav</code>, <code>spnsh</code>, and <code>caps</code>.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card hero">
       <h2>Home-Row Icon Mockup</h2>
       <p class="note">
         First-pass icon vocabulary for the bottom 2x2 status stack. The order follows the active HRM wrapper:
@@ -861,6 +914,70 @@
           </div>
           <p class="note">Two slots on to test connector readability.</p>
         </article>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <h2>Proposed Anchor + Windows Chord Layout</h2>
+      <p class="note">
+        Requirements-only concept for the next status-screen direction. The screen teaches the physical grammar:
+        top home-row anchors, reused layer tile, bottom Windows/GUI chord button. The old
+        <code>corne</code> text label is removed in this concept.
+      </p>
+
+      <div class="oled-comps">
+        <article>
+          <h3>Resting Base/Colemak</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-proposed-status="rest"></canvas>
+          </div>
+          <p class="note">Reuses the current Base/Colemak layer tile. Windows button is quiet.</p>
+        </article>
+
+        <article>
+          <h3>Anchor Held</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-proposed-status="anchor"></canvas>
+          </div>
+          <p class="note">Held anchor is pressed. Reuses the current anchor layer tile. Windows button is available.</p>
+        </article>
+
+        <article>
+          <h3>GUI Pressed</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-proposed-status="gui"></canvas>
+          </div>
+          <p class="note">Reuses the current chord layer tile once anchor + Windows/GUI is pressed.</p>
+        </article>
+
+        <article>
+          <h3>Chord Icons</h3>
+          <div class="oled-device">
+            <canvas class="rendered-oled" data-render-proposed-status="icons"></canvas>
+          </div>
+          <p class="note">Literal icons: test Navigation compass against a four-arrow cross before firmware.</p>
+        </article>
+      </div>
+
+      <div class="asset-list">
+        <div class="asset">
+          <strong>Requirements Captured</strong>
+          <span class="note">
+            Top: four peer anchors (<code>Fn</code>, <code>@</code>, <code>#</code>, existing Ctrl icon).
+            Middle: reuse the current Base, Anchor, and Chord layer tile images in the existing tile slot.
+            Bottom: a centered GUI/action pair using the same left tile + connector + right tile grammar as
+            Filterpaper. The left tile reuses the old GUI art; the right tile is blank or carries the chord icon.
+            No <code>corne</code> text label in this concept.
+          </span>
+        </div>
+        <div class="asset">
+          <strong>Icon Direction</strong>
+          <span class="note">
+            Styles uses <code>¶</code>. Snap uses 30/70 rectangles. Media uses a simple speaker.
+            Navigation should test compass/weather-vane versus four-arrow cross in the brief before firmware.
+            Firmware should reuse existing OLED font mechanics and unused glyph slots where possible.
+          </span>
+        </div>
       </div>
     </section>
 
@@ -1074,6 +1191,12 @@
       num: [0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x40, 0x40, 0x20, 0x20, 0x10, 0x10, 0x08, 0x08, 0x10, 0x10, 0x20, 0x20, 0x40, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x88, 0x88, 0x5d, 0x5d, 0x3e, 0x3e, 0x7c, 0x7c, 0xf8, 0xf8, 0x7c, 0x7c, 0x3e, 0x3e, 0x5d, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x16, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x04, 0x04, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00],
       sym: [0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80, 0x80, 0x80, 0x80, 0xc0, 0xc0, 0xe0, 0xe0, 0xf0, 0xf0, 0xf8, 0xf8, 0xf0, 0xf0, 0xe0, 0xe0, 0xc0, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x5d, 0x88, 0x88, 0x88, 0x88, 0x55, 0x55, 0x23, 0x23, 0x47, 0x47, 0x8f, 0x8f, 0x47, 0x47, 0x23, 0x23, 0x55, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x02, 0x04, 0x04, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01, 0x0e, 0x06, 0x00, 0x00, 0x00, 0x00],
       arrows: [0xa2, 0x94, 0x00, 0x08, 0x04, 0x7e, 0x1c, 0x08, 0x00, 0x08, 0x1c, 0x2a, 0x04, 0x08, 0x00, 0x10, 0x20, 0x7e, 0x20, 0x10, 0x00, 0x08, 0x08, 0x2a]
+    };
+
+    const catFrames = {
+      paws: [150, 0x33,0x00,0x02,0x80,0x05,0x00,0x01,0x80,0x02,0x40,0x04,0x20,0x04,0x10,0x83,0x08,0x04,0x02,0x02,0x01,0x85,0x02,0x0c,0x30,0x40,0x80,0x2e,0x00,0x03,0x80,0x31,0x00,0x82,0x1e,0xe1,0x02,0x00,0x02,0x01,0x02,0x02,0x01,0x81,0x02,0x80,0x02,0x00,0x02,0x80,0x09,0x00,0x82,0x80,0x00,0x02,0x30,0x02,0x00,0x8a,0x01,0xe1,0x1a,0x06,0x09,0x31,0x35,0x01,0x8a,0x7c,0x02,0x00,0x04,0x80,0x04,0x40,0x04,0x20,0x04,0x10,0x05,0x08,0x05,0x04,0x04,0x02,0x04,0x01,0x33,0x00,0x84,0x80,0x70,0x0c,0x03,0x02,0x00,0x88,0x18,0x06,0x05,0x98,0x99,0x84,0xc3,0x7c,0x02,0x41,0x02,0x40,0x84,0x20,0x21,0x22,0x12,0x03,0x11,0x01,0x09,0x04,0x08,0x06,0x04,0x03,0x02,0x04,0x01,0x36,0x00,0x05,0x80,0x05,0x40,0x05,0x20,0x05,0x10,0x05,0x08,0x05,0x04,0x82,0x02,0x03,0x02,0x02,0x06,0x01,0x47,0x00],
+      tap0: [180, 0x33,0x00,0x02,0x80,0x05,0x00,0x01,0x80,0x02,0x40,0x04,0x20,0x04,0x10,0x83,0x08,0x04,0x02,0x02,0x01,0x85,0x02,0x0c,0x30,0x40,0x80,0x07,0x00,0x04,0xf8,0x05,0x00,0x02,0x80,0x1c,0x00,0x03,0x80,0x31,0x00,0x82,0x1e,0xe1,0x02,0x00,0x02,0x01,0x02,0x02,0x01,0x81,0x02,0x80,0x02,0x00,0x02,0x80,0x09,0x00,0x82,0x80,0x00,0x02,0x30,0x02,0x00,0x02,0x01,0x8e,0x02,0x04,0x08,0x10,0x20,0x43,0x87,0x07,0x01,0x00,0xb8,0xbc,0xbe,0x9f,0x02,0x5f,0x82,0x4f,0x4c,0x04,0x20,0x04,0x10,0x05,0x08,0x05,0x04,0x04,0x02,0x04,0x01,0x33,0x00,0x84,0x80,0x70,0x0c,0x03,0x02,0x00,0x88,0x18,0x06,0x05,0x98,0x99,0x84,0x43,0x7c,0x02,0x41,0x02,0x40,0x84,0x20,0x21,0x22,0x12,0x03,0x11,0x01,0x09,0x04,0x08,0x02,0x04,0x02,0x08,0x05,0x10,0x85,0x11,0x0f,0x01,0x3d,0x7c,0x05,0xfc,0x82,0x3c,0x0c,0x2e,0x00,0x05,0x80,0x05,0x40,0x05,0x20,0x05,0x10,0x05,0x08,0x05,0x04,0x82,0x02,0x03,0x02,0x02,0x06,0x01,0x24,0x00,0x01,0x01,0x02,0x03,0x20,0x00],
+      tap1: [153, 0x33,0x00,0x02,0x80,0x05,0x00,0x01,0x80,0x02,0x40,0x04,0x20,0x04,0x10,0x83,0x08,0x04,0x02,0x02,0x01,0x85,0x02,0x0c,0x30,0x40,0x80,0x2e,0x00,0x03,0x80,0x31,0x00,0x82,0x1e,0xe1,0x02,0x00,0x02,0x01,0x02,0x02,0x01,0x01,0x04,0x00,0x02,0x80,0x09,0x00,0x82,0x80,0x00,0x02,0x30,0x02,0x00,0x8a,0x01,0xe1,0x1a,0x06,0x09,0x31,0x35,0x01,0x8a,0x7c,0x02,0x00,0x04,0x80,0x04,0x40,0x04,0x20,0x04,0x10,0x05,0x08,0x05,0x04,0x04,0x02,0x04,0x01,0x33,0x00,0x84,0x80,0x70,0x0c,0x03,0x0a,0x00,0x02,0x01,0x86,0x00,0x40,0xa0,0x21,0x22,0x12,0x03,0x11,0x01,0x09,0x04,0x08,0x06,0x04,0x03,0x02,0x04,0x01,0x36,0x00,0x05,0x80,0x05,0x40,0x05,0x20,0x05,0x10,0x05,0x08,0x05,0x04,0x82,0x02,0x03,0x02,0x7a,0x04,0x79,0x82,0x39,0x31,0x02,0x02,0x02,0x04,0x03,0x08,0x02,0x88,0x82,0x87,0x80,0x3c,0x00]
     };
 
     function drawOledIcon(canvas, bytes, glyphColumns) {
@@ -1292,35 +1415,6 @@
       });
     }
 
-    function iconContent(name, side = "left") {
-      const rows = blankRows();
-      if (name === "fn") {
-        placeBitmap(rows, [
-          "XXXX....",
-          "X.......",
-          "XXX.....",
-          "X...XX..",
-          "X..X..X.",
-          "X..X..X.",
-          "X..X..X."
-        ], side === "left" ? 4 : 2, 5);
-      } else if (name === "sym") {
-        placeGlyph(rows, "@", side === "left" ? 5 : 2, 5);
-      } else if (name === "num") {
-        placeGlyph(rows, "#", side === "left" ? 5 : 2, 5);
-      } else if (name === "ctrl") {
-        placeGlyph(rows, "^", side === "left" ? 3 : 4, 6);
-      }
-      return rows;
-    }
-
-    function buildHomeIcon(name, side, pressed) {
-      const outline = side === "left" ? leftTileOutline : mirrorRows(leftTileOutline);
-      const fill = side === "left" ? leftTileFill : mirrorRows(leftTileFill);
-      const content = iconContent(name, side);
-      return pressed ? subtractRows(fill, content) : mergeRows(outline, content);
-    }
-
     function rowsToGlyphPages(rows) {
       const pages = [[], []];
       for (let page = 0; page < 2; page += 1) {
@@ -1338,59 +1432,72 @@
       return { top: pages[0], bottom: pages[1] };
     }
 
-    const homeIcons = {
-      fn: {
-        left: {
-          off: rowsToGlyphPages(buildHomeIcon("fn", "left", false)),
-          on: rowsToGlyphPages(buildHomeIcon("fn", "left", true))
-        },
-        right: {
-          off: rowsToGlyphPages(buildHomeIcon("fn", "right", false)),
-          on: rowsToGlyphPages(buildHomeIcon("fn", "right", true))
-        }
-      },
-      sym: {
-        left: {
-          off: rowsToGlyphPages(buildHomeIcon("sym", "left", false)),
-          on: rowsToGlyphPages(buildHomeIcon("sym", "left", true))
-        },
-        right: {
-          off: rowsToGlyphPages(buildHomeIcon("sym", "right", false)),
-          on: rowsToGlyphPages(buildHomeIcon("sym", "right", true))
-        }
-      },
-      num: {
-        left: {
-          off: rowsToGlyphPages(buildHomeIcon("num", "left", false)),
-          on: rowsToGlyphPages(buildHomeIcon("num", "left", true))
-        },
-        right: {
-          off: rowsToGlyphPages(buildHomeIcon("num", "right", false)),
-          on: rowsToGlyphPages(buildHomeIcon("num", "right", true))
-        }
-      },
-      ctrl: {
-        left: {
-          off: {
-            top: [...glyphBytes(0x89), ...glyphBytes(0x8a)],
-            bottom: [...glyphBytes(0xa9), ...glyphBytes(0xaa)]
-          },
-          on: {
-            top: [...glyphBytes(0x91), ...glyphBytes(0x92)],
-            bottom: [...glyphBytes(0xb1), ...glyphBytes(0xb2)]
-          }
-        },
-        right: {
-          off: rowsToGlyphPages(mirrorRows(glyphPagesToRows(
-            [...glyphBytes(0x89), ...glyphBytes(0x8a)],
-            [...glyphBytes(0xa9), ...glyphBytes(0xaa)]
-          ))),
-          on: rowsToGlyphPages(mirrorRows(glyphPagesToRows(
-            [...glyphBytes(0x91), ...glyphBytes(0x92)],
-            [...glyphBytes(0xb1), ...glyphBytes(0xb2)]
-          )))
-        }
+    function tileFromGlyphCodes(topCodes, bottomCodes) {
+      return {
+        top: topCodes.flatMap((code) => [...glyphBytes(code)]),
+        bottom: bottomCodes.flatMap((code) => [...glyphBytes(code)])
+      };
+    }
+
+    function iconContent(name, side = "left") {
+      const rows = blankRows();
+      if (name === "fn") {
+        placeBitmap(rows, [
+          "XXXXX...",
+          "X.......",
+          "XXX.....",
+          "X.......",
+          "X..XX...",
+          "X.X..X..",
+          "X.X..X..",
+          "X.X..X.."
+        ], side === "left" ? 4 : 2, 4);
+      } else if (name === "sym") {
+        placeGlyph(rows, "@", side === "left" ? 5 : 2, 5);
+      } else if (name === "num") {
+        placeGlyph(rows, "#", side === "left" ? 5 : 2, 5);
+      } else if (name === "ctrl") {
+        placeGlyph(rows, "^", side === "left" ? 3 : 4, 6);
       }
+      return rows;
+    }
+
+    function buildHomeIcon(name, side, pressed) {
+      const outline = side === "left" ? leftTileOutline : mirrorRows(leftTileOutline);
+      const fill = side === "left" ? leftTileFill : mirrorRows(leftTileFill);
+      const content = iconContent(name, side);
+      return pressed ? subtractRows(fill, content) : mergeRows(outline, content);
+    }
+
+    function generatedPair(name) {
+      return {
+        left: {
+          off: rowsToGlyphPages(buildHomeIcon(name, "left", false)),
+          on: rowsToGlyphPages(buildHomeIcon(name, "left", true))
+        },
+        right: {
+          off: rowsToGlyphPages(buildHomeIcon(name, "right", false)),
+          on: rowsToGlyphPages(buildHomeIcon(name, "right", true))
+        }
+      };
+    }
+
+    function iconPair(offTop, offBottom, onTop, onBottom) {
+      const off = tileFromGlyphCodes(offTop, offBottom);
+      const on = tileFromGlyphCodes(onTop, onBottom);
+      return {
+        left: { off, on },
+        right: { off, on }
+      };
+    }
+
+    const homeIcons = {
+      fn: generatedPair("fn"),
+      sym: generatedPair("sym"),
+      num: generatedPair("num"),
+      ctrl: generatedPair("ctrl"),
+      gui: iconPair(statusGlyphs.guiOff1, statusGlyphs.guiOff2, statusGlyphs.guiOn1, statusGlyphs.guiOn2),
+      blank: generatedPair("blank")
     };
 
     function drawRawBytes(buffer, glyphX, page, bytes) {
@@ -1426,6 +1533,245 @@
           for (let bit = 0; bit < 8; bit += 1) {
             if (byte & (1 << bit)) {
               ctx.fillRect(x * scale, (page * 8 + bit) * scale, scale, scale);
+            }
+          }
+        }
+      }
+    }
+
+    function setBufferPixel(buffer, x, y, on = true) {
+      if (x < 0 || x >= 32 || y < 0 || y >= 128) {
+        return;
+      }
+      const index = Math.floor(y / 8) * 32 + x;
+      const mask = 1 << (y % 8);
+      if (on) {
+        buffer[index] |= mask;
+      } else {
+        buffer[index] &= 0xff ^ mask;
+      }
+    }
+
+    function drawTileAt(buffer, xOffset, yOffset, tile) {
+      const rows = glyphPagesToRows(tile.top, tile.bottom);
+      rows.forEach((row, y) => {
+        row.split("").forEach((cell, x) => {
+          if (cell !== ".") {
+            setBufferPixel(buffer, xOffset + x, yOffset + y);
+          }
+        });
+      });
+    }
+
+    function drawRowsAt(buffer, xOffset, yOffset, rows) {
+      rows.forEach((row, y) => {
+        row.split("").forEach((cell, x) => {
+          if (cell !== ".") {
+            setBufferPixel(buffer, xOffset + x, yOffset + y);
+          }
+        });
+      });
+    }
+
+    function drawGlyphCodesAt(buffer, xOffset, yOffset, codes) {
+      codes.forEach((code, glyphIndex) => {
+        glyphBytes(code).forEach((byte, glyphX) => {
+          for (let bit = 0; bit < 8; bit += 1) {
+            if (byte & (1 << bit)) {
+              setBufferPixel(buffer, xOffset + glyphIndex * 6 + glyphX, yOffset + bit);
+            }
+          }
+        });
+      });
+    }
+
+    function drawHomePairAt(buffer, xOffset, yOffset, leftIcon, rightIcon, leftOn, rightOn) {
+      const left = homeIcons[leftIcon].left[leftOn ? "on" : "off"];
+      const right = homeIcons[rightIcon].right[rightOn ? "on" : "off"];
+      drawTileAt(buffer, xOffset, yOffset, left);
+      drawGlyphCodesAt(buffer, xOffset + 12, yOffset, connectorCodes(leftOn, rightOn, false));
+      drawTileAt(buffer, xOffset + 18, yOffset, right);
+      drawGlyphCodesAt(buffer, xOffset + 12, yOffset + 8, connectorCodes(leftOn, rightOn, true));
+    }
+
+    function drawBufferRect(buffer, x, y, width, height, filled = false, on = true) {
+      for (let px = x; px < x + width; px += 1) {
+        for (let py = y; py < y + height; py += 1) {
+          if (filled || px === x || px === x + width - 1 || py === y || py === y + height - 1) {
+            setBufferPixel(buffer, px, py, on);
+          }
+        }
+      }
+    }
+
+    function drawBufferGlyph(buffer, char, x, y, on = true) {
+      const bytes = glyphBytes(char.charCodeAt(0));
+      bytes.forEach((byte, byteX) => {
+        for (let bit = 0; bit < 8; bit += 1) {
+          if (byte & (1 << bit)) {
+            setBufferPixel(buffer, x + byteX, y + bit, on);
+          }
+        }
+      });
+    }
+
+    function drawDepthIndicator(buffer, activeStep) {
+      const tile = {
+        rest: statusGlyphs.baseLayer,
+        anchor: statusGlyphs.anchorLayer,
+        chord: statusGlyphs.chordLayer
+      }[activeStep] || statusGlyphs.baseLayer;
+      writeCodes(buffer, { x: 0, y: 7 }, tile);
+    }
+
+    function drawWindowsMark(buffer, x, y, on = true) {
+      drawBufferRect(buffer, x, y, 3, 3, true, on);
+      drawBufferRect(buffer, x + 5, y, 3, 3, true, on);
+      drawBufferRect(buffer, x, y + 5, 3, 3, true, on);
+      drawBufferRect(buffer, x + 5, y + 5, 3, 3, true, on);
+    }
+
+    function drawChordIcon(buffer, name, x, y, on = true) {
+      if (name === "nav") {
+        setBufferPixel(buffer, x + 4, y, on);
+        setBufferPixel(buffer, x + 3, y + 1, on);
+        setBufferPixel(buffer, x + 5, y + 1, on);
+        setBufferPixel(buffer, x + 2, y + 2, on);
+        setBufferPixel(buffer, x + 6, y + 2, on);
+        setBufferPixel(buffer, x + 4, y + 2, on);
+        setBufferPixel(buffer, x + 4, y + 3, on);
+        setBufferPixel(buffer, x + 1, y + 4, on);
+        setBufferPixel(buffer, x + 2, y + 4, on);
+        setBufferPixel(buffer, x + 6, y + 4, on);
+        setBufferPixel(buffer, x + 7, y + 4, on);
+        setBufferPixel(buffer, x + 4, y + 5, on);
+        setBufferPixel(buffer, x + 2, y + 6, on);
+        setBufferPixel(buffer, x + 6, y + 6, on);
+        setBufferPixel(buffer, x + 3, y + 7, on);
+        setBufferPixel(buffer, x + 5, y + 7, on);
+        setBufferPixel(buffer, x + 4, y + 8, on);
+      } else if (name === "nav-cross") {
+        drawBufferRect(buffer, x + 4, y, 2, 9, true, on);
+        drawBufferRect(buffer, x, y + 4, 10, 2, true, on);
+        setBufferPixel(buffer, x + 3, y + 1, on);
+        setBufferPixel(buffer, x + 6, y + 1, on);
+        setBufferPixel(buffer, x + 3, y + 7, on);
+        setBufferPixel(buffer, x + 6, y + 7, on);
+      } else if (name === "style") {
+        drawBufferRect(buffer, x + 2, y, 5, 2, true, on);
+        drawBufferRect(buffer, x + 2, y, 2, 9, true, on);
+        drawBufferRect(buffer, x + 5, y, 2, 9, true, on);
+        drawBufferRect(buffer, x + 7, y + 1, 2, 2, true, on);
+        drawBufferRect(buffer, x + 7, y + 5, 2, 4, true, on);
+      } else if (name === "snap") {
+        drawBufferRect(buffer, x, y + 1, 3, 8, false, on);
+        drawBufferRect(buffer, x + 4, y + 1, 6, 8, false, on);
+      } else if (name === "media") {
+        drawBufferRect(buffer, x, y + 3, 3, 4, true, on);
+        setBufferPixel(buffer, x + 3, y + 2, on);
+        setBufferPixel(buffer, x + 3, y + 7, on);
+        drawBufferRect(buffer, x + 4, y + 1, 2, 8, true, on);
+        setBufferPixel(buffer, x + 7, y + 2, on);
+        setBufferPixel(buffer, x + 8, y + 4, on);
+        setBufferPixel(buffer, x + 7, y + 6, on);
+      }
+    }
+
+    function drawWindowsButton(buffer, mode, iconName) {
+      const pressed = mode === "pressed" || mode === "chord";
+      const x = 1;
+      const y = 96;
+      drawHomePairAt(buffer, x, y, "gui", "blank", pressed, mode === "chord");
+
+      if (mode === "chord") {
+        drawChordIcon(buffer, iconName, x + 21, y + 3, false);
+      }
+    }
+
+    function drawChordIconCandidates(buffer) {
+      const slots = [
+        { icon: "nav", x: 2, y: 43 },
+        { icon: "nav-cross", x: 18, y: 43 },
+        { icon: "style", x: 2, y: 62 },
+        { icon: "snap", x: 18, y: 62 },
+        { icon: "media", x: 10, y: 82 }
+      ];
+      slots.forEach((slot) => {
+        drawBufferRect(buffer, slot.x, slot.y, 12, 12, false);
+        drawChordIcon(buffer, slot.icon, slot.x + 1, slot.y + 1);
+      });
+    }
+
+    function drawProposedStatus(canvas, state) {
+      const buffer = new Uint8Array(32 * 16);
+      const active = {
+        rest: "none",
+        anchor: "sym",
+        gui: "sym",
+        icons: "fn-sym"
+      }[state] || "none";
+      const activeSet = new Set(active === "none" ? [] : active.split("-"));
+
+      drawHomePairAt(buffer, 1, 8, "fn", "sym", activeSet.has("fn"), activeSet.has("sym"));
+      drawHomePairAt(buffer, 1, 24, "num", "ctrl", activeSet.has("num"), activeSet.has("ctrl"));
+
+      if (state === "icons") {
+        drawChordIconCandidates(buffer);
+        drawWindowsButton(buffer, "chord", "nav");
+      } else {
+        drawDepthIndicator(buffer, state === "rest" ? "rest" : state === "anchor" ? "anchor" : "chord");
+        drawWindowsButton(buffer, state === "rest" ? "quiet" : state === "anchor" ? "available" : "pressed");
+      }
+
+      paintBuffer(canvas, buffer);
+    }
+
+    function decodeCatFrame(frame) {
+      const raw = new Uint8Array(128 * 4);
+      let cursor = 0;
+      const size = frame[0];
+      let i = 1;
+      while (i < size) {
+        let count = frame[i];
+        i += 1;
+        if (count & 0x80) {
+          count &= 0x7f;
+          for (let j = 0; j < count; j += 1) {
+            raw[cursor] = frame[i];
+            cursor += 1;
+            i += 1;
+          }
+        } else {
+          const byte = frame[i];
+          i += 1;
+          for (let j = 0; j < count; j += 1) {
+            raw[cursor] = byte;
+            cursor += 1;
+          }
+        }
+      }
+      return raw;
+    }
+
+    function drawCatFrame(canvas, frameName) {
+      const raw = decodeCatFrame(catFrames[frameName] || catFrames.paws);
+      const scale = 3;
+      canvas.width = 32 * scale;
+      canvas.height = 128 * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#080a0d";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#d7f7ff";
+
+      for (let page = 0; page < 4; page += 1) {
+        for (let x = 0; x < 128; x += 1) {
+          const byte = raw[page * 128 + x];
+          for (let bit = 0; bit < 8; bit += 1) {
+            if (byte & (1 << bit)) {
+              const rawY = page * 8 + bit;
+              const displayX = rawY;
+              const displayY = 127 - x;
+              ctx.fillRect(displayX * scale, displayY * scale, scale, scale);
             }
           }
         }
@@ -1625,6 +1971,10 @@
       drawHomeRowStatus(canvas, canvas.dataset.renderHomeRow);
     });
 
+    document.querySelectorAll("[data-render-proposed-status]").forEach((canvas) => {
+      drawProposedStatus(canvas, canvas.dataset.renderProposedStatus);
+    });
+
     document.querySelectorAll("[data-render-layer-tile]").forEach((canvas) => {
       drawLayerTilePreview(canvas, canvas.dataset.renderLayerTile);
     });
@@ -1639,6 +1989,10 @@
 
     document.querySelectorAll("[data-render-chord-label]").forEach((canvas) => {
       drawChordLabel(canvas, canvas.dataset.renderChordLabel);
+    });
+
+    document.querySelectorAll("[data-render-cat-frame]").forEach((canvas) => {
+      drawCatFrame(canvas, canvas.dataset.renderCatFrame);
     });
 
   </script>

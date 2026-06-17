@@ -35,6 +35,8 @@
  */
 
 #include QMK_KEYBOARD_H
+#include "../features/layers.h"
+#include "../features/tap_dance.h"
 
 #define IDLE_FRAMES 5
 #define TAP_FRAMES  2
@@ -44,6 +46,7 @@
 
 // Timer duration between key presses
 uint32_t oled_tap_timer = 0;
+extern uint8_t chieftaindots_cat_state;
 
 // Run-length encoded animation frames
 // Right frames
@@ -177,7 +180,11 @@ void animate_cat(void) {
 	static uint8_t tap_index = 0;
 	static uint8_t idle_index = 0;
 
-	if (timer_elapsed32(oled_tap_timer) < TAP_INTERVAL) {
+	if (chieftaindots_cat_state == CAT_BIG_PRESS) {
+		decode_frame_transformed(tap0, is_keyboard_left() ? OLED_TRANSFORM_MIRROR_X : OLED_TRANSFORM_NONE);
+	} else if (get_highest_layer(layer_state) > CMK) {
+		decode_frame_transformed(tap1, is_keyboard_left() ? OLED_TRANSFORM_MIRROR_X : OLED_TRANSFORM_NONE);
+	} else if (timer_elapsed32(oled_tap_timer) < TAP_INTERVAL) {
 		tap_index = (tap_index + 1) & 1;
 		decode_frame_transformed(tap[tap_index], is_keyboard_left() ? OLED_TRANSFORM_MIRROR_X : OLED_TRANSFORM_NONE);
 	} else if (timer_elapsed32(oled_tap_timer) < PAWS_INTERVAL) {
@@ -192,6 +199,7 @@ void animate_cat(void) {
 static void render_bongocat(void) {
 	// Timer duration between animation frames
 	static uint16_t anim_timer = 0;
+	bool cat_state_active = chieftaindots_cat_state == CAT_BIG_PRESS || get_highest_layer(layer_state) > CMK;
 
 #ifdef WPM_ENABLE
 	static uint8_t prev_wpm = 0;
@@ -202,7 +210,7 @@ static void render_bongocat(void) {
 	prev_wpm = get_current_wpm();
 #endif
 
-	if (timer_elapsed32(oled_tap_timer) > OLED_TIMEOUT) {
+	if (!cat_state_active && timer_elapsed32(oled_tap_timer) > OLED_TIMEOUT) {
 		oled_off();
 	} else if (timer_elapsed(anim_timer) > FRAME_DURATION) {
 		anim_timer = timer_read();

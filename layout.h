@@ -75,7 +75,7 @@
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
 	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
-// Snap diagnostic path: GUI is held by the entry dance, so this sends arrows.
+// Ctrl+GUI Snap path: firmware owns GUI as one-shot Win+Arrow taps.
 #define _SNP \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_UP,   XXXXXXX, XXXXXXX, KC_DEL,   \
@@ -129,6 +129,7 @@
 	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
 // Spanish layer: hold either outside bottom key, then press the matching letter.
+// Double-tap either Spanish key toggles the host input language.
 #define _SPAN \
 /* Top:    ---    ¡      ---    É      ---    ---      ---    Ú      Í      Ó      ---    ---  */\
 	XXXXXXX, ES_IEXL, XXXXXXX, ES_E,    XXXXXXX, XXXXXXX,     XXXXXXX, ES_U,    ES_I,    ES_O,    XXXXXXX, XXXXXXX, \
