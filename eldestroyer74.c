@@ -15,6 +15,7 @@
 extern bool process_spanish_compose(uint16_t keycode, keyrecord_t *record);
 extern void send_windows_alt_code(const char *code);
 extern uint8_t chieftaindots_snap_mode;
+uint8_t chieftaindots_cat_state;
 
 #define AUTO_CAPS_ENABLE 0
 
@@ -123,7 +124,6 @@ static bool delayed_alt_pending;
 static bool delayed_alt_registered;
 static bool delayed_alt_blocked;
 static bool delayed_alt_space_blocked;
-extern bool spanish_language_switch_mode;
 
 static uint16_t base_tap_keycode(uint16_t keycode) {
 	if (IS_QK_LAYER_TAP(keycode)) {
@@ -208,32 +208,6 @@ static bool process_delayed_alt(uint16_t keycode, keyrecord_t *record) {
 		register_delayed_alt();
 	}
 	return true;
-}
-
-static bool is_language_switch_forward_key(keyrecord_t *record, uint16_t keycode) {
-	return is_space_keycode(keycode) || (record->event.key.row == 5 && record->event.key.col == 3);
-}
-
-static bool is_language_switch_backward_key(keyrecord_t *record) {
-	return record->event.key.row == 4 && record->event.key.col == 3;
-}
-
-static bool process_spanish_language_switch(uint16_t keycode, keyrecord_t *record) {
-	if (!spanish_language_switch_mode) {
-		return true;
-	}
-
-	if (record->event.pressed) {
-		if (is_language_switch_backward_key(record)) {
-			tap_code16(S(KC_SPC));
-			return false;
-		}
-		if (is_language_switch_forward_key(record, keycode)) {
-			tap_code(KC_SPC);
-			return false;
-		}
-	}
-	return !(is_language_switch_backward_key(record) || is_language_switch_forward_key(record, keycode));
 }
 
 static bool process_directional_english_quotes(uint16_t keycode, keyrecord_t *record) {
@@ -814,6 +788,7 @@ static bool process_snap_mode(uint16_t keycode, keyrecord_t *record) {
 		case KC_DOWN:
 		case KC_RGHT:
 			if (record->event.pressed) {
+				chieftaindots_cat_state = CAT_BIG_PRESS;
 				if (chieftaindots_snap_mode == SNAP_MODE_WINDOW) {
 					uint8_t mods = get_mods();
 					uint8_t weak_mods = get_weak_mods();
@@ -822,27 +797,40 @@ static bool process_snap_mode(uint16_t keycode, keyrecord_t *record) {
 					tap_code16(G(keycode));
 					set_mods(mods);
 					set_weak_mods(weak_mods);
-				} else {
-					switch (keycode) {
-						case KC_UP:
-							tap_code16(G(KC_TAB));
-							break;
-						case KC_LEFT:
-							tap_code16(G(C(KC_LEFT)));
-							break;
-						case KC_DOWN:
-							tap_code16(G(KC_D));
-							break;
-						case KC_RGHT:
-							tap_code16(G(C(KC_RGHT)));
-							break;
-					}
 				}
+			} else {
+				chieftaindots_cat_state = CAT_IDLE;
 			}
 			return false;
 	}
 
 	return true;
+}
+
+static bool is_command_layer_action_key(uint16_t keycode) {
+	if (IS_QK_MODS(keycode)) {
+		keycode = QK_MODS_GET_BASIC_KEYCODE(keycode);
+	}
+
+	switch (keycode) {
+		case KC_UP:
+		case KC_LEFT:
+		case KC_DOWN:
+		case KC_RGHT:
+		case KC_VOLU:
+		case KC_VOLD:
+		case KC_MPLY:
+			return true;
+		default:
+			return false;
+	}
+}
+
+static void update_cat_for_command_action(uint16_t keycode, keyrecord_t *record) {
+	if (get_highest_layer(layer_state) <= CMK || !is_command_layer_action_key(keycode)) {
+		return;
+	}
+	chieftaindots_cat_state = record->event.pressed ? CAT_BIG_PRESS : CAT_IDLE;
 }
 
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
@@ -869,13 +857,11 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 		return false;
 	}
 
-	if (!process_spanish_language_switch(keycode, record)) {
-		return false;
-	}
-
 	if (!process_snap_mode(keycode, record)) {
 		return false;
 	}
+
+	update_cat_for_command_action(keycode, record);
 
 #if TEXT_MNEMONICS_ENABLE
 	if (!process_text_mnemonic(keycode, record)) {

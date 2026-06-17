@@ -32,10 +32,6 @@ typedef struct {
 	bool real_gui;
 } gui_snap_dance_t;
 
-typedef struct {
-	uint8_t source;
-} spanish_dance_t;
-
 // One pattern powers the small punctuation ladders:
 // tap = common character, hold = related alternate, double-tap = rarer pair.
 static tap_hold_double_t left_bracket_dance = {KC_LPRN, KC_LBRC, KC_LCBR};
@@ -54,15 +50,12 @@ static gui_snap_dance_t base_gui_snap_dance = {0, true};
 static gui_snap_dance_t num_gui_nav_snap_dance = {NAV, false};
 static gui_snap_dance_t sym_gui_ext_snap_dance = {EXT, false};
 static gui_snap_dance_t sys_gui_med_snap_dance = {MED, false};
-static spanish_dance_t spanish_left_dance = {SPANISH_SOURCE_LEFT};
-static spanish_dance_t spanish_right_dance = {SPANISH_SOURCE_RIGHT};
 static bool gui_snap_layer_held;
 static bool gui_snap_gui_held;
 static uint8_t gui_snap_active_layer;
 uint8_t chieftaindots_snap_mode;
-bool spanish_language_switch_mode;
-uint8_t spanish_language_switch_source;
 static bool spanish_layer_held;
+extern uint8_t chieftaindots_cat_state;
 
 enum {
 	SNAP_LEFT_CTRL_ROW = 1,
@@ -86,6 +79,14 @@ static void tap_hold_double_finished(tap_dance_state_t *state, void *user_data) 
 	} else {
 		tap_code16(dance->double_tap);
 	}
+}
+
+static void nav_dance_cat_press(tap_dance_state_t *state, void *user_data) {
+	chieftaindots_cat_state = CAT_BIG_PRESS;
+}
+
+static void nav_dance_cat_release(tap_dance_state_t *state, void *user_data) {
+	chieftaindots_cat_state = CAT_IDLE;
 }
 
 static void nav_dance_finished(tap_dance_state_t *state, void *user_data) {
@@ -148,12 +149,7 @@ static void gui_snap_finished(tap_dance_state_t *state, void *user_data) {
 	uint8_t weak_mods = get_weak_mods();
 	bool ctrl_down = ((mods | weak_mods) & MOD_MASK_CTRL) || snap_ctrl_source_held();
 
-	if (state->count > 1 && state->pressed) {
-		layer_on(SNP);
-		gui_snap_layer_held = true;
-		gui_snap_active_layer = SNP;
-		chieftaindots_snap_mode = SNAP_MODE_DESKTOP;
-	} else if (state->count == 1 && state->pressed) {
+	if (state->count >= 1 && state->pressed) {
 		if (ctrl_down) {
 			layer_on(SNP);
 			gui_snap_layer_held = true;
@@ -188,22 +184,12 @@ static void gui_snap_reset(tap_dance_state_t *state, void *user_data) {
 }
 
 static void spanish_dance_finished(tap_dance_state_t *state, void *user_data) {
-	spanish_dance_t *dance = (spanish_dance_t *)user_data;
 	spanish_layer_held = false;
-	spanish_language_switch_mode = false;
-	spanish_language_switch_source = SPANISH_SOURCE_NONE;
 
-	if (state->count > 1 && state->pressed) {
-		register_code(KC_LGUI);
-		if (dance->source == SPANISH_SOURCE_LEFT) {
-			tap_code16(S(KC_SPC));
-		} else {
-			tap_code(KC_SPC);
-		}
-		spanish_language_switch_mode = true;
-		spanish_language_switch_source = dance->source;
-	} else if (state->count > 1) {
-		tap_code16(G(KC_SPC));
+	if (state->count > 1) {
+		register_code(KC_LALT);
+		tap_code(KC_LSFT);
+		unregister_code(KC_LALT);
 	} else if (state->pressed) {
 		layer_on(ESP);
 		spanish_layer_held = true;
@@ -211,11 +197,6 @@ static void spanish_dance_finished(tap_dance_state_t *state, void *user_data) {
 }
 
 static void spanish_dance_reset(tap_dance_state_t *state, void *user_data) {
-	if (spanish_language_switch_mode) {
-		unregister_code(KC_LGUI);
-		spanish_language_switch_mode = false;
-		spanish_language_switch_source = SPANISH_SOURCE_NONE;
-	}
 	if (spanish_layer_held) {
 		layer_off(ESP);
 		spanish_layer_held = false;
@@ -296,19 +277,19 @@ tap_dance_action_t tap_dance_actions[] = {
 		.user_data = &num_three_dot_gt_dance,
 	},
 	[TD_NAV_UP] = {
-		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
+		.fn = {nav_dance_cat_press, nav_dance_finished, nav_dance_reset, nav_dance_cat_release},
 		.user_data = &nav_up_dance,
 	},
 	[TD_NAV_LEFT] = {
-		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
+		.fn = {nav_dance_cat_press, nav_dance_finished, nav_dance_reset, nav_dance_cat_release},
 		.user_data = &nav_left_dance,
 	},
 	[TD_NAV_DOWN] = {
-		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
+		.fn = {nav_dance_cat_press, nav_dance_finished, nav_dance_reset, nav_dance_cat_release},
 		.user_data = &nav_down_dance,
 	},
 	[TD_NAV_RIGHT] = {
-		.fn = {NULL, nav_dance_finished, nav_dance_reset, NULL},
+		.fn = {nav_dance_cat_press, nav_dance_finished, nav_dance_reset, nav_dance_cat_release},
 		.user_data = &nav_right_dance,
 	},
 	[TD_BASE_GUI_SNAP] = {
@@ -329,11 +310,9 @@ tap_dance_action_t tap_dance_actions[] = {
 	},
 	[TD_SPANISH_LEFT] = {
 		.fn = {NULL, spanish_dance_finished, spanish_dance_reset, NULL},
-		.user_data = &spanish_left_dance,
 	},
 	[TD_SPANISH_RIGHT] = {
 		.fn = {NULL, spanish_dance_finished, spanish_dance_reset, NULL},
-		.user_data = &spanish_right_dance,
 	},
 	[TD_CAPS_LONG] = ACTION_TAP_DANCE_FN(caps_long_finished),
 };

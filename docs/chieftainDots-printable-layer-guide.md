@@ -7,7 +7,8 @@ as one coherent keyboard.
 Stable trial note: OLED/screens are on. The current safe OLED slice makes
 Navigation movement-only, flattens Styles and Media to plain keys, and keeps
 Snap in a small Snap-specific path instead of the newer shared directional
-tap-dance helper that caused phantom modifier reports in QMK key tester.
+tap-dance helper that caused phantom modifier reports in QMK key tester. The
+OLED label names semantic states, not raw Ctrl/Alt/GUI.
 
 Legend: `---` intentionally blank, `trans` falls through, `DEL` means the
 Backspace key sends Delete.
@@ -34,11 +35,12 @@ Hold D/K + left GUI    = Navigation: movement only
 Hold S/L + left GUI    = Styles: Alt+Shift+Arrow
 Hold A/; + left GUI    = Media, Teams-first
 Hold Ctrl + left GUI   = Snap window placement mode
-Double tap-hold GUI    = Snap desktop/workspace mode
 Double tap-hold mnemonic = Text snippets
 ```
 
 Snap has no tap-only action. It is entered only as a held mode.
+Double tap-hold GUI has no separate action in this build; it behaves like the
+ordinary GUI/anchor hold path.
 
 ```text
 Command gesture rule
@@ -104,14 +106,6 @@ One-shot shortcuts
 Win+Left  Win+Down  Win+Right
 ```
 
-Snap desktop/workspace: double tap and hold GUI, then press `I/J/K/L`.
-
-```text
-Exact shortcuts
-      Win+Tab
-Win+Ctrl+Left  Win+D  Win+Ctrl+Right
-```
-
 ## Base
 
 ```text
@@ -128,8 +122,8 @@ Specials:
 - `/`: tap `/`, hold `\`, double tap `|`.
 - Shift + Caps = left English quote `“`.
 - Shift + `'` = right English quote `”`.
-- either lower corner: hold Spanish, double tap Windows language switch,
-  double-tap-hold language selector traversal.
+- either lower corner: hold Spanish, double tap quick Windows language toggle
+  (`Alt+Shift`).
 - Base Space and Enter: tap normally, hold for Shift.
 - right outer thumb: Menu / context menu.
 
@@ -164,12 +158,12 @@ Use Shift first for capitals:
 
 Language switch:
 
-- double tap either Spanish key to send `Win+Space` once.
-- double tap and hold either Spanish key to hold the Windows selector open.
-- left Spanish double-tap-hold starts backward/up.
-- right Spanish double-tap-hold starts forward/down.
-- while held, press `I` to move backward/up or `K` to move forward/down.
-- release Spanish to choose the highlighted language.
+- double tap either Spanish key to send `Alt+Shift`.
+- `Alt+Shift` is the quick Windows language toggle when enabled.
+- `Win+Space` opens the Windows language selector, but that gesture is not on
+  the keyboard right now.
+- Spanish has no RGB layer light in the current build because the typed
+  character confirms the layer was active.
 
 ## Numbers
 
@@ -252,14 +246,6 @@ The entry gesture exposes the Snap layer; each arrow sends one Win+Arrow tap.
 Left  Down  Right
 ```
 
-Snap desktop/workspace: double tap and hold GUI, then use `I/J/K/L`.
-
-```text
-Exact shortcuts
-      Win+Tab
-Win+Ctrl+Left   Win+D   Win+Ctrl+Right
-```
-
 ## Tools
 
 Media: hold `A` or `;`, then hold left GUI.
@@ -335,7 +321,7 @@ Media I            Volume Up        ---          ---                 ---
 Media J            Teams mic mute   ---          ---                 ---
 Media K            Volume Down      ---          ---                 ---
 Media L            Play/Pause       ---          ---                 ---
-Spanish key        ---              Spanish      Win+Space           Language selector
+Spanish key        ---              Spanish      Alt+Shift           ---
 Shift+Caps         “                ---          ---                 ---
 Shift+'            ”                ---          ---                 ---
 ```
@@ -361,8 +347,7 @@ After flashing, test:
 - Navigation `I/J/K/L` hold = held arrows.
 - Navigation `I/J/K/L` double tap = semantic jumps.
 - Navigation `I/J/K/L` double-tap-hold = movement extremes.
-- Spanish double tap = Windows language switch.
-- Spanish double-tap-hold + `I/K` = traverse the language selector.
+- Spanish double tap = quick Windows language toggle (`Alt+Shift`).
 - Avoid pressing `L` while GUI is held unless you intend to lock Windows.
 - Accidental Alt+Shift and Alt+Space should not switch language or open the
   host window menu.
@@ -371,12 +356,20 @@ After flashing, test:
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.
 - hold Ctrl + left GUI, then `I/J/K/L` = Snap window placement.
-- double-tap-hold GUI, then `I/J/K/L` = desktop/workspace actions.
+- double-tap-hold GUI = no separate action; ordinary GUI/anchor hold behavior.
 - Double-tap-hold `H/W/P/M/E/G/N` snippets fire only when intended.
 
 Screen check:
 
 - Screens should draw cleanly on both halves.
+- Resting Base should show the normal `corne`/katakana label and the resting
+  layer tile.
+- Colemak should show `clmk ` and the middle anchor tile.
+- Spanish hold should show `spnsh` and the middle anchor tile.
+- Caps and Long Caps should both show `caps ` and the middle anchor tile.
+- Chord layers should show their labels: ` nav `, `style`, `media`, or `snap `.
+- Plain Ctrl, Alt, or GUI should not replace the label unless they form a named
+  mode such as Snap.
 - If display corruption or phantom key reports return, suspect RAM pressure or
   the newer shared directional tap-dance helper before blaming the keymap.
 
@@ -396,7 +389,9 @@ Delete cue         red        Backspace key only on command layers with DEL
 
 Base and Colemak idle should stay visually quiet. Holding an anchor shows the
 active layer and thumb options. Once a thumb chord is pressed, unused thumb
-hints turn off. Plain Ctrl/Shift/Alt/GUI do not have RGB feedback.
+hints turn off. Spanish intentionally has no RGB layer light because it is a
+character palette rather than a command surface. Plain Ctrl/Shift/Alt/GUI do not
+have RGB feedback.
 
 The leftmost LED columns on the left half may not light on this physical board,
 so do not rely on those LEDs for chord discovery.
