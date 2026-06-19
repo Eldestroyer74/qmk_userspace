@@ -279,12 +279,14 @@ Function / System: hold `A` or `;`.
 
 ```text
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
----      ---    ---    ---    ---    ---        ---    F4     F5     F6     F11    COLE
+---      ---    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
 ---      ---    ---    ---    ---    ---        ---    F1     F2     F3     F12    ---
                          MED    ALT    SHIFT       ENTER  RALT  MENU
 ```
 
-Press `COLE` to toggle Colemak.
+Press `SNIP` (`Function + S`) to send the Windows screen snip shortcut
+`Win+Shift+S`. Hold Function first, then tap `S`; holding `S` first enters
+Symbols. Press `COLE` to toggle Colemak.
 
 Mnemonic snippets on Base/Colemak: double tap the letter, then hold the second
 tap.
@@ -356,6 +358,7 @@ After flashing, test:
 - Accidental Alt+Shift and Alt+Space should not switch language or open the
   host window menu.
 - Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
+- Function + `S` = Windows screen snip (`Win+Shift+S`).
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.
@@ -399,5 +402,8 @@ hints turn off. Spanish intentionally has no RGB layer light because it is a
 character palette rather than a command surface. Plain Ctrl/Shift/Alt/GUI do not
 have RGB feedback.
 
-The leftmost LED columns on the left half may not light on this physical board,
-so do not rely on those LEDs for chord discovery.
+The physical keyboard named ChieftainDots has a confirmed unavailable `S` RGB
+LED, possibly related to the broader left-side LED/column fault. Both halves
+were flashed and `Function + S` works, but the `S` LED also stays dark during
+the all-red Caps Lock state. Treat this as hardware, not a missing Function-layer
+RGB rule, and do not rely on that LED for shortcut discovery until repaired.

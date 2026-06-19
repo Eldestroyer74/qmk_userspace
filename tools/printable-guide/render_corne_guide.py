@@ -237,7 +237,7 @@ TEXT = [
 FUNCTION = [
     [K("_KEY_TAB"), K("F1"), K("F2"), K("F3"), K("F4"), K("F5"),
      K("F6"), K("F7"), K("F8"), K("F9"), K("F10"), K("_KEY_DEL")],
-    [K(""), K(""), K(""), K(""), K(""), K(""),
+    [K(""), K(""), K("SNIP", "Win+Shift+S"), K(""), K(""), K(""),
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("")],
@@ -1177,7 +1177,7 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
 
     def render(r, c, x, y, tap, hold, double, spanish="", double_hold=""):
         hl = (r, c) in access_set
-        sec = (r, c) in secondary_set and not hl
+        sec = (r, c) in secondary_set and not hl and tap != "SNIP"
         emb = (r, c) in embed_set and not hl and not sec
 
         if hl:
@@ -1560,6 +1560,8 @@ def write_png(svg, png_path, output_width):
         tmp.write(html)
         render_path = tmp.name
     try:
+        if _os.path.exists(png_path):
+            _os.unlink(png_path)
         _subprocess.run(
             [
                 _EDGE_EXE,

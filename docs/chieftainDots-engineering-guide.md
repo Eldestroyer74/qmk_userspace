@@ -108,6 +108,75 @@ Run QMK from MINGW64. From PowerShell, Codex can use:
 & 'C:\QMK_MSYS\shell_connector.cmd' -lc 'cd /c/Users/RicardoEscalon/Documents/qmk_firmware && qmk compile users/eldestroyer74/keymaps/corne.json'
 ```
 
+### Updating QMK MSYS
+
+Treat these as three separate update surfaces:
+
+- The QMK MSYS installer version controls the Windows distribution in
+  `C:\QMK_MSYS`.
+- Pacman controls the packages inside that installation, including the QMK CLI,
+  Python, Git, compilers, libraries, and the MSYS2 keyring.
+- The outer `qmk_firmware` Git checkout is the firmware source/build dependency.
+  Updating QMK MSYS does not pull or modify that repository, and it does not
+  modify the nested ChieftainDots userspace repository.
+
+Check the installed QMK MSYS release from PowerShell:
+
+```powershell
+(Get-Item 'C:\QMK_MSYS\unins000.exe').VersionInfo.ProductVersion
+```
+
+Compare it with the latest official QMK MSYS release at
+`https://github.com/qmk/qmk_distro_msys/releases/latest`. The GitHub API can be
+used for a scriptable check:
+
+```powershell
+(Invoke-RestMethod -Headers @{ 'User-Agent'='QMK-MSYS-version-check' } `
+  -Uri 'https://api.github.com/repos/qmk/qmk_distro_msys/releases/latest').tag_name
+```
+
+Check the active tool versions and pending package updates without changing
+anything:
+
+```powershell
+& 'C:\QMK_MSYS\shell_connector.cmd' -lc 'qmk --version; python --version; git --version; pacman -Q mingw-w64-x86_64-python-qmk; pacman -Qu'
+```
+
+If the installer is current but `pacman -Qu` lists updates, close other QMK MSYS
+sessions and builds, then run the full package upgrade:
+
+```powershell
+& 'C:\QMK_MSYS\shell_connector.cmd' -lc 'pacman -Syu'
+```
+
+Accept the proposed package replacements when prompted. For an unattended run,
+use `pacman --noconfirm -Syu` only after reviewing the pending package list.
+Large compiler or Python transitions can take several minutes and may appear
+quiet through `shell_connector.cmd`; do not start a second updater while the
+first `pacman` process is still running.
+
+Afterward, open a fresh shell and verify that QMK starts and no updates remain:
+
+```powershell
+& 'C:\QMK_MSYS\shell_connector.cmd' -lc 'qmk --version; python --version; git --version; pacman -Q mingw-w64-x86_64-python-qmk; pacman -Qu'
+```
+
+An empty `pacman -Qu` result means the package set is current. Messages about no
+job control or not being able to set a terminal process group are expected when
+using the non-interactive shell connector; use the command exit code and package
+transaction result to judge success. A firmware compile is a separate action
+and still requires approval under the Compile Gate.
+
+Maintenance record, 2026-06-19: installed QMK MSYS `1.12.0` matched the latest
+official release. `pacman -Syu` upgraded 151 packages (277.41 MiB download),
+including the MSYS2 keyring, Git, GCC/Clang, Python, QMK CLI package, OpenSSL,
+and supporting libraries. It replaced five old MinGW `-git` runtime packages
+with their stable package equivalents. Verification reported QMK CLI `1.2.0`,
+Python `3.14.6`, Git `2.54.0`,
+`mingw-w64-x86_64-python-qmk 1.2.0-4`, and zero pending package updates. No QMK
+firmware was compiled or flashed, and neither Git repository was changed by the
+toolchain update.
+
 For split Corne flashing, prefer the canonical JSON flash commands so QMK uses
 the active ChieftainDots userspace and writes the correct `EE_HANDS` handedness
 marker to each half:

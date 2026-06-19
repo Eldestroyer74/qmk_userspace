@@ -28,6 +28,7 @@
 #define THUMB_SPACE_SHIFT LSFT_T(KC_SPC)
 #define THUMB_ENTER_SHIFT RSFT_T(KC_ENT)
 #define NUM_SPACE_SYMBOLS LT(SYM, KC_SPC)
+#define SCREEN_SNIP LSG(KC_S)
 #define NUM_ENTER_SYMBOLS LT(SYM, KC_ENT)
 #define RIGHT_THUMBS THUMB_ENTER_SHIFT, KC_RALT, KC_APP
 #define NUM_RIGHT_THUMBS NUM_ENTER_SYMBOLS, KC_RALT, KC_APP
@@ -110,8 +111,8 @@
 #define _SYST \
 /* Top:    TAB    F1     F2     F3     F4     F5       F6     F7     F8     F9     F10    DEL */\
 	TAB_ESC_CLOSE, KC_F1, KC_F2, KC_F3, KC_F4,   KC_F5,       KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_DEL,  \
-/* Home:   ---    ---    ---    ---    ---    ---      F11    F4     F5     F6     ---    COLE */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
+/* Home:   ---    ---    SNIP   ---    ---    ---      F11    F4     F5     F6     ---    COLE */\
+	XXXXXXX, XXXXXXX, SCREEN_SNIP, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    F1     F2     F3     F12    --- */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  XXXXXXX, \
 /* Thumbs:                         MED    ALT    SHIFT    ENTER  RALT   MENU */\
