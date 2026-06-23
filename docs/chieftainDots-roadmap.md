@@ -82,7 +82,10 @@ worked because arrows emitted GUI, but Windows did not move the active window
 because the physically held Ctrl contaminated the shortcut as `Ctrl+Win+Arrow`.
 Current compile masks Ctrl only around each one-shot window Snap arrow tap, then
 restores the previous modifier state; it compiled at `28408/28672`, leaving
-`264` bytes free.
+`264` bytes free. Physical use is acceptable for now: Snap works well enough to
+keep the current firmware as the working source of truth, but it can still feel
+unpredictable sometimes. Treat future Snap work as a parked refinement, not as a
+blocker for publishing the accepted userspace commits.
 
 Current Function shortcut slice adds Windows screen snip on `Function + S` with
 native `LSG(KC_S)`. Compile succeeded at `28280/28672`, leaving `392` bytes
