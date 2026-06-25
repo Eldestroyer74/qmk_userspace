@@ -280,15 +280,17 @@ Function / System: hold `A` or `;`.
 ```text
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
 ---      ---    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
----      ---    ---    ---    ---    ---        ---    F1     F2     F3     F12    ---
+---      ---    CUT    COPY   PASTE  ---        ---    F1     F2     F3     F12    ---
                          MED    ALT    SHIFT       ENTER  RALT  MENU
 ```
 
 Press `SNIP` (`Function + S`) to send the Windows screen snip shortcut
 `Win+Shift+S`. Hold Function first, then tap `S`; holding `S` first enters
-Symbols. Press `COLE` to toggle Colemak.
+Symbols. Press `CUT` (`Function + X`) to send `Ctrl+X`, `COPY`
+(`Function + C`) to send `Ctrl+C`, `PASTE` (`Function + V`) to send `Ctrl+V`,
+and `COLE` to toggle Colemak.
 
-Mnemonic snippets on Base/Colemak: double tap the letter, then hold the second
+Mnemonic shortcuts on Base/Colemak: double tap the letter, then hold the second
 tap.
 
 ```text
@@ -359,6 +361,7 @@ After flashing, test:
   host window menu.
 - Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
 - Function + `S` = Windows screen snip (`Win+Shift+S`).
+- Function + `X/C/V` = Cut / Copy / Paste (`Ctrl+X/C/V`).
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.

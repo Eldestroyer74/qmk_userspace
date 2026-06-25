@@ -241,7 +241,7 @@ FUNCTION = [
      K("F6"), K("F7"), K("F8"), K("F9"), K("F10"), K("_KEY_DEL")],
     [K(""), K(""), K("_KEY_SNIP"), K(""), K(""), K(""),
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
-    [K(""), K(""), K(""), K(""), K(""), K(""),
+    [K(""), K(""), K("CUT"), K("COPY"), K("PASTE"), K(""),
      K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("")],
     [K(""), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
 ]
