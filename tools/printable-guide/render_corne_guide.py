@@ -96,7 +96,7 @@ NUMBERS = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("1"), K("2", ",", "<"), K("3", ".", ">"), K("/"), K("")],
     [K(""), K("_KEY_ALT"), K("_KEY_SPACE","Sym"),
-     K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+     K("_KEY_ENTER","Sym"), K("_KEY_ALT"), K("_KEY_MENU")],
 ]
 
 # NAV folds the old Extremes + Snap sub-layers into faint annotations on the
@@ -141,7 +141,7 @@ STYLE_ICONS = {"_OUTDENT", "_INDENT", "_REORDER_UP", "_REORDER_DN"}
 KEY_ICONS = {"_KEY_TAB", "_KEY_MEDIA", "_KEY_CALC", "_KEY_GUI",
              "_KEY_SPACE", "_KEY_MENU", "_KEY_BSP", "_KEY_DEL",
              "_KEY_ENTER", "_KEY_ALT", "_KEY_SYM", "_KEY_GLOBE",
-             "_KEY_SNIP"}
+             "_KEY_SNIP", "_KEY_CUT", "_KEY_COPY", "_KEY_PASTE"}
 # Nav 4-tier: word-jump (fast-forward rotated) + extremes (step-forward rotated)
 WORD_ICONS    = {"_WORD_LEFT", "_WORD_RIGHT", "_WORD_UP", "_WORD_DOWN"}
 EXTREME_ICONS = {"_EXTREME_LEFT", "_EXTREME_RIGHT", "_EXTREME_UP", "_EXTREME_DOWN"}
@@ -212,7 +212,10 @@ ICON_TUNING = {
     "_KEY_ALT":     (0.52, 0.36),   # option/alt escalator
     "_KEY_SYM":     (0.56, 0.36),   # </> â€” wide-ish, give it room
     "_KEY_GLOBE":   (0.56, 0.36),   # globe â€” Spanish-compose anchor
-    "_KEY_SNIP":    (0.54, 0.36),   # scissors â€” Windows screen snip
+    "_KEY_SNIP":    (0.54, 0.36),   # camera â€” Windows screen snip
+    "_KEY_CUT":     (0.54, 0.36),   # scissors
+    "_KEY_COPY":    (0.52, 0.36),   # overlapping pages
+    "_KEY_PASTE":   (0.50, 0.36),   # clipboard
 }
 
 # MEDIA â€” guide-aligned 4-key cluster: VOL+ above the home row, with
@@ -241,9 +244,9 @@ FUNCTION = [
      K("F6"), K("F7"), K("F8"), K("F9"), K("F10"), K("_KEY_DEL")],
     [K(""), K(""), K("_KEY_SNIP"), K(""), K(""), K(""),
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
-    [K(""), K(""), K("CUT"), K("COPY"), K("PASTE"), K(""),
+    [K(""), K(""), K("_KEY_CUT"), K("_KEY_COPY"), K("_KEY_PASTE"), K(""),
      K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("")],
-    [K(""), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K(""), K("_KEY_ALT"), K("_KEY_ENTER","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
 ]
 
 CTRL = [
@@ -623,7 +626,10 @@ def _load_fa_glyphs():
         "_KEY_DEL":     0xf00d,  # times (Ã—) â€” plain dark Del key
         "_KEY_SYM":     0xf121,  # code </>
         "_KEY_GLOBE":   0xf7a2,  # globe-europe â€” Spanish-compose anchor
-        "_KEY_SNIP":    0xf0c4,  # cut / scissors â€” Windows screen snip
+        "_KEY_SNIP":    0xf030,  # camera â€” Windows screen snip
+        "_KEY_CUT":     0xf0c4,  # cut / scissors
+        "_KEY_COPY":    0xf0c5,  # copy
+        "_KEY_PASTE":   0xf0ea,  # paste / clipboard
         "_OUTDENT":     0xf03b,  # outdent â€” promote paragraph (Alt+Shift+Left)
         "_INDENT":      0xf03c,  # indent â€” demote paragraph (Alt+Shift+Right)
         "_REORDER_UP":  0xf161,  # sort-amount-up â€” move paragraph up (Alt+Shift+Up)
@@ -962,7 +968,7 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
              font_main, font_hold, secondary=False, secondary_label=None,
              embed=False, font_boost=1.0, palette=None,
              embed_palette=None, payload=False, payload_palette=None,
-             spanish="", double_hold="", shift=""):
+             spanish="", double_hold="", shift="", muted=False):
     blank = (tap == "" and not highlight and not secondary and not embed)
     trans = (tap == "â–½")
 
@@ -990,6 +996,11 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
         stroke = pal["cue_stroke"]
         text = pal["cue_text"]
         hold_color = pal["cue_text"]
+    elif muted:
+        fill = "#eaeef3"
+        stroke = "#cbd5e1"
+        text = MUTED
+        hold_color = MUTED
     elif dark:
         if blank or trans:
             fill = "#eaeef3"
@@ -1178,10 +1189,26 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
     font_hold = max(7, int(round(unit * 0.26)))
     parts = []
 
+    def is_repeated_thumb(r, c, tap, hold, double, spanish, double_hold):
+        if layer_name in ("BASE", "COLEMAK") or r != 3:
+            return False
+        if double or spanish or double_hold:
+            return False
+        repeated = {
+            (3, 1): ("_KEY_ALT", ""),
+            (3, 2): ("_KEY_SPACE", "Sft"),
+            (3, 3): ("_KEY_ENTER", "Sft"),
+            (3, 4): ("_KEY_ALT", ""),
+            (3, 5): ("_KEY_MENU", ""),
+        }
+        return repeated.get((r, c)) == (tap, hold)
+
     def render(r, c, x, y, tap, hold, double, spanish="", double_hold=""):
         hl = (r, c) in access_set
         sec = (r, c) in secondary_set and not hl and tap != "_KEY_SNIP"
         emb = (r, c) in embed_set and not hl and not sec
+        muted = (not hl and not sec and not emb and
+                 is_repeated_thumb(r, c, tap, hold, double, spanish, double_hold))
 
         if hl:
             # Highlighted anchor / GUI thumb: paint in the BOARD's own hue with
@@ -1210,6 +1237,7 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
                         secondary=sec, embed=emb, font_boost=font_boost,
                         palette=key_pal, embed_palette=emb_pal,
                         spanish=spanish, double_hold=double_hold,
+                        muted=muted,
                         shift=SHIFT_MAP.get(tap, "") if layer_name in ("BASE", "COLEMAK") else "")
 
     def _unpack(cell):

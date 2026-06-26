@@ -25,7 +25,8 @@ Hold D / K             = Numbers
 Hold F / J             = Ctrl
 Hold Base Space / Enter = Shift
 Hold either lower corner = Spanish
-Right thumbs: Numbers uses Enter/Symbols; Symbols and Function use Enter/Shift;
+Right thumbs: Numbers uses Enter/Symbols; Symbols and Function use Enter/Shift.
+Function left thumb: tap Enter, hold Shift for mouse-driven paste workflows;
 RAlt and Menu stay available.
 ```
 
@@ -280,15 +281,16 @@ Function / System: hold `A` or `;`.
 ```text
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
 ---      ---    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
----      ---    CUT    COPY   PASTE  ---        ---    F1     F2     F3     F12    ---
-                         MED    ALT    SHIFT       ENTER  RALT  MENU
+---      ---    cut    copy   paste  ---        ---    F1     F2     F3     F12    ---
+                         MED    ALT    ENT/SFT     ENTER  RALT  MENU
 ```
 
-Press `SNIP` (`Function + S`) to send the Windows screen snip shortcut
+Press the camera icon (`Function + S`) to send the Windows screen snip shortcut
 `Win+Shift+S`. Hold Function first, then tap `S`; holding `S` first enters
-Symbols. Press `CUT` (`Function + X`) to send `Ctrl+X`, `COPY`
-(`Function + C`) to send `Ctrl+C`, `PASTE` (`Function + V`) to send `Ctrl+V`,
-and `COLE` to toggle Colemak.
+Symbols. Press scissors (`Function + X`) to send `Ctrl+X`, copy pages
+(`Function + C`) to send `Ctrl+C`, paste clipboard (`Function + V`) to send
+`Ctrl+V`, tap the left thumb key to send Enter, and `COLE` to toggle Colemak.
+Holding the left thumb key on Function still sends Shift.
 
 Mnemonic shortcuts on Base/Colemak: double tap the letter, then hold the second
 tap.
@@ -341,7 +343,8 @@ Shift+'            ”                ---          ---                 ---
 - Double-tap Caps enters Long Caps, which stays on across words and uses the
   same red RGB as normal Caps.
 - In Numbers, both Space and Enter hold Symbols.
-- In Symbols and Function, Space and Enter hold Shift.
+- In Symbols, Space and Enter hold Shift; in Function, the left thumb taps
+  Enter and holds Shift.
 - Watch normal typing for accidental thumb Shift, especially on Space.
 - Also check intentional Shift use such as Space/Enter + `/` for `?`.
 

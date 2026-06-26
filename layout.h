@@ -27,6 +27,7 @@
 // special cases for inherited thumb keys.
 #define THUMB_SPACE_SHIFT LSFT_T(KC_SPC)
 #define THUMB_ENTER_SHIFT RSFT_T(KC_ENT)
+#define FUNC_ENTER_SHIFT LSFT_T(KC_ENT)
 #define NUM_SPACE_SYMBOLS LT(SYM, KC_SPC)
 #define SCREEN_SNIP LSG(KC_S)
 #define CLIP_CUT C(KC_X)
@@ -118,8 +119,8 @@
 	XXXXXXX, XXXXXXX, SCREEN_SNIP, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
 /* Bottom: ---    ---    CUT    COPY   PASTE  ---      ---    F1     F2     F3     F12    --- */\
 	XXXXXXX, XXXXXXX, CLIP_CUT, CLIP_COPY, CLIP_PASTE, XXXXXXX, XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  XXXXXXX, \
-/* Thumbs:                         MED    ALT    SHIFT    ENTER  RALT   MENU */\
-	                            SYS_GUI_MED_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
+/* Thumbs:                         MED    ALT    ENT/SFT  ENTER  RALT   MENU */\
+	                            SYS_GUI_MED_SNAP, DELAYED_LALT, FUNC_ENTER_SHIFT, RIGHT_THUMBS
 
 // Function/System + left GUI thumb Media: plain keys only while RAM is tight.
 #define _MEDI \

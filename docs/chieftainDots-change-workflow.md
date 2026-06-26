@@ -73,6 +73,21 @@ Decision locations:
 - Git commits and tags: exact return points for accepted slices and preserved
   experiments.
 
+## Printable Guide Renderer Gate
+
+Use this whenever `tools/printable-guide/render_corne_guide.py`,
+`docs/chieftainDots-printable-layer-guide.md`, or the rendered PNG changes.
+
+1. Compare every touched renderer layer table against `layout.h`.
+2. For thumb keys, verify both tap and hold behavior against the layer macro.
+3. Classify each thumb as repeated behavior, active chord entry, or
+   layer-specific change before applying grey, chord-color, or dark styling.
+4. Regenerate `imgs/chieftainDots-corne.png`.
+5. Visually inspect the touched layer cards, including nearby sibling layers
+   that share the same thumb positions.
+6. Record diagram-only decisions in the roadmap when they change the visual
+   grammar or future verification expectations.
+
 ## Required Loop
 
 1. Check the current repository state before changing files: branch, short

@@ -67,6 +67,11 @@ Frequently used layers should be reachable from thumbs or home-row holds. If
 home-row holds cause accidental activation, tune timing or change placement
 before adding more behavior on top.
 
+Prefer placing the most frequent, timing-sensitive, or error-costly home-row
+anchors on the strongest and most coordinated fingers. When that conflicts with
+mirrored mnemonic order, document which value wins for the trial and test the
+weaker-side cost physically.
+
 ### Keep Command Layers Literal
 
 Command layers should remain predictable. Do not apply broad typing-layer
@@ -219,6 +224,15 @@ RGB should also distinguish present state from future choice:
 - On thumb-refined command layers, the Backspace position should light red when
   it has become Delete. Numbers and Symbols should not show that red Delete cue
   when Delete is not part of their current character-entry concept.
+- Printable guides should de-emphasize repeated thumb behavior. Thumb keys that
+  behave the same as the normal thumb model should use the same quiet grey as
+  blank keys; active chord thumbs should stay in the chord color, and
+  layer-specific thumb changes should stay dark/high-contrast so the changed
+  behavior is the thing the eye learns.
+- Diagram styling must not override behavior truth. Before muting, highlighting,
+  or changing an icon, confirm the key's tap and hold behavior in `layout.h`;
+  the printable guide can simplify visual weight, but it must not invent a
+  second keymap.
 
 Active states override previews. The intended priority is whole-board modes,
 active held layers, then off.
