@@ -3,16 +3,15 @@
 ## Current Summary
 
 ChieftainDots is currently a Corne-first keyboard project built from
-`keymaps/corne.json`. The current compiled trial uses two typing layers, three
+`keymaps/corne.json`. The current local trial uses two typing layers, four
 home-row anchors, one GUI child per anchor, RGB as state feedback, and OLED as a
 display subsystem rather than an owner of key behavior.
 
 - Base and Colemak are the only layers wrapped with `HRM(...)`.
-- `D`/`K` own Numbers; `Numbers + GUI` owns Navigation.
+- `A`/`;` own Control; `Control + GUI` owns Media.
 - `S`/`L` own Symbols; `Symbols + GUI` owns Office.
-- `A`/`;` own Function/System; `Function + GUI` owns Media.
-- Snap is a Ctrl+GUI chord so it uses the same visible chord grammar as the
-  other command layers.
+- `D`/`K` own Numbers; `Numbers + GUI` owns Navigation.
+- `F`/`J` own Function/System; `Function + GUI` owns Snap.
 - Text snippets are mnemonic double-tap-hold gestures on Base/Colemak letters,
   not a daily layer chord.
 - Spanish stays on the lower corners, with double-tap language switching.
@@ -51,8 +50,8 @@ recipes should be created from the current layer model when a real port starts.
 - Numbers: number-row memory plus a right-hand number pad, accessed from `D` or
   `K`. Holding either thumb while in Numbers reaches Symbols.
 - Symbols: top-row punctuation and shifted symbols, accessed from `S` or `L`.
-- Function/System: function keys in a Numbers-like shape, accessed from `A` or
-  `;`.
+- Function/System: function keys in a Numbers-like shape, accessed from `F` or
+  `J`.
 - Navigation: movement using the `I/J/K/L` spatial shape, accessed by holding
   Numbers and the left GUI thumb. Target behavior: tap sends arrows, hold holds
   arrows, double tap sends semantic jumps, and double-tap-hold sends movement
@@ -61,13 +60,12 @@ recipes should be created from the current layer model when a real port starts.
   holding Symbols and the left GUI thumb. Target behavior: tap sends arrows,
   hold sends `Alt+Shift+Arrow` for PowerPoint/Word structure, double tap sends
   selection movement, and double-tap-hold sends extreme selection.
-- Media: Teams-first meeting/media controls, accessed from Function/System plus
+- Media: Teams-first meeting/media controls, accessed from Control plus
   the left GUI thumb. Meeting mute is the main expected use, with global volume
   and playback controls as secondary behavior.
-- Snap: Windows snap traversal, accessed from the Ctrl+GUI chord so RGB and
-  OLED can explain it consistently with the other command layers. Important
-  displaced Windows virtual-desktop shortcuts live deliberately inside the
-  layer rather than relying on raw pass-through.
+- Snap: Windows snap traversal, accessed from Function/System plus the left GUI
+  thumb so RGB and OLED can explain it consistently with the other command
+  layers.
 - Text Snippets: safe-to-type personal snippets on mnemonic Base/Colemak
   double-tap-hold letters. Private string values must live in ignored local
   files.
@@ -308,16 +306,15 @@ The model:
 - A left thumb position refines that family into a related sub-layer.
 - The right hand performs the command.
 
-### Three Anchors And Chords
+### Four Anchors And Chords
 
 The current trial has evolved from older two-family thumb-refinement language
-to three visible anchors plus one chord per anchor, with Snap as the separate
-Ctrl+GUI command chord:
+to four visible anchors plus one GUI chord per anchor:
 
-- Hold `D` or `K`: Numbers. GUI chord: Navigation.
+- Hold `A` or `;`: Control. GUI chord: Media.
 - Hold `S` or `L`: Symbols. GUI chord: Office.
-- Hold `A` or `;`: Function/System. GUI chord: Media.
-- Hold Control plus GUI: Snap.
+- Hold `D` or `K`: Numbers. GUI chord: Navigation.
+- Hold `F` or `J`: Function/System. GUI chord: Snap.
 
 When this model changes, update `layout.h`, `keymaps/corne.json`, RGB, OLED
 status, the printable guide, and this section as one design slice.
@@ -376,7 +373,7 @@ Shift+Home  Shift+Page Down  Shift+End
 ```
 
 ```text
-Snap, Ctrl+GUI chord
+Snap, Function/System + GUI chord
 
 Tap = snap current window
       Win+Alt+Up
@@ -394,7 +391,7 @@ Double-tap-hold = intentionally empty for the first trial
 ```
 
 ```text
-Media, Function/System + GUI chord, Teams-first
+Media, Control + GUI chord, Teams-first
 
 Tap = daily meeting/media controls
       Volume Up
@@ -424,7 +421,7 @@ Double-tap-hold = intentionally empty
 - Snap is implemented as `_SNP`, entered by holding the Control anchor and the
   exposed GUI thumb chord. It uses `SNAP_*_DANCE` so the same right-hand arrow
   shape can send snap, monitor, and desktop commands.
-- Media is resurrected as `_MEDI`, entered by Function/System plus GUI. It is a
+- Media is resurrected as `_MEDI`, entered by Control plus GUI. It is a
   deliberately small Teams-first layer: volume up/down, Teams mic mute,
   system mute, play/pause, and previous/next track.
 
@@ -433,7 +430,7 @@ Settled decisions for the current chord slice:
 - Navigation Up/Down semantic jumps use `Ctrl+Up/Down`.
 - Navigation Up/Down movement extremes use `Page Up/Page Down`.
 - Office Up/Down extreme selection uses `Shift+Page Up/Page Down`.
-- Snap lives on the Ctrl+GUI chord.
+- Snap lives on the Function/System + GUI chord.
 - Media returns in this slice to keep four anchors with one visible chord each.
 - Snap includes `Win+Tab`, `Win+Ctrl+Left`, `Win+D`, and `Win+Ctrl+Right`;
   `Win+Ctrl+F4` is intentionally omitted from the first trial.
@@ -480,13 +477,11 @@ Navigation and extremes keep `D = Ctrl` and `F = Shift` as plain held modifiers
 for consistency. Selection is now composed from those plain modifiers plus
 Navigation or Extremes, instead of being owned by a dedicated layer.
 
-The Snap layer is entered with Ctrl+GUI because the left GUI thumb already
-enters the anchor child layers. Ctrl+GUI makes Snap a visible chord instead of
-a hidden GUI double-tap-and-hold mode. Displaced Windows virtual desktop
-shortcuts are added back deliberately inside Snap: Ctrl+GUI+Left/Right for
-switching virtual desktops and Ctrl+GUI+D for showing the desktop. Ctrl+GUI+F4
-is intentionally omitted from the first trial because closing a virtual desktop
-is destructive enough to deserve its own later decision.
+The Snap layer is entered with Function/System + GUI because the new four-anchor
+trial gives Snap an ordinary anchor-child relationship. This replaces the
+special Ctrl+GUI entry path. Displaced Windows virtual desktop shortcuts should
+return only after a separate decision; the current Snap trial is window
+placement only.
 
 Implemented Snap hierarchy:
 

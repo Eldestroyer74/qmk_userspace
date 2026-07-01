@@ -78,10 +78,6 @@ static bool is_left_thumb_gui_position(uint8_t row, uint8_t col) {
 	return row == L_THUMB && col == L_MIDDLE;
 }
 
-static bool is_left_thumb_alt_position(uint8_t row, uint8_t col) {
-	return row == L_THUMB && col == L_INDEX;
-}
-
 static RGB rgb_for_thumb_hint(uint8_t layer, uint8_t row, uint8_t col) {
 	if (layer == NUM) {
 		if (is_left_thumb_gui_position(row, col)) {
@@ -95,7 +91,7 @@ static RGB rgb_for_thumb_hint(uint8_t layer, uint8_t row, uint8_t col) {
 	}
 	if (layer == SYS) {
 		if (is_left_thumb_gui_position(row, col)) {
-			return (RGB){RGB_MED};
+			return (RGB){RGB_SNP};
 		}
 	}
 	return (RGB){RGB_OFF};
@@ -110,11 +106,11 @@ static bool is_left_symbol_anchor_position(uint8_t row, uint8_t col) {
 }
 
 static bool is_left_function_anchor_position(uint8_t row, uint8_t col) {
-	return row == L_HOME && col == L_PINKY;
+	return row == L_HOME && col == L_INDEX;
 }
 
 static bool is_left_control_anchor_position(uint8_t row, uint8_t col) {
-	return row == L_HOME && col == L_INDEX;
+	return row == L_HOME && col == L_PINKY;
 }
 
 static uint16_t keycode_at_position(uint8_t layer, uint8_t row, uint8_t col) {
@@ -148,9 +144,9 @@ static bool rgb_should_light_command_key(uint8_t layer, uint8_t row, uint8_t col
 		case EXT:
 			return is_left_symbol_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case MED:
-			return is_left_function_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
+			return is_left_control_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		case SYS:
-			return is_left_function_anchor_position(row, col) || is_left_thumb_alt_position(row, col);
+			return is_left_function_anchor_position(row, col) || is_left_thumb_gui_position(row, col);
 		default:
 			return false;
 	}

@@ -114,7 +114,7 @@ static void render_home_pair(char const *left_top, char const *left_bottom, char
 }
 
 
-static void render_home_row_status(uint8_t const fn, uint8_t const sym, uint8_t const num, uint8_t const ctrl) {
+static void render_home_row_status(uint8_t const ctrl, uint8_t const sym, uint8_t const num, uint8_t const fn) {
 	static char const fn_off_1[] PROGMEM = {0x85, 0x86, 0};
 	static char const fn_off_2[] PROGMEM = {0xa5, 0xa6, 0};
 	static char const fn_on_1[]  PROGMEM = {0x8d, 0x8e, 0};
@@ -136,20 +136,20 @@ static void render_home_row_status(uint8_t const fn, uint8_t const sym, uint8_t 
 	static char const ctrl_on_2[]  PROGMEM = {0xcf, 0xd0, 0};
 
 	render_home_pair(
-		fn ? fn_on_1 : fn_off_1,
-		fn ? fn_on_2 : fn_off_2,
+		ctrl ? ctrl_on_1 : ctrl_off_1,
+		ctrl ? ctrl_on_2 : ctrl_off_2,
 		sym ? sym_on_1 : sym_off_1,
 		sym ? sym_on_2 : sym_off_2,
-		fn,
+		ctrl,
 		sym
 	);
 	render_home_pair(
 		num ? num_on_1 : num_off_1,
 		num ? num_on_2 : num_off_2,
-		ctrl ? ctrl_on_1 : ctrl_off_1,
-		ctrl ? ctrl_on_2 : ctrl_off_2,
+		fn ? fn_on_1 : fn_off_1,
+		fn ? fn_on_2 : fn_off_2,
 		num,
-		ctrl
+		fn
 	);
 }
 
@@ -161,15 +161,15 @@ void render_mod_status(void) {
 #endif
 	uint8_t layer = get_highest_layer(layer_state | default_layer_state);
 	bool caps_active = host_keyboard_led_state().caps_lock || chieftaindots_long_caps_mode;
-	uint8_t fn    = layer_state_is(SYS) || layer_state_is(MED);
+	uint8_t fn    = layer_state_is(SYS) || layer_state_is(SNP);
 	uint8_t sym   = layer_state_is(SYM) || layer_state_is(EXT);
 	uint8_t num   = layer_state_is(NUM) || layer_state_is(NAV);
-	uint8_t ctrl  = (mods & MOD_MASK_CTRL) || layer_state_is(SNP);
+	uint8_t ctrl  = (mods & MOD_MASK_CTRL) || layer_state_is(MED);
 
 	render_logo(layer, caps_active);
 	oled_set_cursor(0,6);
 	render_layer_state(layer, caps_active);
 
 	oled_set_cursor(0,11);
-	render_home_row_status(fn, sym, num, ctrl);
+	render_home_row_status(ctrl, sym, num, fn);
 }

@@ -22,8 +22,9 @@ implementation before they are treated as rules.
   invoke number and symbol access through home-row layer taps.
 - The "do not double up" principle is under review. A dedicated Symbols layer
   exists even though shifted number symbols also exist conceptually.
-- Home-row modifiers/layers are implemented, but the exact CAGS/SyNCS ordering
-  is still experimental and may be causing accidental layer activation.
+- Home-row modifiers/layers are implemented, but the exact outside-to-inside
+  order is still experimental. The current trial is Control, Symbols, Numbers,
+  Function on `A/;`, `S/L`, `D/K`, and `F/J`.
 
 ## Revised Principles
 

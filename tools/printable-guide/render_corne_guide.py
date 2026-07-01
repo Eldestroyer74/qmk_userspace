@@ -53,8 +53,8 @@ def K(tap, hold="", double="", spanish="", dhold=""): return (tap, hold, double,
 BASE = [
     [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("E","","","Ã‰","_TEXT_EMAIL"), K("R"), K("T"),
      K("Y"), K("U","","","Ãš"), K("I","","","Ã"), K("O","","","Ã“"), K("P","","","","_TEXT_PHONE"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Fn","","Ã"), K("S","Sym"), K("D","Num"), K("F","Ctrl"), K("G"),
-     K("H","","","","_TEXT_HOME"), K("J","Ctrl"), K("K","Num"), K("L","Sym"), K(";","Fn","","Ãœ"), K("'")],
+    [K("_KEY_CAPS"), K("A","Ctrl","","Ã"), K("S","Sym"), K("D","Num"), K("F","Fn"), K("G"),
+     K("H","","","","_TEXT_HOME"), K("J","Fn"), K("K","Num"), K("L","Sym"), K(";","Ctrl","","Ãœ"), K("'")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V"), K("B"),
      K("N","","","Ã‘","_TEXT_NAME"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
     [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
@@ -63,8 +63,8 @@ BASE = [
 COLEMAK = [
     [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("F","","","Ã‰"), K("P","","","","_TEXT_PHONE"), K("G"),
      K("J"), K("L","","","Ãš"), K("U","","","Ã"), K("Y","","","Ã“"), K("'"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Fn","","Ã"), K("R","Sym"), K("S","Num"), K("T","Ctrl"), K("D"),
-     K("H","","","","_TEXT_HOME"), K("N","Ctrl","","","_TEXT_NAME"), K("E","Num","","","_TEXT_EMAIL"), K("I","Sym"), K("O","Fn","","Ãœ"), K(";")],
+    [K("_KEY_CAPS"), K("A","Ctrl","","Ã"), K("R","Sym"), K("S","Num"), K("T","Fn"), K("D"),
+     K("H","","","","_TEXT_HOME"), K("N","Fn","","","_TEXT_NAME"), K("E","Num","","","_TEXT_EMAIL"), K("I","Sym"), K("O","Ctrl","","Ãœ"), K(";")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V"), K("B"),
      K("K","","","Ã‘"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
     [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
@@ -108,7 +108,7 @@ NUMBERS = [
 NAV = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K(""), K("_ARROW_UP","_ARROW_UP","_WORD_UP","","_EXTREME_UP"), K(""), K(""), K("_KEY_DEL")],
-    [K(""), K(""), K(""), K(""), K("Ctrl"), K(""),
+    [K(""), K("Ctrl"), K(""), K(""), K(""), K(""),
      K(""), K("_ARROW_LEFT","_ARROW_LEFT","_WORD_LEFT","","_EXTREME_LEFT"),
      K("_ARROW_DOWN","_ARROW_DOWN","_WORD_DOWN","","_EXTREME_DOWN"),
      K("_ARROW_RIGHT","_ARROW_RIGHT","_WORD_RIGHT","","_EXTREME_RIGHT"), K(""), K("")],
@@ -273,25 +273,23 @@ SNAP = [
 ACCESS = {
     "BASE": [],
     "COLEMAK": [],
-    "FUNCTION":   [(1, 1), (1, 10)],            # A or ;
+    "CTRL":       [(1, 1), (1, 10)],            # A or ;
     "MEDIA":      [(1, 1), (1, 10), (3, 0)],    # (A or ;) + GUI
     "SYMBOLS":    [(1, 2), (1, 9)],             # S or L
     "MSSTYLES":   [(1, 2), (1, 9), (3, 0)],     # (S or L) + GUI
     "NUMBERS":    [(1, 3), (1, 8)],             # D or K
     "NAVIGATION": [(1, 3), (1, 8), (3, 0)],     # (D or K) + GUI
-    "CTRL":       [(1, 4), (1, 7)],             # F or J
+    "FUNCTION":   [(1, 4), (1, 7)],             # F or J
     "SNAP":       [(1, 4), (1, 7), (3, 0)],     # (F or J) + GUI
 }
 
-# Faint sky-blue cue: render as an unlabelled coloured tile every anchor that
-# could reach a sub-layer but isn't the one in use on this card. Lets the eye
-# locate the active anchor in relation to its siblings. Built per layer from
-# ANCHOR_POSITIONS minus the active access set.
+# Faint sky-blue cue: render as an unlabelled coloured tile every sibling
+# anchor that is not in use on this card, so the active anchor has context.
 ANCHOR_POSITIONS = [
     (1, 1),   # A
     (1, 2),   # S
-    (3, 0),   # GUI thumb
-    (3, 1),   # Alt thumb
+    (1, 3),   # D
+    (1, 4),   # F
 ]
 
 # EMBED: positions on a layer that render in the sky-blue cue palette while
@@ -378,29 +376,25 @@ def portal_palette(layer, row, col):
     return LAYER_PALETTE.get(dest) if dest else None
 
 # Anchor identity â€” every anchor seat carries its own palette regardless of
-# which sub-layer card it appears on. Home row A/S map to their root layers;
-# left thumbs map to the destination they reach from the current parent
-# family (warm = A+thumb, cool = S+thumb).
-WARM_LAYERS = {"SYMBOLS", "MEDIA", "FUNCTION"}
+# which sub-layer card it appears on.
+WARM_LAYERS = {"CTRL", "MEDIA", "SYMBOLS", "MSSTYLES"}
 COOL_LAYERS = {"NUMBERS", "NAVIGATION", "MSSTYLES"}
 
 ANCHOR_IDENTITY = {
-    (1, 1): "SYMBOLS",
-    (1, 2): "NUMBERS",
+    (1, 1): "CTRL",
+    (1, 2): "SYMBOLS",
+    (1, 3): "NUMBERS",
+    (1, 4): "FUNCTION",
 }
 
 THUMB_IDENTITY = {
-    "warm": {(3, 0): "MEDIA",      (3, 1): "FUNCTION"},
+    "warm": {(3, 0): "MEDIA"},
     "cool": {(3, 0): "NAVIGATION", (3, 1): "MSSTYLES"},
 }
 
-# Family root cards. On these, every thumb anchor IS a chord-access seat â€”
-# pressing GUI / Alt / Space (while still holding A or S) is what advances to
-# the next layer. Render them in their destination layer's full chord palette
-# + white icon so the launch pads read at a glance. On any other sub-layer
-# card the thumbs that aren't part of the active chord stay as silent pale
-# tiles (no icon) so the eye lands on the single active chord member.
-ROOT_LAYERS = {"NUMBERS", "SYMBOLS"}
+# Family root cards. On these, the active anchor is the parent concept; GUI is
+# the visible child option when the layer owns a GUI chord.
+ROOT_LAYERS = {"CTRL", "SYMBOLS", "NUMBERS", "FUNCTION"}
 
 def anchor_palette(layer, row, col):
     """Identity palette for an anchor seat, or None if (row, col) isn't an
@@ -454,28 +448,25 @@ ANCHOR_ICON = {
 # ---------------------------------------------------------------------------
 # Page-2 sub-layer highlight model (the agreed ChieftainDots design).
 #
-# Every sub-layer card lights EXACTLY TWO keys in the card's OWN layer hue:
-#   1. the active home-row anchor (A=(1,1) / S=(1,2) / D=(1,3)), showing its
-#      letter, and
-#   2. the left GUI thumb (3,0), showing the GUI/windows icon.
-# The OTHER two home-row anchors render as PALE CUES in their sibling family's
-# hue (parent hue on a parent card, child hue on a child card) with no label.
+# Every command card lights the active home-row anchor in the card's own hue.
+# Child cards also light the left GUI thumb. Other home-row anchors render as
+# pale cues in their sibling family's hue.
 HOME_ANCHORS = [(1, 1), (1, 2), (1, 3), (1, 4)]   # A / S / D / F
 GUI_THUMB = (3, 0)                        # left GUI thumb = data[3][0]
 
 ACTIVE_ANCHOR = {
-    "FUNCTION": (1, 1), "MEDIA":      (1, 1),   # A family
+    "CTRL":     (1, 1), "MEDIA":      (1, 1),   # A family
     "SYMBOLS":  (1, 2), "MSSTYLES":   (1, 2),   # S family
     "NUMBERS":  (1, 3), "NAVIGATION": (1, 3),   # D family
-    "CTRL":     (1, 4), "SNAP":       (1, 4),   # F family
+    "FUNCTION": (1, 4), "SNAP":       (1, 4),   # F family
 }
 
 # Parent (bare-hold) layers vs child (+GUI) layers.
 PARENT_LAYERS = {"FUNCTION", "SYMBOLS", "NUMBERS", "CTRL"}
 
 # Sibling-cue hue per anchor position.
-PARENT_HUE = {(1, 1): "FUNCTION", (1, 2): "SYMBOLS",  (1, 3): "NUMBERS", (1, 4): "CTRL"}
-CHILD_HUE  = {(1, 1): "MEDIA",    (1, 2): "MSSTYLES", (1, 3): "NAVIGATION", (1, 4): "CTRL"}
+PARENT_HUE = {(1, 1): "CTRL",  (1, 2): "SYMBOLS",  (1, 3): "NUMBERS",    (1, 4): "FUNCTION"}
+CHILD_HUE  = {(1, 1): "MEDIA", (1, 2): "MSSTYLES", (1, 3): "NAVIGATION", (1, 4): "SNAP"}
 
 def card_highlights(layer):
     """Return (access_set, secondary_set, cue_map) for a sub-layer card.
@@ -485,22 +476,12 @@ def card_highlights(layer):
     cue_map     â€” {(row,col): sibling_layer} so each cue takes its own
                   family hue rather than the board hue.
     """
-    # F-family (CTRL / SNAP) â€” anchor at (1,4), cues are A/S/D
-    if layer == "CTRL":
-        access = {(1, 4), GUI_THUMB}
-        cues = [(1, 1), (1, 2), (1, 3)]
-        cue_map = {(1, 1): "FUNCTION", (1, 2): "SYMBOLS", (1, 3): "NUMBERS"}
-        return access, set(cues), cue_map
-    if layer == "SNAP":
-        access = {(1, 4), GUI_THUMB}
-        cues = [(1, 1), (1, 2), (1, 3)]
-        cue_map = {(1, 1): "MEDIA", (1, 2): "MSSTYLES", (1, 3): "NAVIGATION"}
-        return access, set(cues), cue_map
-
     active = ACTIVE_ANCHOR.get(layer)
     if not active:
         return set(), set(), {}
-    access = {active, GUI_THUMB}
+    access = {active}
+    if layer not in PARENT_LAYERS:
+        access.add(GUI_THUMB)
     cues = [p for p in HOME_ANCHORS if p != active]
     hue = PARENT_HUE if layer in PARENT_LAYERS else CHILD_HUE
     cue_map = {p: hue[p] for p in cues}
@@ -1414,8 +1395,8 @@ def build():
     """
     Single landscape page (1680 Ã— 1188):
       Top band  : BASE | COLEMAK  (two alpha cards, full width)
-      Row 1     : FUNCTION | MEDIA  Â·  SYMBOLS | MSSTYLES
-      Row 2     : NUMBERS | NAVIGATION  Â·  CTRL | SNAP
+      Row 1     : CTRL | MEDIA  Â·  SYMBOLS | MSSTYLES
+      Row 2     : NUMBERS | NAVIGATION  Â·  FUNCTION | SNAP
       Bottom    : KEY ANATOMY (bare, no card background)
     """
     FONTFAM = 'font-family="Inter, Segoe UI, system-ui, sans-serif"'
@@ -1482,18 +1463,19 @@ def build():
 
     # â”€â”€ Matrix rows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Each row: (left pair) hold, +GUI  |divider|  (right pair) hold, +GUI
-    # row 2: 4-col (Function/Media/Symbols/Styles), card_w=mid_card_w, unit=mid_unit
+    # row 2: 4-col (Control/Media/Symbols/Styles), card_w=mid_card_w, unit=mid_unit
     row2_specs = [
-        ("FUNCTION",   "FUNCTION",   FUNCTION, 3, "hold"),
+        ("CONTROL",    "CTRL",       CTRL,     3, "hold"),
         ("MEDIA",      "MEDIA",      MEDIA,    4, "+ GUI"),
         ("SYMBOLS",    "SYMBOLS",    SYMBOLS,  5, "hold"),
         ("MS STYLES",  "MSSTYLES",   MSSTYLES, 6, "+ GUI"),
     ]
-    # row 3: 3-col (Numbers/Navigation/Snap), card_w=bot_card_w, unit=bot_unit
+    # row 3: 4-col (Numbers/Navigation/Function/Snap), card_w=mid_card_w, unit=mid_unit
     row3_specs = [
         ("NUMBERS",    "NUMBERS",    NUMBERS,  7, "hold"),
         ("NAVIGATION", "NAVIGATION", NAV,      8, "+ GUI"),
-        ("SNAP",       "SNAP",       SNAP,     9, "Ctrl + GUI"),
+        ("FUNCTION",   "FUNCTION",   FUNCTION, 9, "hold"),
+        ("SNAP",       "SNAP",       SNAP,    10, "+ GUI"),
     ]
 
     def render_row(specs, row_idx, card_w, unit):
@@ -1521,7 +1503,7 @@ def build():
             parts.append(kb)
 
     render_row(row2_specs, 1, mid_card_w, mid_unit)
-    render_row(row3_specs, 2, bot_card_w, bot_unit)
+    render_row(row3_specs, 2, mid_card_w, mid_unit)
 
     # â”€â”€ KEY ANATOMY (bare â€” no card background) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     label_color = MUTED
@@ -1547,7 +1529,7 @@ def build():
     label_gap = 7
     label_y = lg_y + 14
     bot_label_y = lg_y + lg_unit - 4
-    parts.append(draw_key(lg_x[0], lg_y, lg_unit, lg_unit, "A", "Sym", "Wk",
+    parts.append(draw_key(lg_x[0], lg_y, lg_unit, lg_unit, "A", "Ctrl", "Wk",
                           True, False, None, lg_font_main, lg_font_hold,
                           spanish="Ã", double_hold="G+W"))
     parts.append(f'<text x="{lg_x[0]+lg_unit+label_gap:.1f}" y="{label_y:.1f}" text-anchor="start" {FONTFAM} font-size="10.5" font-weight="600" fill="{label_color}">hold</text>')

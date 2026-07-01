@@ -17,9 +17,9 @@
 //#define HM_QUOT	/*LSFT_T(KC_QUOT) LGUI_T(KC_QUOT)*/ LT(SYM, KC_QUOT)// SYMBOL
 #define HM_SCLN LT(SYM, KC_SCLN)
 //#define HRML(k1,k2,k3,k4) LSFT_T(k1),LALT_T(k2),LCTL_T(k3),LGUI_T(k4)
-#define HRML(k1,k2,k3,k4) LT(SYS, k1), LT(SYM, k2), LT(NUM, k3), LCTL_T(k4)
+#define HRML(k1,k2,k3,k4) LCTL_T(k1), LT(SYM, k2), LT(NUM, k3), LT(SYS, k4)
 //#define HRMR(k1,k2,k3,k4) LGUI_T(k1),LCTL_T(k2),LALT_T(k3),LSFT_T(k4)
-#define HRMR(k1,k2,k3,k4) RCTL_T(k1), LT(NUM, k2), LT(SYM, k3), LT(SYS, k4)
+#define HRMR(k1,k2,k3,k4) LT(SYS, k1), LT(NUM, k2), LT(SYM, k3), RCTL_T(k4)
 
 // Command layers repeat the Base right thumbs instead of using transparent
 // fallthrough so behavior and RGB stay aligned through the ordinary
@@ -73,8 +73,8 @@
 #define _NAV \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    UP     ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, NAV_UP_DANCE, XXXXXXX, XXXXXXX, KC_DEL,   \
-/* Home:   ---    ---    ---    ---    CTRL   ---      ---    LEFT   DOWN   RIGHT  ---    ---  */\
-	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_LCTL, XXXXXXX,     XXXXXXX, NAV_LEFT_DANCE, NAV_DOWN_DANCE, NAV_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
+/* Home:   ---    CTRL   ---    ---    ---    ---      ---    LEFT   DOWN   RIGHT  ---    ---  */\
+	XXXXXXX, KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, NAV_LEFT_DANCE, NAV_DOWN_DANCE, NAV_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
@@ -119,10 +119,10 @@
 	XXXXXXX, XXXXXXX, SCREEN_SNIP, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
 /* Bottom: ---    ---    CUT    COPY   PASTE  ---      ---    F1     F2     F3     F12    --- */\
 	XXXXXXX, XXXXXXX, CLIP_CUT, CLIP_COPY, CLIP_PASTE, XXXXXXX, XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  XXXXXXX, \
-/* Thumbs:                         MED    ALT    ENT/SFT  ENTER  RALT   MENU */\
+/* Thumbs:                         SNAP   ALT    ENT/SFT  ENTER  RALT   MENU */\
 	                            SYS_GUI_MED_SNAP, DELAYED_LALT, FUNC_ENTER_SHIFT, RIGHT_THUMBS
 
-// Function/System + left GUI thumb Media: plain keys only while RAM is tight.
+// Control + left GUI thumb Media: plain keys only while RAM is tight.
 #define _MEDI \
 /* Top:    ---    ---    ---    ---    ---    ---      ---    ---    VOL+   ---    ---    DEL  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_VOLU, XXXXXXX, XXXXXXX, KC_DEL,   \

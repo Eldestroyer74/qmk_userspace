@@ -61,6 +61,288 @@ function glyphSequenceSvg(font, codes, options = {}) {
   return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="OLED glyph sequence">${rects}</svg>`;
 }
 
+function stringCodes(text) {
+  return Array.from(text, (char) => char.charCodeAt(0));
+}
+
+function codesFor(nameOrCodes) {
+  if (Array.isArray(nameOrCodes)) {
+    return nameOrCodes;
+  }
+  if (iconArrays[nameOrCodes]) {
+    return iconArrays[nameOrCodes];
+  }
+  return stringCodes(nameOrCodes);
+}
+
+function writeChars(screen, col, row, codes, cols = 5) {
+  let x = col;
+  let y = row;
+  for (const code of codes.filter((item) => item !== 0)) {
+    if (y >= screen.length) {
+      break;
+    }
+    screen[y][x] = code;
+    x += 1;
+    if (x >= cols) {
+      x = 0;
+      y += 1;
+    }
+  }
+}
+
+function makeScreen() {
+  return Array.from({ length: 16 }, () => Array(5).fill(0x20));
+}
+
+function oledScreenSvg(font, rows, options = {}) {
+  const scale = options.scale || 5;
+  const fill = options.fill || "#d7f7ff";
+  const cols = rows[0].length;
+  const width = cols * 6 * scale;
+  const height = rows.length * 8 * scale;
+  const rects = rows.flatMap((row, y) =>
+    row.map((code, x) => glyphRects(font, code, x * 6 * scale, y * 8 * scale, scale, fill))
+  ).join("");
+  return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="OLED status screen">${rects}</svg>`;
+}
+
+function homePairRows(leftTop, leftBottom, rightTop, rightBottom, leftOn, rightOn) {
+  const connectorTop = leftOn && rightOn ? "on_on_1" : leftOn ? "on_off_1" : rightOn ? "off_on_1" : "off_off_1";
+  const connectorBottom = leftOn && rightOn ? "on_on_2" : leftOn ? "on_off_2" : rightOn ? "off_on_2" : "off_off_2";
+  return [
+    [...codesFor(leftTop), ...codesFor(connectorTop), ...codesFor(rightTop)].filter((code) => code !== 0),
+    [...codesFor(leftBottom), ...codesFor(connectorBottom), ...codesFor(rightBottom)].filter((code) => code !== 0),
+  ];
+}
+
+function homeRowStatusRows(states) {
+  const concept = {
+    ctrl: ["ctrl_off_1", "ctrl_off_2", "ctrl_on_1", "ctrl_on_2"],
+    sym: ["sym_off_1", "sym_off_2", "sym_on_1", "sym_on_2"],
+    num: ["num_off_1", "num_off_2", "num_on_1", "num_on_2"],
+    fn: ["fn_off_1", "fn_off_2", "fn_on_1", "fn_on_2"],
+  };
+  function parts(name) {
+    const [offTop, offBottom, onTop, onBottom] = concept[name];
+    return states[name] ? [onTop, onBottom] : [offTop, offBottom];
+  }
+  const [ctrlTop, ctrlBottom] = parts("ctrl");
+  const [symTop, symBottom] = parts("sym");
+  const [numTop, numBottom] = parts("num");
+  const [fnTop, fnBottom] = parts("fn");
+  return [
+    ...homePairRows(ctrlTop, ctrlBottom, symTop, symBottom, states.ctrl, states.sym),
+    ...homePairRows(numTop, numBottom, fnTop, fnBottom, states.num, states.fn),
+  ];
+}
+
+function statusScreenRows({ label = "     ", layerArt = "base_layer", states = {} }) {
+  const screen = makeScreen();
+  writeChars(screen, 0, 0, codesFor("corne_logo"));
+  writeChars(screen, 0, 3, codesFor(label.padEnd(5).slice(0, 5)));
+  writeChars(screen, 0, 6, codesFor(layerArt));
+  const rows = homeRowStatusRows({
+    ctrl: false,
+    sym: false,
+    num: false,
+    fn: false,
+    ...states,
+  });
+  rows.forEach((rowCodes, index) => writeChars(screen, 0, 11 + index, rowCodes));
+  return screen;
+}
+
+function statusScreenPreview(font) {
+  const screens = [
+    ["Resting", { label: "     ", layerArt: "base_layer" }],
+    ["Control held", { label: "     ", layerArt: "anchor_layer", states: { ctrl: true } }],
+    ["Symbols held", { label: "     ", layerArt: "anchor_layer", states: { sym: true } }],
+    ["Numbers held", { label: "     ", layerArt: "anchor_layer", states: { num: true } }],
+    ["Function held", { label: "     ", layerArt: "anchor_layer", states: { fn: true } }],
+    ["Media chord", { label: "media", layerArt: "chord_layer", states: { ctrl: true } }],
+    ["Styles chord", { label: "style", layerArt: "chord_layer", states: { sym: true } }],
+    ["Navigation chord", { label: " nav ", layerArt: "chord_layer", states: { num: true } }],
+    ["Snap chord", { label: " snap", layerArt: "chord_layer", states: { fn: true } }],
+  ];
+  return screens.map(([name, config]) => assetRow(
+    name,
+    oledScreenSvg(font, statusScreenRows(config), { scale: 5 }),
+    "Rendered as the current 5-column rotated OLED status screen: logo, layer tile, and home-row status stack."
+  )).join("");
+}
+
+const proposedConceptTiles = {
+  ctrl: [
+    "############",
+    "#..........#",
+    "#..######..#",
+    "#.##....##.#",
+    "#.##.......#",
+    "#.##.......#",
+    "#.##.......#",
+    "#.##.......#",
+    "#.##.......#",
+    "#.##.......#",
+    "#.##....##.#",
+    "#..######..#",
+    "#..........#",
+    "#.##.####..#",
+    "#..........#",
+    "############",
+  ],
+  sym: [
+    "############",
+    "#..........#",
+    "#..#....#..#",
+    "#..#....#..#",
+    "#.########.#",
+    "#..#....#..#",
+    "#..#....#..#",
+    "#.########.#",
+    "#..#....#..#",
+    "#..#....#..#",
+    "#..........#",
+    "#..##..##..#",
+    "#.#..##..#.#",
+    "#..##..##..#",
+    "#..........#",
+    "############",
+  ],
+  num: [
+    "############",
+    "#..........#",
+    "#..#....#..#",
+    "#..#....#..#",
+    "#.########.#",
+    "#..#....#..#",
+    "#..#....#..#",
+    "#.########.#",
+    "#..#....#..#",
+    "#..#....#..#",
+    "#..........#",
+    "#....##....#",
+    "#...###....#",
+    "#....##....#",
+    "#..........#",
+    "############",
+  ],
+  fn: [
+    "############",
+    "#..........#",
+    "#.########.#",
+    "#.##.......#",
+    "#.##.......#",
+    "#.######...#",
+    "#.##.......#",
+    "#.##.......#",
+    "#..........#",
+    "#.##...##..#",
+    "#.###..##..#",
+    "#.####.##..#",
+    "#.##.####..#",
+    "#..........#",
+    "#..........#",
+    "############",
+  ],
+};
+
+function drawMatrixRects(matrix, originX, originY, scale, fill) {
+  const rects = [];
+  matrix.forEach((row, y) => {
+    Array.from(row).forEach((pixel, x) => {
+      if (pixel === "#") {
+        rects.push(`<rect x="${originX + x * scale}" y="${originY + y * scale}" width="${scale}" height="${scale}" fill="${fill}"/>`);
+      }
+    });
+  });
+  return rects.join("");
+}
+
+function invertMatrix(matrix) {
+  return matrix.map((row) => Array.from(row).map((pixel) => pixel === "#" ? "." : "#").join(""));
+}
+
+function proposedTileSvg(name, on = false, options = {}) {
+  const scale = options.scale || 5;
+  const matrix = on ? invertMatrix(proposedConceptTiles[name]) : proposedConceptTiles[name];
+  const fill = options.fill || "#d7f7ff";
+  const width = 12 * scale;
+  const height = 16 * scale;
+  return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="Proposed ${name} tile">${drawMatrixRects(matrix, 0, 0, scale, fill)}</svg>`;
+}
+
+function connectorName(leftOn, rightOn, bottom) {
+  if (leftOn && rightOn) return bottom ? "on_on_2" : "on_on_1";
+  if (leftOn) return bottom ? "on_off_2" : "on_off_1";
+  if (rightOn) return bottom ? "off_on_2" : "off_on_1";
+  return bottom ? "off_off_2" : "off_off_1";
+}
+
+function connectorGlyphRects(font, x, y, scale, leftOn, rightOn, fill) {
+  const top = iconArrays[connectorName(leftOn, rightOn, false)].filter((code) => code !== 0)[0];
+  const bottom = iconArrays[connectorName(leftOn, rightOn, true)].filter((code) => code !== 0)[0];
+  return [
+    glyphRects(font, top, x, y, scale, fill),
+    glyphRects(font, bottom, x, y + 8 * scale, scale, fill),
+  ].join("");
+}
+
+function proposedStatusScreenSvg(font, config, options = {}) {
+  const scale = options.scale || 5;
+  const fill = options.fill || "#d7f7ff";
+  const width = 30 * scale;
+  const height = 128 * scale;
+  const states = { ctrl: false, sym: false, num: false, fn: false, ...(config.states || {}) };
+  const screen = statusScreenRows(config);
+  const rects = [];
+
+  for (let row = 0; row < 11; row += 1) {
+    for (let col = 0; col < 5; col += 1) {
+      rects.push(glyphRects(font, screen[row][col], col * 6 * scale, row * 8 * scale, scale, fill));
+    }
+  }
+
+  rects.push(drawMatrixRects(states.ctrl ? invertMatrix(proposedConceptTiles.ctrl) : proposedConceptTiles.ctrl, 0, 88 * scale, scale, fill));
+  rects.push(connectorGlyphRects(font, 12 * scale, 88 * scale, scale, states.ctrl, states.sym, fill));
+  rects.push(drawMatrixRects(states.sym ? invertMatrix(proposedConceptTiles.sym) : proposedConceptTiles.sym, 18 * scale, 88 * scale, scale, fill));
+  rects.push(drawMatrixRects(states.num ? invertMatrix(proposedConceptTiles.num) : proposedConceptTiles.num, 0, 112 * scale, scale, fill));
+  rects.push(connectorGlyphRects(font, 12 * scale, 112 * scale, scale, states.num, states.fn, fill));
+  rects.push(drawMatrixRects(states.fn ? invertMatrix(proposedConceptTiles.fn) : proposedConceptTiles.fn, 18 * scale, 112 * scale, scale, fill));
+
+  return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="Proposed OLED status screen">${rects.join("")}</svg>`;
+}
+
+function proposedConceptPreview(font) {
+  const concepts = ["ctrl", "sym", "num", "fn"];
+  const screens = [
+    ["Resting", { label: "     ", layerArt: "base_layer" }],
+    ["Control held", { label: "     ", layerArt: "anchor_layer", states: { ctrl: true } }],
+    ["Symbols held", { label: "     ", layerArt: "anchor_layer", states: { sym: true } }],
+    ["Numbers held", { label: "     ", layerArt: "anchor_layer", states: { num: true } }],
+    ["Function held", { label: "     ", layerArt: "anchor_layer", states: { fn: true } }],
+    ["Media chord", { label: "media", layerArt: "chord_layer", states: { ctrl: true } }],
+    ["Styles chord", { label: "style", layerArt: "chord_layer", states: { sym: true } }],
+    ["Navigation chord", { label: " nav ", layerArt: "chord_layer", states: { num: true } }],
+    ["Snap chord", { label: " snap", layerArt: "chord_layer", states: { fn: true } }],
+  ];
+  return `
+    <div class="grid">
+      ${concepts.map((name) => compositionRow(
+        `${name.toUpperCase()} off/on proposal`,
+        `<div class="conceptPair">${proposedTileSvg(name, false, { scale: 5 })}${proposedTileSvg(name, true, { scale: 5 })}</div>`,
+        "Preview-only 12x16 concept art. The on state is shown as an inverted tile for scanability."
+      )).join("")}
+    </div>
+    <div class="grid" style="margin-top:14px">
+      ${screens.map(([name, config]) => assetRow(
+        name,
+        proposedStatusScreenSvg(font, config, { scale: 5 }),
+        "Preview-only proposed concept tiles in the full OLED status composition."
+      )).join("")}
+    </div>`;
+}
+
 function glyphBytesSvg(bytes, options = {}) {
   const scale = options.scale || 8;
   const fill = options.fill || "#d7f7ff";
@@ -427,14 +709,14 @@ function transformDemo(font) {
 
 function onOffComparisonDemo(font) {
   const comparisons = [
-    ["GUI top", 0x85, 0x8d],
-    ["GUI bottom", 0xa5, 0xad],
-    ["Alt top", 0x87, 0x8f],
-    ["Alt bottom", 0xa7, 0xaf],
-    ["Ctrl top", 0x89, 0x91],
-    ["Ctrl bottom", 0xa9, 0xb1],
-    ["Shift top", 0x8b, 0xcd],
-    ["Shift bottom", 0xab, 0xcf],
+    ["Function top", 0x85, 0x8d],
+    ["Function bottom", 0xa5, 0xad],
+    ["Symbols top", 0x87, 0x8f],
+    ["Symbols bottom", 0xa7, 0xaf],
+    ["Numbers top", 0x89, 0x91],
+    ["Numbers bottom", 0xa9, 0xb1],
+    ["Control top", 0x8b, 0xcd],
+    ["Control bottom", 0xab, 0xcf],
     ["Connector top off/off -> on/off", 0xc5, 0xc7],
     ["Connector top off/off -> off/on", 0xc5, 0xc9],
     ["Connector top off/off -> on/on", 0xc5, 0xcb],
@@ -518,14 +800,14 @@ const iconArrays = extractNamedArrays(iconsSource, "static char const");
 const catFrames = extractNamedArrays(catSource, "static unsigned char const");
 const audit = makeAudit(font, iconArrays, catFrames);
 
-const layerNames = ["base_layer", "numb_layer", "symb_layer"];
+const layerNames = ["base_layer", "anchor_layer", "chord_layer"];
 const logoNames = ["corne_logo", "katakana"];
-const modifierNames = [
-  "gui_off_1", "gui_on_1", "alt_off_1", "alt_on_1",
-  "ctrl_off_1", "ctrl_on_1", "shift_off_1", "shift_on_1",
+const statusTileNames = [
+  "fn_off_1", "fn_on_1", "sym_off_1", "sym_on_1",
+  "num_off_1", "num_on_1", "ctrl_off_1", "ctrl_on_1",
   "off_off_1", "on_off_1", "off_on_1", "on_on_1",
 ];
-const catNames = ["idle0", "paws", "tap0", "left_idle0", "left_paws", "left_tap0"];
+const catNames = ["idle0", "paws", "tap0"];
 
 function assetRow(name, svg, note) {
   return `
@@ -545,18 +827,15 @@ function compositionRow(name, svg, note) {
     </article>`;
 }
 
-const guiAltStates = [
-  ["GUI off + Alt off", "gui_off_1", "off_off_1", "alt_off_1", "gui_off_2", "off_off_2", "alt_off_2"],
-  ["GUI on + Alt off", "gui_on_1", "on_off_1", "alt_off_1", "gui_on_2", "on_off_2", "alt_off_2"],
-  ["GUI off + Alt on", "gui_off_1", "off_on_1", "alt_on_1", "gui_off_2", "off_on_2", "alt_on_2"],
-  ["GUI on + Alt on", "gui_on_1", "on_on_1", "alt_on_1", "gui_on_2", "on_on_2", "alt_on_2"],
-];
-
-const ctrlShiftStates = [
-  ["Ctrl off + Shift off", "ctrl_off_1", "off_off_1", "shift_off_1", "ctrl_off_2", "off_off_2", "shift_off_2"],
-  ["Ctrl on + Shift off", "ctrl_on_1", "on_off_1", "shift_off_1", "ctrl_on_2", "on_off_2", "shift_off_2"],
-  ["Ctrl off + Shift on", "ctrl_off_1", "off_on_1", "shift_on_1", "ctrl_off_2", "off_on_2", "shift_on_2"],
-  ["Ctrl on + Shift on", "ctrl_on_1", "on_on_1", "shift_on_1", "ctrl_on_2", "on_on_2", "shift_on_2"],
+const currentStatusStates = [
+  ["Control off + Symbols off", "ctrl_off_1", "off_off_1", "sym_off_1", "ctrl_off_2", "off_off_2", "sym_off_2"],
+  ["Control on + Symbols off", "ctrl_on_1", "on_off_1", "sym_off_1", "ctrl_on_2", "on_off_2", "sym_off_2"],
+  ["Control off + Symbols on", "ctrl_off_1", "off_on_1", "sym_on_1", "ctrl_off_2", "off_on_2", "sym_on_2"],
+  ["Control on + Symbols on", "ctrl_on_1", "on_on_1", "sym_on_1", "ctrl_on_2", "on_on_2", "sym_on_2"],
+  ["Numbers off + Function off", "num_off_1", "off_off_1", "fn_off_1", "num_off_2", "off_off_2", "fn_off_2"],
+  ["Numbers on + Function off", "num_on_1", "on_off_1", "fn_off_1", "num_on_2", "on_off_2", "fn_off_2"],
+  ["Numbers off + Function on", "num_off_1", "off_on_1", "fn_on_1", "num_off_2", "off_on_2", "fn_on_2"],
+  ["Numbers on + Function on", "num_on_1", "on_on_1", "fn_on_1", "num_on_2", "on_on_2", "fn_on_2"],
 ];
 
 const html = `<!doctype html>
@@ -653,6 +932,12 @@ const html = `<!doctype html>
     }
     .composed svg {
       margin: 0 auto;
+    }
+    .conceptPair {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
     }
     .explain {
       display: grid;
@@ -801,42 +1086,81 @@ const html = `<!doctype html>
     </section>
 
     <section class="card">
-      <h2>Modifier Tiles From <code>oled-icons.c</code></h2>
+      <h2>Current Status Screen Compositions</h2>
+      <div class="explain">
+        <p>
+          <strong>These are the screens to inspect for moved-button artefacts.</strong>
+          The renderer writes the same custom font glyphs into the same rotated
+          5-column screen structure as <code>render_mod_status()</code>.
+        </p>
+        <p>
+          <strong>R29 order is shown as Control, Symbols, Numbers, Function.</strong>
+          Chord states keep the same home-row concept pressed while the middle
+          tile changes to the chord artwork and the top label names the surface.
+        </p>
+      </div>
+      <div class="grid" style="margin-top:14px">
+        ${statusScreenPreview(font)}
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Proposed Clean Concept Tiles</h2>
+      <div class="explain">
+        <p>
+          <strong>This is option 2 as a preview only.</strong>
+          The four home-row concepts get purpose-built 12 by 16 pixel tiles
+          instead of reusing moved modifier fragments. This page has not changed
+          <code>oledfont.c</code> or firmware glyph bytes.
+        </p>
+        <p>
+          <strong>The goal is to test readability first.</strong>
+          If one of these reads well, the next firmware step would be to pack
+          the chosen art into available custom glyph slots and compile-measure
+          before flashing.
+        </p>
+      </div>
+      <div style="margin-top:14px">
+        ${proposedConceptPreview(font)}
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Home-Row Status Tiles From <code>oled-icons.c</code></h2>
       <div class="explain">
         <p>
           <strong>These are not single complete images.</strong>
-          The renderer composes each modifier pair from six custom font glyphs:
-          left modifier top, connector top, right modifier top, then left modifier
-          bottom, connector bottom, right modifier bottom.
+          The renderer composes each home-row status pair from six custom font
+          glyphs: left concept top, connector top, right concept top, then left
+          concept bottom, connector bottom, right concept bottom.
         </p>
         <p>
           <strong>The connector is also stateful.</strong>
-          For GUI/Alt and Ctrl/Shift, the code chooses one of four connector
-          pairs: off/off, on/off, off/on, or on/on. That is how the visual bridge
-          between the two modifier icons changes with the active state.
+          The code chooses one of four connector pairs: off/off, on/off, off/on,
+          or on/on. That is how the visual bridge between the two concept icons
+          changes with the active state.
         </p>
       </div>
     </section>
 
     <section class="card">
-      <h2>Composed Modifier States</h2>
+      <h2>Composed Home-Row Status States</h2>
       <div class="grid">
-        ${guiAltStates.map(([name, ...parts]) => compositionRow(name, composedModifierSvg(font, ...parts), "Composed exactly like render_gui_alt(): top row first, then bottom row.")).join("")}
-        ${ctrlShiftStates.map(([name, ...parts]) => compositionRow(name, composedModifierSvg(font, ...parts), "Composed exactly like render_ctrl_shift(): top row first, then bottom row.")).join("")}
+        ${currentStatusStates.map(([name, ...parts]) => compositionRow(name, composedModifierSvg(font, ...parts), "Composed exactly like render_home_pair(): top row first, then bottom row.")).join("")}
       </div>
     </section>
 
     <section class="card">
-      <h2>Raw Modifier Building Blocks</h2>
+      <h2>Raw Home-Row Status Building Blocks</h2>
       <div class="grid">
-        ${modifierNames.map((name) => assetRow(name, glyphSequenceSvg(font, iconArrays[name], { scale: 6 }), "Single-row modifier or connector tile from the current renderer.")).join("")}
+        ${statusTileNames.map((name) => assetRow(name, glyphSequenceSvg(font, iconArrays[name], { scale: 6 }), "Single-row status or connector tile from the current renderer.")).join("")}
       </div>
     </section>
 
     <section class="card">
       <h2>Representative Static Cat Frames From <code>oled-bongocat.c</code></h2>
       <div class="grid">
-        ${catNames.map((name) => assetRow(name, rawOledSvg(decodeRleFrame(catFrames[name]), { scale: 2 }), "Decoded from the existing RLE frame data as a still image.")).join("")}
+        ${catNames.map((name) => assetRow(name, rawOledSvg(decodeRleFrame(catFrames[name]), { scale: 2 }), "Decoded from stored RLE frame data as a still image. Left-side frames are derived by firmware mirroring.")).join("")}
       </div>
     </section>
 

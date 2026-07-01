@@ -49,7 +49,7 @@ static nav_dance_t nav_right_dance = {KC_RGHT, KC_RGHT, C(KC_RGHT), KC_END};
 static gui_snap_dance_t base_gui_snap_dance = {0, true};
 static gui_snap_dance_t num_gui_nav_snap_dance = {NAV, false};
 static gui_snap_dance_t sym_gui_ext_snap_dance = {EXT, false};
-static gui_snap_dance_t sys_gui_med_snap_dance = {MED, false};
+static gui_snap_dance_t sys_gui_med_snap_dance = {SNP, false};
 static bool gui_snap_layer_held;
 static bool gui_snap_gui_held;
 static uint8_t gui_snap_active_layer;
@@ -59,9 +59,9 @@ extern uint8_t chieftaindots_cat_state;
 
 enum {
 	SNAP_LEFT_CTRL_ROW = 1,
-	SNAP_LEFT_CTRL_COL = 4,
+	SNAP_LEFT_CTRL_COL = 1,
 	SNAP_RIGHT_CTRL_ROW = 5,
-	SNAP_RIGHT_CTRL_COL = 4,
+	SNAP_RIGHT_CTRL_COL = 0,
 };
 
 static bool snap_ctrl_source_held(void) {
@@ -152,10 +152,9 @@ static void gui_snap_finished(tap_dance_state_t *state, void *user_data) {
 
 	if (state->count >= 1 && state->pressed) {
 		if (physical_ctrl_down) {
-			layer_on(SNP);
+			layer_on(MED);
 			gui_snap_layer_held = true;
-			gui_snap_active_layer = SNP;
-			chieftaindots_snap_mode = SNAP_MODE_WINDOW;
+			gui_snap_active_layer = MED;
 		} else if (host_ctrl_down) {
 			// Do not leak a live Ctrl+GUI hold to Windows if Ctrl timing was
 			// visible to the host but not confirmed from the physical source.
@@ -166,6 +165,9 @@ static void gui_snap_finished(tap_dance_state_t *state, void *user_data) {
 			layer_on(dance->layer);
 			gui_snap_layer_held = true;
 			gui_snap_active_layer = dance->layer;
+			if (dance->layer == SNP) {
+				chieftaindots_snap_mode = SNAP_MODE_WINDOW;
+			}
 		}
 	} else if (dance->real_gui) {
 		tap_code(KC_LGUI);

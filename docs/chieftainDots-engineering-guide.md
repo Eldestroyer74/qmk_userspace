@@ -108,6 +108,57 @@ Run QMK from MINGW64. From PowerShell, Codex can use:
 & 'C:\QMK_MSYS\shell_connector.cmd' -lc 'cd /c/Users/RicardoEscalon/Documents/qmk_firmware && qmk compile users/eldestroyer74/keymaps/corne.json'
 ```
 
+### Local Toolchain Stack Updates
+
+Treat local toolchain maintenance as a check-first pass. Record installed and
+latest versions before updating anything, and update only the tool surface that
+is actually stale.
+
+The local stack has these separate surfaces:
+
+- Windows Git, used by PowerShell and normal Windows tooling.
+- QMK MSYS installer, the Windows distribution rooted at `C:\QMK_MSYS`.
+- QMK MSYS pacman packages, including the QMK CLI package, Python, compilers,
+  libraries, the MSYS2 keyring, and the MSYS Git.
+- QMK Toolbox, the Windows GUI flasher.
+- The outer `qmk_firmware` checkout, which is not part of routine toolchain
+  updating and must only be pulled when that is the explicit task.
+
+Check Windows Git from PowerShell:
+
+```powershell
+git --version
+```
+
+Compare with the latest official Git for Windows release:
+
+```powershell
+(Invoke-RestMethod -Headers @{ 'User-Agent'='Git-version-check' } `
+  -Uri 'https://api.github.com/repos/git-for-windows/git/releases/latest').tag_name
+```
+
+Check installed Windows applications for QMK Toolbox and QMK MSYS:
+
+```powershell
+Get-ItemProperty `
+  'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*', `
+  'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' `
+  -ErrorAction SilentlyContinue |
+  Where-Object { $_.DisplayName -match 'QMK|Toolbox|Git' } |
+  Select-Object DisplayName,DisplayVersion,Publisher,InstallLocation
+```
+
+Compare QMK Toolbox with the latest official release:
+
+```powershell
+(Invoke-RestMethod -Headers @{ 'User-Agent'='QMK-Toolbox-version-check' } `
+  -Uri 'https://api.github.com/repos/qmk/qmk_toolbox/releases/latest').tag_name
+```
+
+Do not update QMK Toolbox while it is flashing a keyboard. Do not compile or
+flash firmware just because the local tools were updated; that remains a
+separate approved action.
+
 ### Updating QMK MSYS
 
 Treat these as three separate update surfaces:
@@ -177,6 +228,25 @@ Python `3.14.6`, Git `2.54.0`,
 firmware was compiled or flashed, and neither Git repository was changed by the
 toolchain update.
 
+Maintenance check, 2026-07-01: Windows Git reported
+`2.54.0.windows.1`, while the latest official Git for Windows release was
+`v2.55.0.windows.1`, so Windows Git was the only stale surface found. Installed
+QMK MSYS was `1.12.0`, matching the latest official QMK MSYS release. QMK MSYS
+reported QMK CLI `1.2.0`, Python `3.14.6`, MSYS Git `2.54.0`, and
+`mingw-w64-x86_64-python-qmk 1.2.0-4`; `pacman -Qu` produced no pending package
+list. Installed QMK Toolbox was `0.3.3`, matching the latest official QMK
+Toolbox release. No package update, firmware compile, flash, userspace edit, or
+outer `qmk_firmware` pull was performed as part of this check.
+
+Maintenance update, 2026-07-01: `winget` metadata still offered Git `2.54.0`
+after `winget source update`, so Windows Git was updated directly from the
+official Git for Windows GitHub release asset `Git-2.55.0-64-bit.exe` using the
+installer arguments `/VERYSILENT /NORESTART`. Verification reported
+`git version 2.55.0.windows.1`, and Windows uninstall metadata reported Git
+`2.55.0`. QMK MSYS remained `1.12.0`, and QMK Toolbox remained `0.3.3`. No QMK
+firmware was compiled or flashed, and the outer `qmk_firmware` checkout was not
+pulled.
+
 For split Corne flashing, prefer the canonical JSON flash commands so QMK uses
 the active ChieftainDots userspace and writes the correct `EE_HANDS` handedness
 marker to each half:
@@ -199,6 +269,11 @@ because the toolchain mishandled the space in `Program Files`.
   If layer keys work but per-key RGB appears on only one side, or right-side
   command-layer indicators do not light, check handedness flashing before
   changing RGB masks.
+  If USB is plugged into the right half and physical keys behave as if the
+  halves are swapped, such as physical `F` producing `J` or physical Backspace
+  firing the left-side Tab/Esc/Close tap dance, treat that as wrong or stale
+  right-half handedness first. Re-flash the right half with `dfu-split-right`
+  before changing layout code.
 - Flow Tap is the preferred first experiment for accidental home-row tap-hold
   activation during normal typing flow. QMK documents `FLOW_TAP_TERM 150` as a
   starting point; ChieftainDots should trial it before making broader
@@ -273,6 +348,47 @@ they were standalone full-height tiles. They were designed for the original
 horizontal modifier panel and look partially drawn when used vertically by
 themselves. Either preserve the original panel, create purpose-built tiny
 home-row glyphs, or use text labels as a temporary readable fallback.
+
+For the bottom home-row status stack, preserve the existing composition grammar
+in `oled-icons.c`: `render_home_pair()` writes a two-cell left tile, one real
+connector glyph, and a two-cell right tile, then repeats the same structure for
+the bottom row. Do not invent a new connector or treat the connector column as a
+separate concept icon. If the status buttons look wrong after a concept reorder,
+replace the correct top/bottom two-cell concept tiles (`fn_*`, `sym_*`,
+`num_*`, `ctrl_*`) and preview them with the real `off_off`, `on_off`,
+`off_on`, and `on_on` connector glyphs before changing firmware bytes. Buttons
+should use the full 12-pixel width of their two glyph cells so they do not look
+narrower than the inherited status buttons.
+
+The home-row status tiles are also position-shaped, not just semantic icons.
+Left buttons and right buttons use different 12x16 frame shapes inside the same
+30-pixel-wide screen. If a concept moves from one side of the 2x2 stack to the
+other, redraw or remap the concept glyph into the destination side's frame
+instead of only moving the old named tile. Then check optical centering inside
+the visible frame: small symbols such as the Control caret may need a one-pixel
+shift to look centered, while text-like symbols such as `Fn` should be compared
+against the inherited `@`/`#` tile balance. Regenerate the OLED asset preview
+from real `oledfont.c` bytes before compiling.
+
+When changing these four buttons, follow this narrow workflow:
+
+1. Treat each button as a 12x16 tile made from two 6x8 font glyphs on the top
+   row and two 6x8 font glyphs on the bottom row. The full row is always left
+   tile + 6x16 connector + right tile.
+2. Decide whether the concept is in a left-side or right-side slot before
+   editing art. Do not reuse a right-side tile on the left or a left-side tile
+   on the right just because the semantic name matches.
+3. Change the existing glyph bytes in `oled/oledfont.c` for the relevant
+   `fn_*`, `sym_*`, `num_*`, or `ctrl_*` slots instead of changing
+   `render_home_pair()` or connector logic.
+4. Preserve both the off and on versions of the same symbol. The on tile is the
+   filled-button version with the symbol cut out as negative space.
+5. Regenerate `docs/chieftainDots-oled-assets-preview.html` and inspect
+   `docs/chieftainDots-oled-status-preview.png` before compiling. Compare
+   left-side concepts against the `#` tile and right-side concepts against the
+   `@` tile for optical centering.
+6. Only compile after the preview looks right; glyph-byte replacements should
+   keep the `oledfont.c` table length unchanged.
 
 If considering a full chord-discovery OLED concept, first measure how many bytes
 are recovered by removing Bongocat. Treat that as a separate product decision:

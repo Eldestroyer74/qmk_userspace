@@ -1,6 +1,6 @@
 # ChieftainDots Daily Layer Guide
 
-Print this as the desk-side map for the future three-anchor command layout.
+Print this as the desk-side map for the four-anchor command layout trial.
 This guide is intentionally forward-looking so the whole design can be reviewed
 as one coherent keyboard.
 
@@ -19,10 +19,10 @@ Backspace key sends Delete.
 Typing
 
 Tap A / S / D / F       = letters
-Hold A / ;             = Function
+Hold A / ;             = Control
 Hold S / L             = Symbols
 Hold D / K             = Numbers
-Hold F / J             = Ctrl
+Hold F / J             = Function
 Hold Base Space / Enter = Shift
 Hold either lower corner = Spanish
 Right thumbs: Numbers uses Enter/Symbols; Symbols and Function use Enter/Shift.
@@ -31,18 +31,17 @@ RAlt and Menu stay available.
 ```
 
 ```text
-Three anchors, one GUI chord each
+Four anchors, one GUI chord each
 
 Hold D/K + left GUI    = Navigation: movement only
 Hold S/L + left GUI    = Styles: Alt+Shift+Arrow
 Hold A/; + left GUI    = Media, Teams-first
-Hold home-row Ctrl + left GUI = Snap window placement mode
+Hold F/J + left GUI    = Snap window placement mode
 Double tap-hold mnemonic = Text snippets
 ```
 
-Snap has no tap-only action. It is entered only as a held mode from the
-physical home-row Ctrl source plus the left GUI thumb. During Snap, firmware
-sends one-shot `Win+Arrow` taps; Windows should not see a live `Ctrl+Win` hold.
+Snap has no tap-only action. It is entered as a held mode from Function plus
+the left GUI thumb. During Snap, firmware sends one-shot `Win+Arrow` taps.
 Double tap-hold GUI has no separate action in this build; it behaves like the
 ordinary GUI/anchor hold path.
 
@@ -94,7 +93,7 @@ Tap: PowerPoint / Word structure
 Alt+Shift+Left  Alt+Shift+Down  Alt+Shift+Right
 ```
 
-Media: hold `A/;`, then hold left GUI.
+Media: hold `A/;` for Control, then hold left GUI.
 
 ```text
 Plain keys only in the current RAM experiment:
@@ -102,7 +101,8 @@ Plain keys only in the current RAM experiment:
 Teams mic mute  Volume Down  Play/Pause
 ```
 
-Snap window placement: hold home-row Ctrl + left GUI, then press `I/J/K/L`.
+Snap window placement: hold `F/J` for Function, then hold left GUI and press
+`I/J/K/L`.
 
 ```text
 One-shot shortcuts
@@ -210,7 +210,7 @@ Navigation: hold `D` or `K`, then hold left GUI.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    UP     ---    ---    DEL
----      ---    ---    ---    CTRL   ---        ---    LEFT   DOWN   RIGHT  ---    ---
+---      CTRL   ---    ---    ---    ---        ---    LEFT   DOWN   RIGHT  ---    ---
 ---      ---    ---    ---    ---    ---        ---    ---    ---    ---    ---    ---
                          trans  ALT    SHIFT       ENTER  RALT  MENU
 ```
@@ -242,7 +242,8 @@ Tap = Alt+Shift+Arrow.
 Hold / double tap / double-tap-hold = intentionally unused for now.
 ```
 
-Snap window placement: hold home-row Ctrl + left GUI, then use `I/J/K/L`.
+Snap window placement: hold `F/J` for Function, then hold left GUI and use
+`I/J/K/L`.
 
 ```text
 The entry gesture exposes the Snap layer. Each arrow sends one Win+Arrow tap,
@@ -253,7 +254,7 @@ Left  Down  Right
 
 ## Tools
 
-Media: hold `A` or `;`, then hold left GUI.
+Media: hold `A` or `;` for Control, then hold left GUI.
 
 ```text
 ---      ---    ---    ---    ---    ---        ---    ---    VOL+   ---    ---    DEL
@@ -276,13 +277,13 @@ L        Play/Pause
 Teams mic mute means `Ctrl+Shift+M`. Media hold and double-tap behaviors are
 disabled in this RAM experiment.
 
-Function / System: hold `A` or `;`.
+Function / System: hold `F` or `J`.
 
 ```text
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
 ---      ---    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
 ---      ---    cut    copy   paste  ---        ---    F1     F2     F3     F12    ---
-                         MED    ALT    ENT/SFT     ENTER  RALT  MENU
+                         SNAP   ALT    ENT/SFT     ENTER  RALT  MENU
 ```
 
 Press the camera icon (`Function + S`) to send the Windows screen snip shortcut
@@ -338,7 +339,7 @@ Shift+'            ”                ---          ---                 ---
 
 ## Current Physical Trial
 
-- `F` and `J` are Ctrl on hold, not Shift.
+- `A` and `;` are Ctrl on hold; `F` and `J` are Function on hold.
 - Base Space and Enter are Shift keys on hold.
 - Double-tap Caps enters Long Caps, which stays on across words and uses the
   same red RGB as normal Caps.
@@ -368,7 +369,7 @@ After flashing, test:
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.
-- hold home-row Ctrl + left GUI, then `I/J/K/L` = Snap window placement.
+- `F/J + left GUI`, then `I/J/K/L` = Snap window placement.
 - Snap should move windows predictably without opening Snap Assist layouts or
   desktop/workspace traversal.
 - double-tap-hold GUI = no separate action; ordinary GUI/anchor hold behavior.
