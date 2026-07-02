@@ -133,17 +133,18 @@
 /* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
 	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
 
-// Spanish layer: hold either outside bottom key, then press the matching letter.
+// Spanish is a transparent character overlay: only Spanish-specific keys
+// override Base/Colemak; unrelated keys fall through so mistakes still teach.
 // Double-tap either Spanish key toggles the host input language.
 #define _SPAN \
 /* Top:    ---    ¡      ---    É      ---    ---      ---    Ú      Í      Ó      ---    ---  */\
-	XXXXXXX, ES_IEXL, XXXXXXX, ES_E,    XXXXXXX, XXXXXXX,     XXXXXXX, ES_U,    ES_I,    ES_O,    XXXXXXX, XXXXXXX, \
+	_______, ES_IEXL, _______, ES_E,    _______, _______,     _______, ES_U,    ES_I,    ES_O,    _______, _______, \
 /* Home:   ---    Á      ---    ---    ---    ---      ---    ---    ---    ---    Ü      ---  */\
-	ES_LDAQ, ES_A,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, ES_UDIA, ES_RDAQ, \
+	ES_LDAQ, ES_A,    _______, _______, _______, _______,     _______, _______, _______, _______, ES_UDIA, ES_RDAQ, \
 /* Bottom: trans  ---    ---    ---    ---    ---      Ñ      ---    ---    ---    ¿      trans */\
-	_______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     ES_N,    XXXXXXX, XXXXXXX, XXXXXXX, ES_IQUE, _______, \
-/* Thumbs:                         ---    ---    ---      ENTER  RALT   MENU */\
-	                            XXXXXXX, XXXXXXX, XXXXXXX,    RIGHT_THUMBS
+	_______, _______, _______, _______, _______, _______,     ES_N,    _______, _______, _______, ES_IQUE, _______, \
+/* Thumbs:                         trans  trans  trans    trans  trans  trans */\
+	                            _______, _______, _______,    _______, _______, _______
 
 // Home-row wrapper. Only Base/Colemak pass through HRM(...) in corne.json;
 // command layers stay plain so held keys compose predictably with thumbs.

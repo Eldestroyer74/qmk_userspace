@@ -69,8 +69,10 @@ recipes should be created from the current layer model when a real port starts.
 - Text Snippets: safe-to-type personal snippets on mnemonic Base/Colemak
   double-tap-hold letters. Private string values must live in ignored local
   files.
-- Spanish: accented letters, punctuation, angle quotes, and input-language
-  switching from the lower-corner Spanish keys.
+- Spanish: a transparent character overlay for accented letters, punctuation,
+  angle quotes, and input-language switching from the lower-corner Spanish keys.
+  Only Spanish-specific key positions override Base/Colemak; unrelated keys
+  fall through so mistyped positions produce normal typing feedback.
 
 ## Cross-Layer Key Roles
 

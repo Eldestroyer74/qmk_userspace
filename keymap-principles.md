@@ -85,6 +85,21 @@ commands, explicit modifier positions, or a dedicated editing layer. The layer
 table should still explain what the key does without requiring the user to
 remember nested tap-hold rules.
 
+### Distinguish Modifiers From Anchors
+
+Traditional modifiers such as Ctrl, Shift, Alt, and GUI are keyboard ingredients,
+not ChieftainDots command layers. They should keep their normal host behavior
+and should not be visually or conceptually promoted into custom layers just
+because they change what another key does.
+
+ChieftainDots anchors exist to make up for missing physical keys on the Corne:
+Symbols, Numbers, Function/System, Snap, Navigation, Media, Office, and similar
+surfaces may use stronger OLED/RGB discovery feedback because they are custom
+command modes. Plain modifiers may have feedback, but it should stay quieter and
+physically grounded. If a future design treats a modifier like a layer, push back
+first and decide whether the user-facing benefit is worth blurring this
+distinction.
+
 ### Make Editing Keys Layer-Aware
 
 Physical key positions can keep a related meaning across layers while changing
@@ -230,6 +245,10 @@ RGB should also distinguish present state from future choice:
   blank keys; active chord thumbs should stay in the chord color, and
   layer-specific thumb changes should stay dark/high-contrast so the changed
   behavior is the thing the eye learns.
+- Printable guide chord affordances should be visually quieter than active
+  chord members. A parent-card thumb that previews a future chord may keep the
+  pale future-layer cue background, but its icon should use the muted thumb-row
+  grey rather than the destination layer's saturated text color.
 - Diagram styling must not override behavior truth. Before muting, highlighting,
   or changing an icon, confirm the key's tap and hold behavior in `layout.h`;
   the printable guide can simplify visual weight, but it must not invent a

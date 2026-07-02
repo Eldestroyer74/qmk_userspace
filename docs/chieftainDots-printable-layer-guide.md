@@ -146,11 +146,15 @@ Colemak uses the same Spanish lower corners and `/` tap dance as Base.
 
 Access: hold either lower corner.
 
+Spanish is a transparent character overlay. If a key is not a Spanish
+character, it falls through to the active typing layer so mistakes produce normal
+typing feedback instead of silence.
+
 ```text
----      ¡      ---    É      ---    ---        ---    Ú      Í      Ó      ---    ---
-«        Á      ---    ---    ---    ---        ---    ---    ---    ---    Ü      »
-trans    ---    ---    ---    ---    ---        Ñ      ---    ---    ---    ¿      trans
-                         ---    ---    ---         trans  trans  trans
+trans    ¡      trans  É      trans  trans      trans  Ú      Í      Ó      trans  trans
+«        Á      trans  trans  trans  trans      trans  trans  trans  trans  Ü      »
+trans    trans  trans  trans  trans  trans      Ñ      trans  trans  trans  ¿      trans
+                         trans  trans  trans       trans  trans  trans
 ```
 
 Use Shift first for capitals:

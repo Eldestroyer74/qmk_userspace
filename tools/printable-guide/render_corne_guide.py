@@ -32,6 +32,7 @@ TITLE_H = 144
 
 BLUE       = "#1e40af"
 BLUE_DEEP  = "#1e3a8a"
+KEY_DARK   = "#0b1220"
 INK        = "#0f172a"
 MUTED      = "#64748b"
 BG         = "#f3f5f8"
@@ -81,7 +82,7 @@ SYMBOLS = [
      K(""), K("$"), K("%"), K("^"), K("+"), K("")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("!"), K("@"), K("#"), K(""), K("")],
-    [K(""), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
 ]
 
 # NUMBERS â€” full top-row digits, right-hand numpad below.
@@ -95,7 +96,7 @@ NUMBERS = [
      K(""), K("4"), K("5"), K("6"), K("="), K("")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("1"), K("2", ",", "<"), K("3", ".", ">"), K("/"), K("")],
-    [K(""), K("_KEY_ALT"), K("_KEY_SPACE","Sym"),
+    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sym"),
      K("_KEY_ENTER","Sym"), K("_KEY_ALT"), K("_KEY_MENU")],
 ]
 
@@ -246,14 +247,14 @@ FUNCTION = [
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
     [K(""), K(""), K("_KEY_CUT"), K("_KEY_COPY"), K("_KEY_PASTE"), K(""),
      K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("")],
-    [K(""), K("_KEY_ALT"), K("_KEY_ENTER","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_ENTER","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
 ]
 
 CTRL = [
     [K("")]*12,
     [K("")]*12,
     [K("")]*12,
-    [K(""), K(""), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
 ]
 
 SNAP = [
@@ -485,6 +486,9 @@ def card_highlights(layer):
     cues = [p for p in HOME_ANCHORS if p != active]
     hue = PARENT_HUE if layer in PARENT_LAYERS else CHILD_HUE
     cue_map = {p: hue[p] for p in cues}
+    if layer in PARENT_LAYERS:
+        cues.append(GUI_THUMB)
+        cue_map[GUI_THUMB] = CHILD_HUE[active]
     return access, set(cues), cue_map
 
 NOTES = {}
@@ -570,6 +574,30 @@ def dosis_text(x, y, text, font_size, fill, anchor="start",
         cur += ginfo["adv"] * scale + letter_spacing
     parts.append('</g>')
     return "".join(parts)
+
+def dosis_width(text, font_size, letter_spacing=0, weight=DOSIS_WEIGHT_TITLE):
+    """Measure Dosis text width in SVG units for fit-to-page layout."""
+    info = _load_dosis_at(weight)
+    scale = font_size / info["upem"]
+    width = 0
+    glyph_count = 0
+    for ch in text:
+        ginfo = _dosis_glyph(weight, ch)
+        if ginfo is None:
+            continue
+        width += ginfo["adv"] * scale + letter_spacing
+        glyph_count += 1
+    if glyph_count:
+        width -= letter_spacing
+    return width
+
+def fit_dosis_text(text, max_width, max_size, min_size=24, letter_spacing=0,
+                   weight=DOSIS_WEIGHT_WORDMARK):
+    """Return the largest integer font size that fits `max_width`."""
+    for size in range(max_size, min_size - 1, -1):
+        if dosis_width(text, size, letter_spacing, weight) <= max_width:
+            return size
+    return min_size
 
 def _load_fa_glyphs():
     """Extract path data + bbox for each FA token from the OTF."""
@@ -1016,7 +1044,9 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
     if blank and not highlight:
         display = ""
     if secondary:
-        display = ""
+        display = secondary_label or ""
+    if secondary and secondary_label:
+        text = MUTED
 
     is_icon = False
     if display in SNAP_ICONS:
@@ -1215,7 +1245,9 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
 
         return draw_key(x, y, unit, unit, tap, hold, double, dark, hl, label,
                         font_main, font_hold,
-                        secondary=sec, embed=emb, font_boost=font_boost,
+                        secondary=sec,
+                        secondary_label=ANCHOR_ICON.get((r, c)) if sec else None,
+                        embed=emb, font_boost=font_boost,
                         palette=key_pal, embed_palette=emb_pal,
                         spanish=spanish, double_hold=double_hold,
                         muted=muted,
@@ -1394,6 +1426,7 @@ def _kb_width_est(unit):
 def build():
     """
     Single landscape page (1680 Ã— 1188):
+      Title     : CHIEFTAIN DOTS wordmark
       Top band  : BASE | COLEMAK  (two alpha cards, full width)
       Row 1     : CTRL | MEDIA  Â·  SYMBOLS | MSSTYLES
       Row 2     : NUMBERS | NAVIGATION  Â·  FUNCTION | SNAP
@@ -1409,19 +1442,19 @@ def build():
     MARGIN     = 34
     usable_w   = PAGE_W - 2 * MARGIN          # 1612
 
-    TOP_H      = 290                           # top band (Base + Colemak)
-    ANAT_H     = 168                           # KEY ANATOMY bottom strip
+    TITLE_BAND = 110                           # Dosis wordmark band
+    ANAT_H     = 86                            # compact KEY ANATOMY bottom strip
     BOT_MARGIN = 20                            # bottom whitespace
     GAP_V      = 14                            # vertical gap between bands
     GAP        = 14                            # consistent gap between ALL cards
 
     # Row heights â€” 3 content rows (2-col, 4-col, 3-col) + anatomy
     # total = PAGE_H - MARGIN - BOT_MARGIN - 4*GAP_V (gaps: before row1, between rows, before anatomy)
-    matrix_total_h = PAGE_H - MARGIN - ANAT_H - BOT_MARGIN - 4 * GAP_V
+    top_y = MARGIN + TITLE_BAND
+    matrix_total_h = PAGE_H - top_y - ANAT_H - BOT_MARGIN - 4 * GAP_V
     row_h = matrix_total_h / 3
 
     # Y positions
-    top_y     = MARGIN
     matrix_y  = [top_y + i * (row_h + GAP_V) for i in range(3)]
     anat_y    = matrix_y[2] + row_h + GAP_V
 
@@ -1436,10 +1469,33 @@ def build():
     bot_unit   = 33
 
     # â”€â”€ Title kicker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    title_text = "CHIEFTAIN DOTS"
+    title_tracking = 2.0
+    title_size = fit_dosis_text(
+        title_text,
+        usable_w,
+        106,
+        42,
+        letter_spacing=title_tracking,
+        weight=DOSIS_WEIGHT_WORDMARK,
+    )
+    title_baseline = MARGIN + title_size * 0.82
     parts.append(
-        f'<text x="{MARGIN}" y="{MARGIN-2}" {FONTFAM} '
-        f'font-size="10" font-weight="700" fill="{BLUE}" letter-spacing="3.0">'
-        f'CORNE / CRKBD / KEYMAP REFERENCE</text>'
+        dosis_text(
+            MARGIN,
+            title_baseline,
+            title_text,
+            title_size,
+            KEY_DARK,
+            letter_spacing=title_tracking,
+            weight=DOSIS_WEIGHT_WORDMARK,
+        )
+    )
+    parts.append(
+        f'<text x="{PAGE_W - MARGIN}" y="{title_baseline:.1f}" '
+        f'text-anchor="end" {FONTFAM} font-size="12" font-weight="700" '
+        f'fill="{BLUE}" letter-spacing="0.7">'
+        f'CORNE / CRKBD / KEYMAP EXPERIENCE</text>'
     )
 
     # â”€â”€ Top band: BASE + COLEMAK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -1510,15 +1566,15 @@ def build():
     lg_cx = MARGIN
     lg_cy = anat_y
     parts.append(
-        f'<text x="{lg_cx+22}" y="{lg_cy+28}" {FONTFAM} font-size="15" '
+        f'<text x="{lg_cx}" y="{lg_cy+18}" {FONTFAM} font-size="14" '
         f'font-weight="800" fill="{INK}" letter-spacing="0.6">KEY ANATOMY</text>'
     )
-    lg_unit = 56
-    lg_y = lg_cy + 50
+    lg_unit = 44
+    lg_y = lg_cy + 30
     lg_font_main = max(11, int(round(lg_unit * 0.42)))
     lg_font_hold = max(7, int(round(lg_unit * 0.26)))
     # Three sample keys spread across lower-centre of anatomy strip
-    key_spacing = 180   # horizontal gap between key x-origins
+    key_spacing = 160   # horizontal gap between key x-origins
     total_keys_w = 2 * key_spacing + lg_unit
     anat_left = lg_cx + (usable_w - total_keys_w) / 2
     lg_x = [
@@ -1531,7 +1587,7 @@ def build():
     bot_label_y = lg_y + lg_unit - 4
     parts.append(draw_key(lg_x[0], lg_y, lg_unit, lg_unit, "A", "Ctrl", "Wk",
                           True, False, None, lg_font_main, lg_font_hold,
-                          spanish="Ã", double_hold="G+W"))
+                          spanish="Ã", double_hold="_TEXT_WORK"))
     parts.append(f'<text x="{lg_x[0]+lg_unit+label_gap:.1f}" y="{label_y:.1f}" text-anchor="start" {FONTFAM} font-size="10.5" font-weight="600" fill="{label_color}">hold</text>')
     parts.append(f'<text x="{lg_x[0]-label_gap:.1f}" y="{label_y:.1f}" text-anchor="end" {FONTFAM} font-size="10.5" font-weight="600" fill="{label_color}">double-tap</text>')
     parts.append(f'<text x="{lg_x[0]-label_gap:.1f}" y="{bot_label_y:.1f}" text-anchor="end" {FONTFAM} font-size="10.5" font-weight="600" fill="{label_color}">dbl-hold</text>')
@@ -1541,7 +1597,7 @@ def build():
     parts.append(draw_key(lg_x[2], lg_y, lg_unit, lg_unit, "", "", "",
                           True, False, None, lg_font_main, lg_font_hold,
                           secondary=True))
-    caption_y = lg_y + lg_unit + 18
+    caption_y = lg_y + lg_unit + 11
     captions = ["key anatomy", "chord member", "chord cue"]
     for i, text in enumerate(captions):
         parts.append(f'<text x="{lg_x[i]+lg_unit/2:.1f}" y="{caption_y:.1f}" text-anchor="middle" {FONTFAM} font-size="11" font-weight="600" fill="{label_color}" letter-spacing="0.3">{esc(text)}</text>')
