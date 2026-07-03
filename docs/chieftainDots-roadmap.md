@@ -75,7 +75,10 @@ before commit because Trello uses plain `c` to archive hovered cards.
 For the R29 four-anchor trial, keep these Function clipboard shortcuts during
 physical testing. If R29 passes and Control on `A/;` makes plain `Ctrl+X/C/V`
 comfortable enough, explicitly review removing the duplicate `Function + X/C/V`
-shortcuts as one small reversible cleanup slice.
+shortcuts as one small reversible cleanup slice. New physical concern:
+`A`-Ctrl plus same-hand `V` can resolve as typed `av`, so the next requirement
+to explore is making Ctrl in its current `A/;` location more eager for
+intentional shortcuts without making ordinary `A` typing unsafe.
 
 Printable guide renderer note: the generated card data reflects the low-byte RGB
 strategy where command layers repeat keycodes so the keymap-driven RGB inspector
@@ -140,6 +143,20 @@ double-tap-hold either Control anchor could send `Ctrl+A` for Select All, but
 this has the same gesture tension and is especially risky on high-frequency `A`,
 where a text-output gesture and a modifier/control gesture would share the same
 timing family.
+
+Additional R29 editing requirement: make Control in its current `A/;` location
+more eager when the user is intentionally doing shortcuts. In use, pressing `A`
+as Ctrl and then `V` can produce `av`, which means the home-row Ctrl resolved as
+a tap during a same-hand shortcut. The first requirement is not to move Ctrl or
+remove Function clipboard, but to explore whether QMK timing policy can make
+Ctrl choose hold more readily for shortcut gestures. Candidate directions:
+per-key permissive hold for Ctrl mod-taps, a Ctrl-specific tapping term, or a
+narrow same-hand shortcut exception for high-value editing keys such as
+`A/X/C/V`. Acceptance test: normal typing must not produce accidental Ctrl
+shortcuts, especially on common `a` rolls, while `Ctrl+V` from the left hand
+should stop leaking `a`. Keep this reversible and compile-measured; do not
+remove `Function + X/C/V` until the current Ctrl location proves reliable in
+physical use.
 
 Hardware diagnostic note, 2026-07-01: plugging USB into the right half made the
 keyboard behave as if right/left positions were swapped: physical `F` produced
