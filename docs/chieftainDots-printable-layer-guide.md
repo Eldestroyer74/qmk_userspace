@@ -27,7 +27,8 @@ Middle thumbs           = Shift
 Hold Base Space / Enter = Alt
 Hold either lower corner = Spanish
 Numbers uses Space/Symbols and Enter/Symbols on the inner thumbs.
-Double tap-hold A/S/V   = Select All / Snip / Paste
+Double tap-hold A/V     = Select All / Paste
+Function + S / Z        = Snip / Undo
 Double tap-hold Shift   = Enter / Submit
 ```
 
@@ -131,7 +132,7 @@ Specials:
   (`Alt+Shift`).
 - middle thumbs: Shift.
 - Base Space and Enter: tap normally, hold for Alt.
-- double tap-hold `A/S/V`: Select All, Snip, Paste.
+- double tap-hold `A/V`: Select All, Paste.
 - double tap-hold either Shift thumb: Enter / Submit.
 - right outer thumb: Menu / context menu.
 
@@ -289,13 +290,14 @@ Function / System: hold `F` or `J`.
 
 ```text
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
----      ---    ---    ---    ---    ---        ---    F4     F5     F6     F11    COLE
-BOOT     ---    ---    ---    ---    ---        ---    F1     F2     F3     F12    BOOT
+---      ---    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
+BOOT     UNDO   ---    ---    ---    ---        ---    F1     F2     F3     F12    BOOT
                          SNAP   SHIFT  SPC/ALT     ENT/ALT SHIFT MENU
 ```
 
-Function is back to function/system keys only during the current mnemonic
-editing trial. `COLE` toggles Colemak. `BOOT` enters the bootloader from normal
+Function keeps a small editing/utility exception set for commands that need a
+fast one-hand path. `Function + S` sends Windows screen snip. `Function + Z`
+sends Undo. `COLE` toggles Colemak. `BOOT` enters the bootloader from normal
 firmware and is placed behind Function on the same lower-corner positions used
 by Spanish compose on Base/Colemak.
 
@@ -304,7 +306,6 @@ tap.
 
 ```text
 A = Select All
-S = Snip
 V = Paste
 H = Home
 W = Work
@@ -375,7 +376,8 @@ After flashing, test:
 - Accidental Alt+Shift and Alt+Space should not switch language or open the
   host window menu.
 - Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
-- Double-tap-hold `A/S/V` = Select All / Snip / Paste.
+- Double-tap-hold `A/V` = Select All / Paste.
+- `Function + S/Z` = Snip / Undo.
 - Double-tap-hold either Shift thumb = Enter / Submit.
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.

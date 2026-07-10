@@ -54,7 +54,7 @@ def K(tap, hold="", double="", spanish="", dhold=""): return (tap, hold, double,
 BASE = [
     [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("E","","","Ã‰","_TEXT_EMAIL"), K("R"), K("T"),
      K("Y"), K("U","","","Ãš"), K("I","","","Ã"), K("O","","","Ã“"), K("P","","","","_TEXT_PHONE"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("S","Sym","","","_KEY_SNIP"), K("D","Num"), K("F","Fn"), K("G"),
+    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("S","Sym"), K("D","Num"), K("F","Fn"), K("G"),
      K("H","","","","_TEXT_HOME"), K("J","Fn"), K("K","Num"), K("L","Sym"), K(";","Ctrl","","Ãœ"), K("'")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
      K("N","","","Ã‘","_TEXT_NAME"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
@@ -64,7 +64,7 @@ BASE = [
 COLEMAK = [
     [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("F","","","Ã‰"), K("P","","","","_TEXT_PHONE"), K("G"),
      K("J"), K("L","","","Ãš"), K("U","","","Ã"), K("Y","","","Ã“"), K("'"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("R","Sym"), K("S","Num","","","_KEY_SNIP"), K("T","Fn"), K("D"),
+    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("R","Sym"), K("S","Num"), K("T","Fn"), K("D"),
      K("H","","","","_TEXT_HOME"), K("N","Fn","","","_TEXT_NAME"), K("E","Num","","","_TEXT_EMAIL"), K("I","Sym"), K("O","Ctrl","","Ãœ"), K(";")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
      K("K","","","Ã‘"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
@@ -142,7 +142,7 @@ STYLE_ICONS = {"_OUTDENT", "_INDENT", "_REORDER_UP", "_REORDER_DN"}
 KEY_ICONS = {"_KEY_TAB", "_KEY_MEDIA", "_KEY_CALC", "_KEY_GUI",
              "_KEY_SPACE", "_KEY_MENU", "_KEY_BSP", "_KEY_DEL",
              "_KEY_ENTER", "_KEY_ALT", "_KEY_SYM", "_KEY_GLOBE",
-             "_KEY_SNIP", "_KEY_CUT", "_KEY_COPY", "_KEY_PASTE"}
+             "_KEY_SNIP", "_KEY_UNDO", "_KEY_CUT", "_KEY_COPY", "_KEY_PASTE"}
 # Nav 4-tier: word-jump (fast-forward rotated) + extremes (step-forward rotated)
 WORD_ICONS    = {"_WORD_LEFT", "_WORD_RIGHT", "_WORD_UP", "_WORD_DOWN"}
 EXTREME_ICONS = {"_EXTREME_LEFT", "_EXTREME_RIGHT", "_EXTREME_UP", "_EXTREME_DOWN"}
@@ -214,6 +214,7 @@ ICON_TUNING = {
     "_KEY_SYM":     (0.56, 0.36),   # </> â€” wide-ish, give it room
     "_KEY_GLOBE":   (0.56, 0.36),   # globe â€” Spanish-compose anchor
     "_KEY_SNIP":    (0.54, 0.36),   # camera â€” Windows screen snip
+    "_KEY_UNDO":    (0.54, 0.36),   # undo-alt â€” Windows undo
     "_KEY_CUT":     (0.54, 0.36),   # scissors
     "_KEY_COPY":    (0.52, 0.36),   # overlapping pages
     "_KEY_PASTE":   (0.50, 0.36),   # clipboard
@@ -243,9 +244,9 @@ TEXT = [
 FUNCTION = [
     [K("_KEY_TAB"), K("F1"), K("F2"), K("F3"), K("F4"), K("F5"),
      K("F6"), K("F7"), K("F8"), K("F9"), K("F10"), K("_KEY_DEL")],
-    [K(""), K(""), K(""), K(""), K(""), K(""),
+    [K(""), K(""), K("_KEY_SNIP"), K(""), K(""), K(""),
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
-    [K("BOOT"), K(""), K(""), K(""), K(""), K(""),
+    [K("BOOT"), K("_KEY_UNDO"), K(""), K(""), K(""), K(""),
      K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("BOOT")],
     [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
@@ -636,6 +637,7 @@ def _load_fa_glyphs():
         "_KEY_SYM":     0xf121,  # code </>
         "_KEY_GLOBE":   0xf7a2,  # globe-europe â€” Spanish-compose anchor
         "_KEY_SNIP":    0xf030,  # camera â€” Windows screen snip
+        "_KEY_UNDO":    0xf2ea,  # undo-alt
         "_KEY_CUT":     0xf0c4,  # cut / scissors
         "_KEY_COPY":    0xf0c5,  # copy
         "_KEY_PASTE":   0xf0ea,  # paste / clipboard

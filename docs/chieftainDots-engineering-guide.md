@@ -16,7 +16,7 @@ the Unicorne build recipe is `keymaps/unicorne.json`.
   change is explicitly about Unicorne, board-specific wiring/OLED/RGB, or the
   user asks to bring the Unicorne port back into the active loop.
 - Ask before compiling or flashing; only one QMK build should run at a time.
-- Last recorded Corne build: 28270 / 28672 bytes, 402 bytes free.
+- Last recorded Corne build: 28248 / 28672 bytes, 424 bytes free.
 - Last recorded Boardsource Unicorne build: ELF text 65248 bytes; UF2 produced.
 - Future keyboard support starts from a fresh current-model recipe and wrapper,
   not old Filterpaper recipes.

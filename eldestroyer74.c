@@ -664,8 +664,6 @@ static uint16_t text_action_for_mnemonic(uint16_t keycode) {
 	switch (keycode) {
 		case KC_A:
 			return C(KC_A);
-		case KC_S:
-			return LSG(KC_S);
 		case KC_V:
 			return C(KC_V);
 		case KC_LSFT:
