@@ -25,17 +25,18 @@
 // fallthrough so behavior and RGB stay aligned through the ordinary
 // keymap-driven path. Keep this repetition here instead of adding RGB
 // special cases for inherited thumb keys.
-#define THUMB_SPACE_SHIFT LSFT_T(KC_SPC)
-#define THUMB_ENTER_SHIFT RSFT_T(KC_ENT)
-#define FUNC_ENTER_SHIFT LSFT_T(KC_ENT)
+#define THUMB_LSHIFT KC_LSFT
+#define THUMB_RSHIFT KC_RSFT
+#define THUMB_SPACE_ALT LALT_T(KC_SPC)
+#define THUMB_ENTER_ALT RALT_T(KC_ENT)
 #define NUM_SPACE_SYMBOLS LT(SYM, KC_SPC)
 #define SCREEN_SNIP LSG(KC_S)
 #define CLIP_CUT C(KC_X)
 #define CLIP_COPY C(KC_C)
 #define CLIP_PASTE C(KC_V)
 #define NUM_ENTER_SYMBOLS LT(SYM, KC_ENT)
-#define RIGHT_THUMBS THUMB_ENTER_SHIFT, KC_RALT, KC_APP
-#define NUM_RIGHT_THUMBS NUM_ENTER_SYMBOLS, KC_RALT, KC_APP
+#define RIGHT_THUMBS THUMB_ENTER_ALT, THUMB_RSHIFT, KC_APP
+#define NUM_RIGHT_THUMBS NUM_ENTER_SYMBOLS, THUMB_RSHIFT, KC_APP
 
 // Base and Colemak alpha layers. corne.json applies HRM(...) to these layers.
 #define _BASE \
@@ -45,8 +46,8 @@
 	CAPS_LONG_DANCE, KC_A, KC_S, KC_D,   KC_F,    KC_G,        KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,   \
 /* Bottom: ES     Z      X      C      V      B        N      M      ,      .      /      ES   */\
 	SPANISH_LEFT_DANCE, KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,        KC_N,    KC_M,    KC_COMM, KC_DOT,  SLASH_PIPE, SPANISH_RIGHT_DANCE, \
-/* Thumbs:                         GUI    ALT    SPC/SFT  ENT/SFT RALT   MENU */\
-	BASE_GUI_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, THUMB_ENTER_SHIFT, KC_RALT, KC_APP
+/* Thumbs:                         GUI    SHIFT  SPC/ALT  ENT/ALT SHIFT MENU */\
+	BASE_GUI_SNAP, THUMB_LSHIFT, THUMB_SPACE_ALT, THUMB_ENTER_ALT, THUMB_RSHIFT, KC_APP
 
 #define _COLE \
 /* Top:    TAB    Q      W      F      P      G        J      L      U      Y      '      BSPC */\
@@ -66,8 +67,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_4,    KC_5,    KC_6,    KC_EQL,  XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    1      2/,/<  3/./>  //\//| ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_1,    NUM_TWO_COMMA_LT, NUM_THREE_DOT_GT, SLASH_PIPE, XXXXXXX, \
-/* Thumbs:                         NAV    ALT    SPC/SYM  ENT/SYM RALT   MENU */\
-	                            NUM_GUI_NAV_SNAP, DELAYED_LALT, NUM_SPACE_SYMBOLS, NUM_RIGHT_THUMBS
+/* Thumbs:                         NAV    SHIFT  SPC/SYM  ENT/SYM SHIFT MENU */\
+	                            NUM_GUI_NAV_SNAP, THUMB_LSHIFT, NUM_SPACE_SYMBOLS, NUM_RIGHT_THUMBS
 
 // D/K + left GUI thumb navigation: movement only.
 #define _NAV \
@@ -77,8 +78,8 @@
 	XXXXXXX, KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, NAV_LEFT_DANCE, NAV_DOWN_DANCE, NAV_RIGHT_DANCE, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
-	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
+/* Thumbs:                         trans  SHIFT  SPC/ALT  ENT/ALT SHIFT MENU */\
+	                            _______, THUMB_LSHIFT, THUMB_SPACE_ALT, RIGHT_THUMBS
 
 // Ctrl+GUI Snap path: firmware owns GUI as one-shot Win+Arrow taps.
 #define _SNP \
@@ -88,7 +89,7 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ---    trans    ENTER  RALT   MENU */\
+/* Thumbs:                         trans  ---    trans    ENT/ALT SHIFT MENU */\
 	                            _______, XXXXXXX, _______,     RIGHT_THUMBS
 
 // Symbols + left GUI thumb Styles: PowerPoint/Word structure shortcuts.
@@ -99,8 +100,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, A(S(KC_LEFT)), A(S(KC_DOWN)), A(S(KC_RGHT)), XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
-	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
+/* Thumbs:                         trans  SHIFT  SPC/ALT  ENT/ALT SHIFT MENU */\
+	                            _______, THUMB_LSHIFT, THUMB_SPACE_ALT, RIGHT_THUMBS
 
 #define _SYMB \
 /* Top:    ~      !      @      #      $      %        ^      &      *      (/[/{  )/]/}  _    */\
@@ -109,18 +110,18 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_DLR,  KC_PERC, KC_CIRC, KC_PLUS, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    !      @      #      //\//| ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, SLASH_PIPE, XXXXXXX, \
-/* Thumbs:                         MS     ALT    SHIFT    ENTER  RALT   MENU */\
-	                            SYM_GUI_EXT_SNAP, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
+/* Thumbs:                         MS     SHIFT  SPC/ALT  ENT/ALT SHIFT MENU */\
+	                            SYM_GUI_EXT_SNAP, THUMB_LSHIFT, THUMB_SPACE_ALT, RIGHT_THUMBS
 // Function keys mirror the Numbers layer's top row and right-hand pad.
 #define _SYST \
 /* Top:    TAB    F1     F2     F3     F4     F5       F6     F7     F8     F9     F10    DEL */\
 	TAB_ESC_CLOSE, KC_F1, KC_F2, KC_F3, KC_F4,   KC_F5,       KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_DEL,  \
-/* Home:   ---    ---    SNIP   ---    ---    ---      F11    F4     F5     F6     ---    COLE */\
-	XXXXXXX, XXXXXXX, SCREEN_SNIP, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
-/* Bottom: ---    ---    CUT    COPY   PASTE  ---      ---    F1     F2     F3     F12    --- */\
-	XXXXXXX, XXXXXXX, CLIP_CUT, CLIP_COPY, CLIP_PASTE, XXXXXXX, XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  XXXXXXX, \
-/* Thumbs:                         SNAP   ALT    ENT/SFT  ENTER  RALT   MENU */\
-	                            SYS_GUI_MED_SNAP, DELAYED_LALT, FUNC_ENTER_SHIFT, RIGHT_THUMBS
+/* Home:   ---    ---    ---    ---    ---    ---      F11    F4     F5     F6     ---    COLE */\
+	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
+/* Bottom: BOOT   ---    ---    ---    ---    ---      ---    F1     F2     F3     F12    BOOT */\
+	QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  QK_BOOT, \
+/* Thumbs:                         SNAP   SHIFT  SPC/ALT  ENT/ALT SHIFT MENU */\
+	                            SYS_GUI_MED_SNAP, THUMB_LSHIFT, THUMB_SPACE_ALT, RIGHT_THUMBS
 
 // Control + left GUI thumb Media: plain keys only while RAM is tight.
 #define _MEDI \
@@ -130,8 +131,8 @@
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, C(S(KC_M)), KC_VOLD, KC_MPLY, XXXXXXX, XXXXXXX, \
 /* Bottom: ---    ---    ---    ---    ---    ---      ---    ---    ---    ---    ---    ---  */\
 	XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, \
-/* Thumbs:                         trans  ALT    SHIFT    ENTER  RALT   MENU */\
-	                            _______, DELAYED_LALT, THUMB_SPACE_SHIFT, RIGHT_THUMBS
+/* Thumbs:                         trans  SHIFT  SPC/ALT  ENT/ALT SHIFT MENU */\
+	                            _______, THUMB_LSHIFT, THUMB_SPACE_ALT, RIGHT_THUMBS
 
 // Spanish is a transparent character overlay: only Spanish-specific keys
 // override Base/Colemak; unrelated keys fall through so mistakes still teach.
@@ -162,7 +163,7 @@
 
 
 
-// Current ChieftainDots uses corne.json and LAYOUT_crkbd_w.
-// Future keyboard ports should add a fresh wrapper from the current layer model
-// instead of carrying forward stale inherited recipes.
+// ChieftainDots keyboard recipes use small board-named wrappers so each target
+// can adapt hardware shape without rewriting the shared layer model.
 #define LAYOUT_crkbd_w(...) LAYOUT_split_3x6_3(__VA_ARGS__)
+#define LAYOUT_unicorne_w(...) LAYOUT_split_3x6_3(__VA_ARGS__)

@@ -1,16 +1,23 @@
 # ChieftainDots Engineering Guide
 
-ChieftainDots is the Corne keyboard project. The active implementation lives in
-the `eldestroyer74` QMK userspace, and the Corne build recipe is
-`keymaps/corne.json`.
+ChieftainDots is the Corne keyboard project, with a compiled Boardsource
+Unicorne port target under trial. The active implementation lives in the
+`eldestroyer74` QMK userspace. The Corne build recipe is `keymaps/corne.json`;
+the Unicorne build recipe is `keymaps/unicorne.json`.
 
 ## Current Summary
 
 - Personal userspace is the source of truth; upstream QMK is the build
   dependency.
-- Canonical target: `qmk compile users/eldestroyer74/keymaps/corne.json`.
+- Canonical Corne target: `qmk compile users/eldestroyer74/keymaps/corne.json`.
+- Boardsource Unicorne target:
+  `qmk compile users/eldestroyer74/keymaps/unicorne.json`.
+- Current default verification target is Corne only. Compile Unicorne when the
+  change is explicitly about Unicorne, board-specific wiring/OLED/RGB, or the
+  user asks to bring the Unicorne port back into the active loop.
 - Ask before compiling or flashing; only one QMK build should run at a time.
-- Last recorded successful build: 22392 / 28672 bytes, 6280 bytes free.
+- Last recorded Corne build: 28270 / 28672 bytes, 402 bytes free.
+- Last recorded Boardsource Unicorne build: ELF text 65248 bytes; UF2 produced.
 - Future keyboard support starts from a fresh current-model recipe and wrapper,
   not old Filterpaper recipes.
 
@@ -54,6 +61,12 @@ Then compile the current baseline:
 qmk compile users/eldestroyer74/keymaps/corne.json
 ```
 
+For the Boardsource Unicorne port target, only when that target is in scope:
+
+```bash
+qmk compile users/eldestroyer74/keymaps/unicorne.json
+```
+
 Ask before compiling. Only one QMK build should run at a time; if a QMK MSYS
 compile is already running, wait for that build to finish before starting
 another.
@@ -64,6 +77,12 @@ QMK should keep writing its normal output file:
 
 ```text
 C:\Users\RicardoEscalon\Documents\qmk_firmware\crkbd_rev1_eldestroyer74.hex
+```
+
+The Boardsource Unicorne target writes:
+
+```text
+C:\Users\RicardoEscalon\Documents\qmk_firmware\boardsource_unicorne_eldestroyer74.uf2
 ```
 
 After an accepted source commit, copy that file into the local ignored
@@ -260,6 +279,12 @@ Flash each half while USB is plugged directly into that half. Press the reset
 button near the screen when QMK waits for the bootloader. This matters for RGB
 and OLED behavior because each half must know whether it is left or right.
 
+QMK Tools/QMK Toolbox can also flash the already-compiled hex quickly. The
+2026-07-09 `QK_BOOT` test flashed both Corne halves with QMK Tools faster than
+the command-line flash flow, then confirmed the running-firmware bootloader
+shortcut worked. Keep compiling from the canonical userspace recipe first so
+the flashed file is known-good.
+
 The previous `C:\Program Files\QMK_MSYS` path caused AVR LTO linking to fail
 because the toolchain mishandled the space in `Program Files`.
 
@@ -274,6 +299,10 @@ because the toolchain mishandled the space in `Program Files`.
   firing the left-side Tab/Esc/Close tap dance, treat that as wrong or stale
   right-half handedness first. Re-flash the right half with `dfu-split-right`
   before changing layout code.
+- The physical ChieftainDots Corne has a known left-side RGB fault affecting
+  the left-side lower columns. If a key action works there but its RGB color is
+  missing, compare against the right side and Caps all-red before changing RGB
+  code.
 - Flow Tap is the preferred first experiment for accidental home-row tap-hold
   activation during normal typing flow. QMK documents `FLOW_TAP_TERM 150` as a
   starting point; ChieftainDots should trial it before making broader

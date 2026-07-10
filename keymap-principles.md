@@ -45,6 +45,12 @@ Thumb keys should follow a memorable bottom-row model. The intended direction is
 Any change to thumb keys must explain whether it prioritizes keycap familiarity,
 typing comfort, or feature access.
 
+When thumb timing becomes the main source of errors, prefer making the most
+frequent thumb taps boring again. Space and Enter may be less suitable for
+tap-hold modifiers than less-frequent thumb positions; a future trial may move
+Shift to plain middle-thumb keys and move Alt to Space/Enter holds if that makes
+ordinary typing calmer.
+
 ### Support Movement And Selection
 
 Navigation should make it easy to move and select by character, word, line, and

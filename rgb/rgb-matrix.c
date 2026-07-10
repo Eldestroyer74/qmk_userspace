@@ -125,6 +125,10 @@ static bool is_delete_key(uint16_t keycode) {
 	return keycode == KC_DEL;
 }
 
+static bool is_bootloader_key(uint16_t keycode) {
+	return keycode == QK_BOOT;
+}
+
 static bool is_colemak_toggle_key(uint16_t keycode) {
 	return keycode == TG(CMK);
 }
@@ -173,6 +177,8 @@ static RGB rgb_for_position(uint8_t layer, uint8_t row, uint8_t col) {
 		rgb = rgb_for_layer(layer);
 		if (layer != NUM && layer != SYM && is_delete_key(keycode)) {
 			rgb = (RGB){RGB_CAPS};
+		} else if (is_bootloader_key(keycode)) {
+			rgb = (RGB){RGB_BOOT};
 		} else if (is_colemak_toggle_key(keycode)) {
 			rgb = (RGB){RGB_CMK};
 		}

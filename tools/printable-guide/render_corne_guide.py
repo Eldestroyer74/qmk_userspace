@@ -54,21 +54,21 @@ def K(tap, hold="", double="", spanish="", dhold=""): return (tap, hold, double,
 BASE = [
     [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("E","","","Ã‰","_TEXT_EMAIL"), K("R"), K("T"),
      K("Y"), K("U","","","Ãš"), K("I","","","Ã"), K("O","","","Ã“"), K("P","","","","_TEXT_PHONE"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Ctrl","","Ã"), K("S","Sym"), K("D","Num"), K("F","Fn"), K("G"),
+    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("S","Sym","","","_KEY_SNIP"), K("D","Num"), K("F","Fn"), K("G"),
      K("H","","","","_TEXT_HOME"), K("J","Fn"), K("K","Num"), K("L","Sym"), K(";","Ctrl","","Ãœ"), K("'")],
-    [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V"), K("B"),
+    [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
      K("N","","","Ã‘","_TEXT_NAME"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
-    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("Shift","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift","","","","Ent"), K("_KEY_MENU")],
 ]
 
 COLEMAK = [
     [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("F","","","Ã‰"), K("P","","","","_TEXT_PHONE"), K("G"),
      K("J"), K("L","","","Ãš"), K("U","","","Ã"), K("Y","","","Ã“"), K("'"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Ctrl","","Ã"), K("R","Sym"), K("S","Num"), K("T","Fn"), K("D"),
+    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("R","Sym"), K("S","Num","","","_KEY_SNIP"), K("T","Fn"), K("D"),
      K("H","","","","_TEXT_HOME"), K("N","Fn","","","_TEXT_NAME"), K("E","Num","","","_TEXT_EMAIL"), K("I","Sym"), K("O","Ctrl","","Ãœ"), K(";")],
-    [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V"), K("B"),
+    [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
      K("K","","","Ã‘"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
-    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("Shift","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift","","","","Ent"), K("_KEY_MENU")],
 ]
 
 # SYMBOLS â€” shifted-number top row + right-hand shifted numpad echoes.
@@ -82,7 +82,7 @@ SYMBOLS = [
      K(""), K("$"), K("%"), K("^"), K("+"), K("")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("!"), K("@"), K("#"), K(""), K("")],
-    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 # NUMBERS â€” full top-row digits, right-hand numpad below.
@@ -96,8 +96,8 @@ NUMBERS = [
      K(""), K("4"), K("5"), K("6"), K("="), K("")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("1"), K("2", ",", "<"), K("3", ".", ">"), K("/"), K("")],
-    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sym"),
-     K("_KEY_ENTER","Sym"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Sym"),
+     K("_KEY_ENTER","Sym"), K("Shift"), K("_KEY_MENU")],
 ]
 
 # NAV folds the old Extremes + Snap sub-layers into faint annotations on the
@@ -114,7 +114,7 @@ NAV = [
      K("_ARROW_DOWN","_ARROW_DOWN","_WORD_DOWN","","_EXTREME_DOWN"),
      K("_ARROW_RIGHT","_ARROW_RIGHT","_WORD_RIGHT","","_EXTREME_RIGHT"), K(""), K("")],
     [K("")]*12,
-    [K("â–½"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("â–½"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 # MSSTYLES â€” Alt+Shift+arrows (PowerPoint paragraph/list style movement).
@@ -125,7 +125,7 @@ MSSTYLES = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_OUTDENT"), K("_REORDER_DN"), K("_INDENT"), K(""), K("")],
     [K("")]*12,
-    [K(""), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K(""), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 SNAP_ICONS = {"_SNAP_MAX", "_SNAP_MIN", "_SNAP_LEFT", "_SNAP_RIGHT"}
@@ -228,7 +228,7 @@ MEDIA = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_MEDIA_MUTE"), K("_MEDIA_VOLDN"), K("_MEDIA_PLAY"), K(""), K("")],
     [K("")]*12,
-    [K("â–½"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("â–½"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 TEXT = [
@@ -243,18 +243,18 @@ TEXT = [
 FUNCTION = [
     [K("_KEY_TAB"), K("F1"), K("F2"), K("F3"), K("F4"), K("F5"),
      K("F6"), K("F7"), K("F8"), K("F9"), K("F10"), K("_KEY_DEL")],
-    [K(""), K(""), K("_KEY_SNIP"), K(""), K(""), K(""),
+    [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
-    [K(""), K(""), K("_KEY_CUT"), K("_KEY_COPY"), K("_KEY_PASTE"), K(""),
-     K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("")],
-    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_ENTER","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("BOOT"), K(""), K(""), K(""), K(""), K(""),
+     K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("BOOT")],
+    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 CTRL = [
     [K("")]*12,
     [K("")]*12,
     [K("")]*12,
-    [K("_KEY_GUI"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 SNAP = [
@@ -263,7 +263,7 @@ SNAP = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_SNAP_LEFT"), K("_SNAP_MIN"), K("_SNAP_RIGHT"), K(""), K("")],
     [K("")]*12,
-    [K("â–½"), K("_KEY_ALT"), K("_KEY_SPACE","Sft"), K("_KEY_ENTER","Sft"), K("_KEY_ALT"), K("_KEY_MENU")],
+    [K("â–½"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 # ACCESS lists every key that gets highlighted on a layer card. Most entries
@@ -1206,10 +1206,10 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
         if double or spanish or double_hold:
             return False
         repeated = {
-            (3, 1): ("_KEY_ALT", ""),
-            (3, 2): ("_KEY_SPACE", "Sft"),
-            (3, 3): ("_KEY_ENTER", "Sft"),
-            (3, 4): ("_KEY_ALT", ""),
+            (3, 1): ("Shift", ""),
+            (3, 2): ("_KEY_SPACE", "Alt"),
+            (3, 3): ("_KEY_ENTER", "Alt"),
+            (3, 4): ("Shift", ""),
             (3, 5): ("_KEY_MENU", ""),
         }
         return repeated.get((r, c)) == (tap, hold)

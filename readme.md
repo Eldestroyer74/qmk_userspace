@@ -22,9 +22,12 @@ map lives in [the printable layer guide](docs/chieftainDots-printable-layer-guid
 
 ## Current State
 
-- Active keyboard: `crkbd/rev1`.
-- Active recipe: `keymaps/corne.json`.
-- Active layout wrapper: `LAYOUT_crkbd_w`.
+- Primary keyboard: Corne / `crkbd/rev1`.
+- Primary recipe: `keymaps/corne.json`.
+- Primary layout wrapper: `LAYOUT_crkbd_w`.
+- Port target under trial: Boardsource Unicorne / `boardsource/unicorne`.
+- Port recipe: `keymaps/unicorne.json`.
+- Port layout wrapper: `LAYOUT_unicorne_w`.
 - Active layer model: Base/Colemak typing layers plus a local four-anchor
   trial: A/; = Control, S/L = Symbols, D/K = Numbers, F/J = Function. Each
   anchor has one GUI child layer: Media, MS Styles, Navigation, and Snap. RGB is
@@ -61,6 +64,12 @@ Canonical compile:
 qmk compile users/eldestroyer74/keymaps/corne.json
 ```
 
+Boardsource Unicorne compile:
+
+```bash
+qmk compile users/eldestroyer74/keymaps/unicorne.json
+```
+
 Canonical split flash commands:
 
 ```bash
@@ -70,6 +79,10 @@ qmk flash users/eldestroyer74/keymaps/corne.json -bl dfu-split-right
 
 Flash each half with USB plugged directly into that half so QMK writes the
 correct `EE_HANDS` marker.
+
+The Boardsource Unicorne target produces a `.uf2` file. Do not flash it until
+the Unicorne bootloader process and physical OLED/RGB behavior have been
+confirmed.
 
 ## Current Feature Shape
 

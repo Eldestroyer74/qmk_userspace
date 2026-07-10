@@ -1,0 +1,17 @@
+{
+	"keyboard": "boardsource/unicorne",
+	"keymap": "eldestroyer74",
+	"layout": "LAYOUT_unicorne_w",
+	"layers": [
+		[ "HRM(_BASE)" ],
+		[ "HRM(_COLE)" ],
+		[ "_NUMB" ],
+		[ "_SYMB" ],
+		[ "_SYST" ],
+		[ "_NAV" ],
+		[ "_EXTR" ],
+		[ "_MEDI" ],
+		[ "_SNP" ],
+		[ "_SPAN" ]
+	]
+}

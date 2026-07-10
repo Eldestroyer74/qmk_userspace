@@ -45,6 +45,7 @@ endif
 # OLED
 ifeq ($(strip $(OLED_ENABLE)), yes)
 	ifeq ($(strip $(KEYBOARD)), crkbd/rev1)
+		OPT_DEFS += -DCHIEFTAINDOTS_CUSTOM_OLED
 		ifeq ($(strip $(OLED)), LUNA FELIX)
 			OPT_DEFS += -D${OLED}
 			SRC += oled-icons.c oled-luna.c

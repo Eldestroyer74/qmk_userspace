@@ -24,10 +24,23 @@ static uint_fast16_t tap_timer = 0;
 #	define IS_TYPING() (timer_elapsed(tap_timer) < TAPPING_TERM * 1.3)
 #endif
 
+#define EAGER_CTRL_TAPPING_TERM 180
+
+static bool is_eager_ctrl_tap(uint16_t keycode) {
+	if (!IS_QK_MOD_TAP(keycode)) {
+		return false;
+	}
+
+	return MODTAP_BIT(keycode) & MOD_MASK_CTRL;
+}
 
 #ifdef TAPPING_TERM_PER_KEY
-// Increase tapping term in between short key presses to avoid false trigger.
+// Keep timing narrow for shortcut Ctrl, while preserving the longer typing-flow
+// window for other home-row tap-holds.
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+	if (is_eager_ctrl_tap(keycode)) {
+		return EAGER_CTRL_TAPPING_TERM;
+	}
 	return IS_HOME_ROW() && IS_TYPING() ? TAPPING_TERM * 1.3 : TAPPING_TERM;
 }
 #endif
@@ -49,9 +62,11 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
 
 
 #ifdef PERMISSIVE_HOLD_PER_KEY
-// Select Shift mod tap immediately when another key is pressed and released.
+// Eager Ctrl targets same-hand shortcuts such as Ctrl+V. Shift is plain on the
+// middle thumbs in the current thumb-remap trial, so Space/Enter no longer need
+// eager Shift tap-hold timing.
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-	return MODTAP_BIT(keycode) & MOD_MASK_SHIFT && !IS_TYPING() ? true : false;
+	return MODTAP_BIT(keycode) & MOD_MASK_CTRL;
 }
 #endif
 
@@ -120,10 +135,6 @@ static char auto_caps_context_word[9];
 static uint8_t auto_caps_context_word_len;
 static bool auto_caps_context_word_safe = true;
 #endif
-static bool delayed_alt_pending;
-static bool delayed_alt_registered;
-static bool delayed_alt_blocked;
-static bool delayed_alt_space_blocked;
 
 static uint16_t base_tap_keycode(uint16_t keycode) {
 	if (IS_QK_LAYER_TAP(keycode)) {
@@ -141,73 +152,12 @@ static bool is_shift_trial_alpha(uint16_t keycode) {
 }
 #endif
 
-static bool is_shift_keycode(uint16_t keycode) {
-	uint16_t tap_key = base_tap_keycode(keycode);
-
-	return keycode == KC_LSFT || keycode == KC_RSFT || keycode == THUMB_SPACE_SHIFT ||
-	       keycode == THUMB_ENTER_SHIFT || tap_key == KC_LSFT || tap_key == KC_RSFT;
-}
-
 static bool has_shift_modifier(void) {
 	uint8_t mods = get_mods() | get_weak_mods();
 #ifndef NO_ACTION_ONESHOT
 	mods |= get_oneshot_mods();
 #endif
 	return mods & MOD_MASK_SHIFT;
-}
-
-static bool is_space_keycode(uint16_t keycode) {
-	return base_tap_keycode(keycode) == KC_SPC;
-}
-
-static void register_delayed_alt(void) {
-	if (!delayed_alt_registered) {
-		register_code(KC_LALT);
-		delayed_alt_registered = true;
-	}
-}
-
-static void unregister_delayed_alt(void) {
-	if (delayed_alt_registered) {
-		unregister_code(KC_LALT);
-	}
-	delayed_alt_registered = false;
-	delayed_alt_pending = false;
-	delayed_alt_blocked = false;
-	delayed_alt_space_blocked = false;
-}
-
-static bool process_delayed_alt(uint16_t keycode, keyrecord_t *record) {
-	if (keycode == DELAYED_LALT) {
-		if (record->event.pressed) {
-			delayed_alt_pending = true;
-			delayed_alt_registered = false;
-			delayed_alt_blocked = false;
-			delayed_alt_space_blocked = false;
-		} else {
-			if (delayed_alt_pending && !delayed_alt_registered && !delayed_alt_blocked) {
-				tap_code(KC_LALT);
-			}
-			unregister_delayed_alt();
-		}
-		return false;
-	}
-
-	if (delayed_alt_pending && !delayed_alt_registered && record->event.pressed && is_space_keycode(keycode)) {
-		delayed_alt_blocked = true;
-		delayed_alt_space_blocked = true;
-		return true;
-	}
-
-	if (delayed_alt_pending && !delayed_alt_registered && record->event.pressed && is_shift_keycode(keycode)) {
-		delayed_alt_blocked = true;
-		return true;
-	}
-
-	if (delayed_alt_pending && !delayed_alt_registered && record->event.pressed && !delayed_alt_space_blocked) {
-		register_delayed_alt();
-	}
-	return true;
 }
 
 static bool process_directional_english_quotes(uint16_t keycode, keyrecord_t *record) {
@@ -477,7 +427,7 @@ static void log_shift_trial(uint16_t keycode, keyrecord_t *record) {
 }
 
 static void log_thumb_shift_trial(uint16_t keycode, keyrecord_t *record) {
-	if (record->event.pressed || (keycode != THUMB_SPACE_SHIFT && keycode != THUMB_ENTER_SHIFT)) {
+	if (record->event.pressed || (keycode != THUMB_LSHIFT && keycode != THUMB_RSHIFT)) {
 		return;
 	}
 
@@ -494,7 +444,7 @@ static void log_space_probe(uint16_t keycode, keyrecord_t *record) {
 	log_session_probe();
 
 	uint16_t tap_key = base_tap_keycode(keycode);
-	if (tap_key != KC_SPC && keycode != THUMB_SPACE_SHIFT) {
+	if (tap_key != KC_SPC) {
 		if (record->event.pressed && get_highest_layer(layer_state) <= CMK && tap_key != KC_NO) {
 			if (space_probe_keys_since_space < UINT8_MAX) {
 				space_probe_keys_since_space++;
@@ -686,6 +636,8 @@ static uint16_t text_mnemonic_timer;
 static uint16_t text_mnemonic_pending_key = KC_NO;
 static uint16_t text_mnemonic_pending_timer;
 static const char *text_mnemonic_pending_stub;
+static uint16_t text_mnemonic_pending_action;
+static bool text_mnemonic_pending_erase;
 static bool text_mnemonic_pending_sent;
 
 static const char *text_stub_for_mnemonic(uint16_t keycode) {
@@ -706,6 +658,25 @@ static const char *text_stub_for_mnemonic(uint16_t keycode) {
 			return TEXT_STUB_NAME;
 	}
 	return NULL;
+}
+
+static uint16_t text_action_for_mnemonic(uint16_t keycode) {
+	switch (keycode) {
+		case KC_A:
+			return C(KC_A);
+		case KC_S:
+			return LSG(KC_S);
+		case KC_V:
+			return C(KC_V);
+		case KC_LSFT:
+		case KC_RSFT:
+			return KC_ENT;
+	}
+	return KC_NO;
+}
+
+static bool should_erase_text_mnemonic_trigger(uint16_t keycode) {
+	return keycode != KC_LSFT && keycode != KC_RSFT;
 }
 
 static bool process_text_mnemonic(uint16_t keycode, keyrecord_t *record) {
@@ -732,7 +703,8 @@ static bool process_text_mnemonic(uint16_t keycode, keyrecord_t *record) {
 	}
 
 	const char *stub = text_stub_for_mnemonic(tap_key);
-	if (!stub) {
+	uint16_t action = text_action_for_mnemonic(tap_key);
+	if (!stub && action == KC_NO) {
 		text_mnemonic_key = KC_NO;
 		return true;
 	}
@@ -742,6 +714,8 @@ static bool process_text_mnemonic(uint16_t keycode, keyrecord_t *record) {
 		text_mnemonic_pending_key = tap_key;
 		text_mnemonic_pending_timer = timer_read();
 		text_mnemonic_pending_stub = stub;
+		text_mnemonic_pending_action = action;
+		text_mnemonic_pending_erase = should_erase_text_mnemonic_trigger(tap_key);
 		text_mnemonic_pending_sent = false;
 		return false;
 	}
@@ -758,8 +732,14 @@ void matrix_scan_user(void) {
 		goto space_probe_scan;
 	}
 
-	tap_code(KC_BSPC);
-	send_string_with_delay(text_mnemonic_pending_stub, 0);
+	if (text_mnemonic_pending_erase) {
+		tap_code(KC_BSPC);
+	}
+	if (text_mnemonic_pending_stub) {
+		send_string_with_delay(text_mnemonic_pending_stub, 0);
+	} else {
+		tap_code16(text_mnemonic_pending_action);
+	}
 	text_mnemonic_pending_sent = true;
 
 space_probe_scan:
@@ -769,7 +749,7 @@ space_probe_scan:
 		space_probe_long_reported = true;
 		uprintf("sp ms=%lu e=h kc=%u d=%u m=%u l=%u\n",
 		        log_ms(),
-		        THUMB_SPACE_SHIFT,
+		        THUMB_SPACE_ALT,
 		        timer_elapsed(space_probe_timer),
 		        get_mods(),
 		        get_highest_layer(layer_state));
@@ -853,10 +833,6 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 		return false;
 	}
 
-	if (!process_delayed_alt(keycode, record)) {
-		return false;
-	}
-
 	if (!process_snap_mode(keycode, record)) {
 		return false;
 	}
@@ -873,7 +849,7 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 		tap_timer = timer_read();
 #endif
-#if (defined OLED_ENABLE && !defined WPM_ENABLE)
+#if (defined CHIEFTAINDOTS_CUSTOM_OLED && !defined WPM_ENABLE)
 		extern uint32_t oled_tap_timer;
 		oled_tap_timer = timer_read32();
 #endif

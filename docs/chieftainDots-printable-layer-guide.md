@@ -23,11 +23,12 @@ Hold A / ;             = Control
 Hold S / L             = Symbols
 Hold D / K             = Numbers
 Hold F / J             = Function
-Hold Base Space / Enter = Shift
+Middle thumbs           = Shift
+Hold Base Space / Enter = Alt
 Hold either lower corner = Spanish
-Right thumbs: Numbers uses Enter/Symbols; Symbols and Function use Enter/Shift.
-Function left thumb: tap Enter, hold Shift for mouse-driven paste workflows;
-RAlt and Menu stay available.
+Numbers uses Space/Symbols and Enter/Symbols on the inner thumbs.
+Double tap-hold A/S/V   = Select All / Snip / Paste
+Double tap-hold Shift   = Enter / Submit
 ```
 
 ```text
@@ -37,7 +38,7 @@ Hold D/K + left GUI    = Navigation: movement only
 Hold S/L + left GUI    = Styles: Alt+Shift+Arrow
 Hold A/; + left GUI    = Media, Teams-first
 Hold F/J + left GUI    = Snap window placement mode
-Double tap-hold mnemonic = Text snippets
+Double tap-hold mnemonic = Text snippets and deliberate editing actions
 ```
 
 Snap has no tap-only action. It is entered as a held mode from Function plus
@@ -51,7 +52,7 @@ Command gesture rule
 Tap             = direct daily action
 Tap and hold    = sustained / larger / repeated action
 Double tap      = secondary reversible action
-Double tap-hold = empty unless a real need is proven
+Double tap-hold = deliberate mnemonic action
 ```
 
 Styles and Media are tap-only in this build. Snap is mode-only.
@@ -116,7 +117,7 @@ Win+Left  Win+Down  Win+Right
 TAB      Q      W      E      R      T          Y      U      I      O      P      BSPC
 CAPS     A      S      D      F      G          H      J      K      L      ;      '
 ES       Z      X      C      V      B          N      M      ,      .      /      ES
-                         GUI    ALT    SPC/SFT     ENT/SFT RALT  MENU
+                         GUI    SHIFT  SPC/ALT     ENT/ALT SHIFT MENU
 ```
 
 Specials:
@@ -128,7 +129,10 @@ Specials:
 - Shift + `'` = right English quote `”`.
 - either lower corner: hold Spanish, double tap quick Windows language toggle
   (`Alt+Shift`).
-- Base Space and Enter: tap normally, hold for Shift.
+- middle thumbs: Shift.
+- Base Space and Enter: tap normally, hold for Alt.
+- double tap-hold `A/S/V`: Select All, Snip, Paste.
+- double tap-hold either Shift thumb: Enter / Submit.
 - right outer thumb: Menu / context menu.
 
 ## Colemak
@@ -161,7 +165,7 @@ Use Shift first for capitals:
 
 - Spanish angle quotes are separate keys: `Spanish + Caps = «`,
   `Spanish + ' = »`.
-- hold Space or Enter for Shift, then hold Spanish, then press the vowel.
+- hold a middle Shift thumb, then hold Spanish, then press the vowel.
 - tested uppercase accented vowels: `Á Í É Ó Ú`.
 
 Language switch:
@@ -181,7 +185,7 @@ Access: hold `D` or `K`.
 `        1      2      3      4      5          6      7      8      9      0      -
 ---      ---    ---    ---    ---    ---        ---    4      5      6      =      ---
 ---      ---    ---    ---    ---    ---        ---    1      2      3      /      ---
-                         NAV    ALT    SPC/SYM     ENT/SYM RALT  MENU
+                         NAV    SHIFT  SPC/SYM     ENT/SYM SHIFT MENU
 ```
 
 Number-pad tap dances:
@@ -198,7 +202,7 @@ Access: hold `S` or `L`. Also available from Numbers by holding either Space or 
 ~        !      @      #      $      %          ^      &      *      (      )      _
 ---      ---    ---    ---    ---    ---        ---    $      %      ^      +      ---
 ---      ---    ---    ---    ---    ---        ---    !      @      #      /      ---
-                         style  ALT    SHIFT       ENTER  RALT  MENU
+                         style  SHIFT  SPC/ALT     ENT/ALT SHIFT MENU
 ```
 
 Bracket tap dances:
@@ -285,22 +289,23 @@ Function / System: hold `F` or `J`.
 
 ```text
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
----      ---    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
----      ---    cut    copy   paste  ---        ---    F1     F2     F3     F12    ---
-                         SNAP   ALT    ENT/SFT     ENTER  RALT  MENU
+---      ---    ---    ---    ---    ---        ---    F4     F5     F6     F11    COLE
+BOOT     ---    ---    ---    ---    ---        ---    F1     F2     F3     F12    BOOT
+                         SNAP   SHIFT  SPC/ALT     ENT/ALT SHIFT MENU
 ```
 
-Press the camera icon (`Function + S`) to send the Windows screen snip shortcut
-`Win+Shift+S`. Hold Function first, then tap `S`; holding `S` first enters
-Symbols. Press scissors (`Function + X`) to send `Ctrl+X`, copy pages
-(`Function + C`) to send `Ctrl+C`, paste clipboard (`Function + V`) to send
-`Ctrl+V`, tap the left thumb key to send Enter, and `COLE` to toggle Colemak.
-Holding the left thumb key on Function still sends Shift.
+Function is back to function/system keys only during the current mnemonic
+editing trial. `COLE` toggles Colemak. `BOOT` enters the bootloader from normal
+firmware and is placed behind Function on the same lower-corner positions used
+by Spanish compose on Base/Colemak.
 
 Mnemonic shortcuts on Base/Colemak: double tap the letter, then hold the second
 tap.
 
 ```text
+A = Select All
+S = Snip
+V = Paste
 H = Home
 W = Work
 P = Phone
@@ -308,6 +313,7 @@ M = Meeting
 E = Email
 G = Personal email
 N = Name
+Shift = Enter / Submit
 ```
 
 ## Tap / Hold / Double Tap
@@ -355,8 +361,9 @@ Shift+'            ”                ---          ---                 ---
 
 After flashing, test:
 
-- Space tap = space; Space hold + letter = capital.
-- Enter tap = enter; Enter hold + letter = capital.
+- Space tap = space; Space hold = Alt.
+- Enter tap = enter; Enter hold = Alt.
+- Middle thumbs hold Shift.
 - Caps tap = normal Caps; Caps double tap = Long Caps; Caps double tap again =
   Caps off.
 - Navigation `I/J/K/L` tap = arrows.
@@ -368,8 +375,8 @@ After flashing, test:
 - Accidental Alt+Shift and Alt+Space should not switch language or open the
   host window menu.
 - Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
-- Function + `S` = Windows screen snip (`Win+Shift+S`).
-- Function + `X/C/V` = Cut / Copy / Paste (`Ctrl+X/C/V`).
+- Double-tap-hold `A/S/V` = Select All / Snip / Paste.
+- Double-tap-hold either Shift thumb = Enter / Submit.
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
 - `A/; + left GUI` = Media.
@@ -404,6 +411,7 @@ Navigation         cyan       #00FFFF
 Styles             yellow     #FFFF00
 Media              dark teal  #052323
 Function/System    green      #4B7A16
+Bootloader         dark pink  #73142D
 Delete cue         red        Backspace key only on command layers with DEL
 ```
 
@@ -418,3 +426,6 @@ LED, possibly related to the broader left-side LED/column fault. Both halves
 were flashed and `Function + S` works, but the `S` LED also stays dark during
 the all-red Caps Lock state. Treat this as hardware, not a missing Function-layer
 RGB rule, and do not rely on that LED for shortcut discovery until repaired.
+The Function-layer bootloader key physically works on the left side even though
+the left-side lower columns may not show the dark-pink boot RGB; the right side
+does show the boot color.

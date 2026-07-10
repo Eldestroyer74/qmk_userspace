@@ -156,6 +156,16 @@ from the current Corne concepts rather than an old inherited file. Treat a port
 as a deliberate feature with its own compile target, firmware-size check, and
 physical test.
 
+The first real second-target candidate is Ricardo's Boardsource Unicorne. Its
+QMK target is `boardsource/unicorne` and it supports the same
+`LAYOUT_split_3x6_3` physical shape as the active Corne recipe, so the port
+should begin as a small recipe/adapter rather than a broad reorganization.
+Corne remains the proven target at `keymaps/corne.json`; Unicorne should get a
+separate recipe such as `keymaps/unicorne.json`. Shared behavior should stay in
+userspace logic, while hardware-specific RGB matrix mapping, OLED orientation,
+split behavior, and bootloader commands stay behind board-specific gates until
+compiled and physically tested.
+
 Porting checklist:
 
 - Confirm the QMK keyboard name and supported layout macro.
@@ -163,6 +173,9 @@ Porting checklist:
 - Decide which ChieftainDots roles must remain identical.
 - Decide which roles move because the keyboard has fewer or more keys.
 - Add a fresh wrapper in `layout.h` only when the recipe needs one.
+- Keep the existing proven target recipe untouched while adding the new target.
+- Gate RGB/OLED code by board until LED order, OLED orientation, and split
+  behavior are validated on the new hardware.
 - Compile and test the new target before calling it supported.
 
 Example for a slightly smaller keyboard:

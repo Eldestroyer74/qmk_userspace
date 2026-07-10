@@ -24,6 +24,7 @@
 #define RGB_MED		RGB_DTEAL
 #define RGB_TXT		RGB_DPINK
 #define RGB_ESP		RGB_DGREEN
+#define RGB_BOOT	RGB_DPINK
 #define RGB_LAYER	RGB_BSTEEL
 
 // Base RGB mode. ChieftainDots paints Caps/Colemak directly in the indicator
