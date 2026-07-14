@@ -126,7 +126,7 @@ static bool is_delete_key(uint16_t keycode) {
 }
 
 static bool is_bootloader_key(uint16_t keycode) {
-	return keycode == QK_BOOT;
+	return keycode == QK_BOOT || keycode == CD_BOOT;
 }
 
 static bool is_colemak_toggle_key(uint16_t keycode) {

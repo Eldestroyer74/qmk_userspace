@@ -7,4 +7,6 @@
 // User keycodes that need to be shared between the layer recipe and
 // process_record_user(). Keep feature-specific behavior in the .c files.
 
+#define CD_BOOT QK_USER_17
+
 #endif

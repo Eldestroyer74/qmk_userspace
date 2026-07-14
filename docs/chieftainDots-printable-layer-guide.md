@@ -290,14 +290,14 @@ Function / System: hold `F` or `J`.
 
 ```text
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
----      ---    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
+---      ALL    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
 BOOT     UNDO   ---    ---    ---    ---        ---    F1     F2     F3     F12    BOOT
                          SNAP   SHIFT  SPC/ALT     ENT/ALT SHIFT MENU
 ```
 
 Function keeps a small editing/utility exception set for commands that need a
-fast one-hand path. `Function + S` sends Windows screen snip. `Function + Z`
-sends Undo. `COLE` toggles Colemak. `BOOT` enters the bootloader from normal
+fast one-hand path. `Function + A` sends Select All, `Function + S` sends
+Windows screen snip, and `Function + Z` sends Undo. `COLE` toggles Colemak. `BOOT` enters the bootloader from normal
 firmware and is placed behind Function on the same lower-corner positions used
 by Spanish compose on Base/Colemak.
 
@@ -377,7 +377,7 @@ After flashing, test:
   host window menu.
 - Media: `I/J/K/L` = Volume Up / Teams mic mute / Volume Down / Play-Pause.
 - Double-tap-hold `A/V` = Select All / Paste.
-- `Function + S/Z` = Snip / Undo.
+- `Function + A/S/Z` = Select All / Snip / Undo.
 - Double-tap-hold either Shift thumb = Enter / Submit.
 - `D/K + left GUI` = Navigation.
 - `S/L + left GUI` = Styles: Alt+Shift+Arrow on `I/J/K/L`.
@@ -430,4 +430,6 @@ the all-red Caps Lock state. Treat this as hardware, not a missing Function-laye
 RGB rule, and do not rely on that LED for shortcut discovery until repaired.
 The Function-layer bootloader key physically works on the left side even though
 the left-side lower columns may not show the dark-pink boot RGB; the right side
-does show the boot color.
+does show the boot color. The M36 boot RGB trial changes the running-firmware
+boot key to flash the whole board in the boot color for a short confirmation
+before entering bootloader; this still needs physical validation.

@@ -3,6 +3,7 @@
 
 #pragma once
 #include QMK_KEYBOARD_H
+#include "features/user_keycodes.h"
 
 // Dimmer RGB colors
 #define RGB_BSTEEL	55, 80, 115
@@ -30,3 +31,5 @@
 // Base RGB mode. ChieftainDots paints Caps/Colemak directly in the indicator
 // callback so split state feedback stays simple and predictable.
 #define DEF_MODE RGB_MATRIX_NONE
+
+void rgb_matrix_update_pwm_buffers(void);

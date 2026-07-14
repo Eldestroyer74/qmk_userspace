@@ -6,6 +6,7 @@
 #include "features/tap_dance.h"
 #include "features/text_stubs.h"
 #include "features/user_keycodes.h"
+#include "rgb-matrix.h"
 
 #ifdef CONSOLE_ENABLE
 #	include "print.h"
@@ -18,6 +19,24 @@ extern uint8_t chieftaindots_snap_mode;
 uint8_t chieftaindots_cat_state;
 
 #define AUTO_CAPS_ENABLE 0
+#define BOOT_RGB_CONFIRM_MS 300
+
+static bool process_boot_rgb_confirm(uint16_t keycode, keyrecord_t *record) {
+	if (keycode != CD_BOOT) {
+		return true;
+	}
+
+	if (record->event.pressed) {
+#ifdef RGB_MATRIX_ENABLE
+		rgb_matrix_mode_noeeprom(DEF_MODE);
+		rgb_matrix_set_color_all(RGB_BOOT);
+		rgb_matrix_update_pwm_buffers();
+		wait_ms(BOOT_RGB_CONFIRM_MS);
+#endif
+		reset_keyboard();
+	}
+	return false;
+}
 
 #if (defined TAPPING_TERM_PER_KEY || defined PERMISSIVE_HOLD_PER_KEY)
 static uint_fast16_t tap_timer = 0;
@@ -824,6 +843,10 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #endif
 
 	if (!process_directional_english_quotes(keycode, record)) {
+		return false;
+	}
+
+	if (!process_boot_rgb_confirm(keycode, record)) {
 		return false;
 	}
 

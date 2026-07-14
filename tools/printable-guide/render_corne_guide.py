@@ -142,7 +142,7 @@ STYLE_ICONS = {"_OUTDENT", "_INDENT", "_REORDER_UP", "_REORDER_DN"}
 KEY_ICONS = {"_KEY_TAB", "_KEY_MEDIA", "_KEY_CALC", "_KEY_GUI",
              "_KEY_SPACE", "_KEY_MENU", "_KEY_BSP", "_KEY_DEL",
              "_KEY_ENTER", "_KEY_ALT", "_KEY_SYM", "_KEY_GLOBE",
-             "_KEY_SNIP", "_KEY_UNDO", "_KEY_CUT", "_KEY_COPY", "_KEY_PASTE"}
+             "_KEY_SELECT_ALL", "_KEY_SNIP", "_KEY_UNDO", "_KEY_CUT", "_KEY_COPY", "_KEY_PASTE"}
 # Nav 4-tier: word-jump (fast-forward rotated) + extremes (step-forward rotated)
 WORD_ICONS    = {"_WORD_LEFT", "_WORD_RIGHT", "_WORD_UP", "_WORD_DOWN"}
 EXTREME_ICONS = {"_EXTREME_LEFT", "_EXTREME_RIGHT", "_EXTREME_UP", "_EXTREME_DOWN"}
@@ -213,6 +213,7 @@ ICON_TUNING = {
     "_KEY_ALT":     (0.52, 0.36),   # option/alt escalator
     "_KEY_SYM":     (0.56, 0.36),   # </> â€” wide-ish, give it room
     "_KEY_GLOBE":   (0.56, 0.36),   # globe â€” Spanish-compose anchor
+    "_KEY_SELECT_ALL": (0.54, 0.36), # object-group â€” Windows Select All
     "_KEY_SNIP":    (0.54, 0.36),   # camera â€” Windows screen snip
     "_KEY_UNDO":    (0.54, 0.36),   # undo-alt â€” Windows undo
     "_KEY_CUT":     (0.54, 0.36),   # scissors
@@ -244,7 +245,7 @@ TEXT = [
 FUNCTION = [
     [K("_KEY_TAB"), K("F1"), K("F2"), K("F3"), K("F4"), K("F5"),
      K("F6"), K("F7"), K("F8"), K("F9"), K("F10"), K("_KEY_DEL")],
-    [K(""), K(""), K("_KEY_SNIP"), K(""), K(""), K(""),
+    [K(""), K("_KEY_SELECT_ALL"), K("_KEY_SNIP"), K(""), K(""), K(""),
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
     [K("BOOT"), K("_KEY_UNDO"), K(""), K(""), K(""), K(""),
      K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("BOOT")],
@@ -636,6 +637,7 @@ def _load_fa_glyphs():
         "_KEY_DEL":     0xf00d,  # times (Ã—) â€” plain dark Del key
         "_KEY_SYM":     0xf121,  # code </>
         "_KEY_GLOBE":   0xf7a2,  # globe-europe â€” Spanish-compose anchor
+        "_KEY_SELECT_ALL": 0xf247, # object-group â€” Windows Select All
         "_KEY_SNIP":    0xf030,  # camera â€” Windows screen snip
         "_KEY_UNDO":    0xf2ea,  # undo-alt
         "_KEY_CUT":     0xf0c4,  # cut / scissors
@@ -1218,7 +1220,7 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
 
     def render(r, c, x, y, tap, hold, double, spanish="", double_hold=""):
         hl = (r, c) in access_set
-        sec = (r, c) in secondary_set and not hl and tap != "_KEY_SNIP"
+        sec = (r, c) in secondary_set and not hl and tap not in {"_KEY_SELECT_ALL", "_KEY_SNIP"}
         emb = (r, c) in embed_set and not hl and not sec
         muted = (not hl and not sec and not emb and
                  is_repeated_thumb(r, c, tap, hold, double, spanish, double_hold))
