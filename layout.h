@@ -29,6 +29,7 @@
 #define THUMB_RSHIFT KC_RSFT
 #define THUMB_SPACE_ALT LALT_T(KC_SPC)
 #define THUMB_ENTER_ALT RALT_T(KC_ENT)
+#define FUNC_ENTER_ALT LALT_T(KC_ENT)
 #define NUM_SPACE_SYMBOLS LT(SYM, KC_SPC)
 #define SCREEN_SNIP LSG(KC_S)
 #define CLIP_SELECT_ALL C(KC_A)
@@ -122,8 +123,8 @@
 	XXXXXXX, CLIP_SELECT_ALL, SCREEN_SNIP, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F4,   KC_F5,   KC_F6,   KC_F11,  TG(CMK), \
 /* Bottom: BOOT   UNDO   ---    ---    ---    ---      ---    F1     F2     F3     F12    BOOT */\
 	CD_BOOT, CLIP_UNDO, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F12,  CD_BOOT, \
-/* Thumbs:                         SNAP   SHIFT  SPC/ALT  ENT/ALT SHIFT MENU */\
-	                            SYS_GUI_MED_SNAP, THUMB_LSHIFT, THUMB_SPACE_ALT, RIGHT_THUMBS
+/* Thumbs:                         SNAP   SHIFT  ENT/ALT  ENT/ALT SHIFT MENU */\
+	                            SYS_GUI_MED_SNAP, THUMB_LSHIFT, FUNC_ENTER_ALT, RIGHT_THUMBS
 
 // Control + left GUI thumb Media: plain keys only while RAM is tight.
 #define _MEDI \

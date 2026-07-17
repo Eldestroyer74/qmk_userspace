@@ -292,7 +292,7 @@ Function / System: hold `F` or `J`.
 TAB      F1     F2     F3     F4     F5         F6     F7     F8     F9     F10    DEL
 ---      ALL    SNIP   ---    ---    ---        ---    F4     F5     F6     F11    COLE
 BOOT     UNDO   ---    ---    ---    ---        ---    F1     F2     F3     F12    BOOT
-                         SNAP   SHIFT  SPC/ALT     ENT/ALT SHIFT MENU
+                         SNAP   SHIFT  ENT/ALT     ENT/ALT SHIFT MENU
 ```
 
 Function keeps a small editing/utility exception set for commands that need a
@@ -300,6 +300,9 @@ fast one-hand path. `Function + A` sends Select All, `Function + S` sends
 Windows screen snip, and `Function + Z` sends Undo. `COLE` toggles Colemak. `BOOT` enters the bootloader from normal
 firmware and is placed behind Function on the same lower-corner positions used
 by Spanish compose on Base/Colemak.
+
+On Function, the left Space position becomes Enter tap / left Alt hold. Base
+and Colemak keep Space tap / left Alt hold at that physical thumb position.
 
 Mnemonic shortcuts on Base/Colemak: double tap the letter, then hold the second
 tap.

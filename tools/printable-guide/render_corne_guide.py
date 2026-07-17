@@ -82,7 +82,7 @@ SYMBOLS = [
      K(""), K("$"), K("%"), K("^"), K("+"), K("")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("!"), K("@"), K("#"), K(""), K("")],
-    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("Shift"), K("_KEY_ENTER","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 # NUMBERS â€” full top-row digits, right-hand numpad below.

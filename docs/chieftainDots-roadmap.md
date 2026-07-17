@@ -117,10 +117,13 @@ available address space." A PowerShell MinGW environment fallback did compile
 the current Corne M36 working tree at `28318/28672`, leaving `354` bytes free.
 Physical testing is complete for M35/M36: boot confirmation works with the
 accepted split behavior described below, and `Function + A` Select All works.
-M40 is now implemented in the working tree: on Function, the third left thumb
-is `ENT/ALT`; Base/Colemak remain `SPC/ALT`. The source guide and renderer are
-updated. M40 remains compile-pending and must be flashed and physically tested
-for both tap Enter and hold left Alt before it can be marked Kept.
+M40 is Kept on the accepted Unicorne build: on Function, the third left thumb
+is `ENT/ALT`; Base/Colemak remain `SPC/ALT`. The source guide, renderer, and
+generated diagram are aligned. The final Unicorne visual firmware compiled,
+both halves were flashed, and physical testing confirms Function-thumb tap
+Enter and hold left Alt work well while Base/Colemak Space tap and left-Alt hold
+remain correct. The Corne-specific compile is no longer an acceptance blocker
+for this behavior while the Unicorne is the practical primary target.
 
 M41 logs a new smart-quote problem: `Shift + '` can send Edge to browser UI
 instead of producing `”`. Test Num Lock on, both directional English quotes,
