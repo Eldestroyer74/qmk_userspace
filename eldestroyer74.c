@@ -18,6 +18,16 @@ extern void send_windows_alt_code(const char *code);
 extern uint8_t chieftaindots_snap_mode;
 uint8_t chieftaindots_cat_state;
 
+#ifdef RGB_MATRIX_CUSTOM_USER
+extern void chieftaindots_rgb_post_init(void);
+#endif
+
+#ifdef CHIEFTAINDOTS_UNICORNE_OLED
+extern void chieftaindots_unicorne_oled_post_init(void);
+extern void chieftaindots_unicorne_oled_note_activity(void);
+extern void chieftaindots_unicorne_oled_housekeeping(void);
+#endif
+
 #define AUTO_CAPS_ENABLE 0
 #define BOOT_RGB_CONFIRM_MS 300
 
@@ -830,6 +840,21 @@ static void update_cat_for_command_action(uint16_t keycode, keyrecord_t *record)
 	chieftaindots_cat_state = record->event.pressed ? CAT_BIG_PRESS : CAT_IDLE;
 }
 
+void keyboard_post_init_user(void) {
+#ifdef RGB_MATRIX_CUSTOM_USER
+	chieftaindots_rgb_post_init();
+#endif
+#ifdef CHIEFTAINDOTS_UNICORNE_OLED
+	chieftaindots_unicorne_oled_post_init();
+#endif
+}
+
+void housekeeping_task_user(void) {
+#ifdef CHIEFTAINDOTS_UNICORNE_OLED
+	chieftaindots_unicorne_oled_housekeeping();
+#endif
+}
+
 bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #ifdef CONSOLE_ENABLE
 	log_shift_trial(keycode, record);
@@ -837,6 +862,11 @@ bool process_record_user(uint16_t const keycode, keyrecord_t *record) {
 #if SPACE_PROBE_ENABLE
 	log_space_probe(keycode, record);
 #endif
+#endif
+#ifdef CHIEFTAINDOTS_UNICORNE_OLED
+	if (record->event.pressed) {
+		chieftaindots_unicorne_oled_note_activity();
+	}
 #endif
 #if AUTO_CAPS_ENABLE
 	process_auto_caps_trial(keycode, record);

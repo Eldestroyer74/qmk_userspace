@@ -42,6 +42,13 @@ ifeq ($(strip $(KEYBOARD)), crkbd/rev1)
 	SRC += rgb-matrix.c
 endif
 
+ifeq ($(strip $(KEYBOARD)), boardsource/unicorne)
+	ifeq ($(strip $(CHIEFTAINDOTS_UNICORNE_VISUALS)), yes)
+		RGB_MATRIX_CUSTOM_USER = yes
+		SRC += rgb-matrix.c
+	endif
+endif
+
 # OLED
 ifeq ($(strip $(OLED_ENABLE)), yes)
 	ifeq ($(strip $(KEYBOARD)), crkbd/rev1)
@@ -50,7 +57,13 @@ ifeq ($(strip $(OLED_ENABLE)), yes)
 			OPT_DEFS += -D${OLED}
 			SRC += oled-icons.c oled-luna.c
 		else
-			SRC += oled-icons.c oled-bongocat.c
+			SRC += oled-icons.c oled-bongocat.c oled-corne.c
+		endif
+	endif
+	ifeq ($(strip $(KEYBOARD)), boardsource/unicorne)
+		ifeq ($(strip $(CHIEFTAINDOTS_UNICORNE_VISUALS)), yes)
+			OPT_DEFS += -DCHIEFTAINDOTS_CUSTOM_OLED -DCHIEFTAINDOTS_UNICORNE_OLED
+			SRC += oled-icons.c oled-bongocat.c oled-unicorne.c
 		endif
 	endif
 endif

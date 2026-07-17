@@ -3,6 +3,41 @@
 Test target: Boardsource Unicorne flashed from
 `users/eldestroyer74/keymaps/unicorne.json`.
 
+## Phase 1/2 acceptance build
+
+Before testing visual adapters, compile and retain a phase-1/2 UF2 with the
+inherited pointing device disabled and the shared ChieftainDots layout intact.
+That build is the rollback artifact for input and behavior testing.
+
+```bash
+qmk compile -e CHIEFTAINDOTS_UNICORNE_VISUALS=no users/eldestroyer74/keymaps/unicorne.json
+```
+
+- Confirm the pointer remains still for at least two minutes after USB attach.
+- Confirm ordinary typing does not emit mouse buttons, wheel, or pointer motion.
+- Test Base and Colemak, then all four home-row anchors.
+- Test Numbers, Symbols, Navigation, Snap, Media, MS Styles, and Spanish.
+- Test smart quotes and only non-private text-stub examples.
+- On Function, test Select All, Snip, Undo, and the M40 third-left-thumb
+  `Enter` tap / left-`Alt` hold.
+- Confirm Base/Colemak keep `Space` tap / left-`Alt` hold at that same thumb.
+- Confirm Caps behavior and the daily host shortcuts you rely on.
+
+Record differences rather than assuming the shared layer wrapper proves parity.
+
+## Phase 3 recovery and split checks
+
+Perform these only after phase 1/2 input behavior is acceptable:
+
+1. Prove Bootmagic independently on each physical half.
+2. Prove the running-firmware boot shortcut independently on each half.
+3. Attach USB to each half in turn and record master/left/right behavior.
+4. Verify inter-half USB-C operation and recovery after flashing each half.
+5. Confirm reset access and a recovery path before testing visual adapters.
+
+Do not apply Corne TRRS assumptions to this board; Unicorne uses its own
+inter-half USB-C hardware path.
+
 Current expectation: core ChieftainDots key behavior should work. RGB and OLED
 are still Boardsource/default feedback and should be observed, not judged as
 final ChieftainDots behavior yet.
@@ -122,8 +157,17 @@ Guardrails:
 
 ## RGB Observation
 
-Current expected state: Unicorne shows Boardsource/default RGB, not the final
-ChieftainDots RGB language.
+Phase-1/2 artifact expectation: Boardsource/default RGB. Phase-4 source
+expectation after a separate manual compile: ChieftainDots indicator RGB using
+the board's generated matrix-to-LED lookup. Phase 4 is not compile-verified yet.
+
+Enable the phase-4 visual adapters explicitly:
+
+```bash
+qmk compile -e CHIEFTAINDOTS_UNICORNE_VISUALS=yes users/eldestroyer74/keymaps/unicorne.json
+```
+
+Compile again with the switch set to `no` for a no-edit phase-4 rollback.
 
 Observe and record:
 
@@ -135,24 +179,31 @@ Observe and record:
 - Whether Caps Lock has any visible indicator.
 - Whether LEDs correspond generally to the physical keys or feel offset.
 
-Do not treat mismatched ChieftainDots colors as a failure yet. This is input for
-the M28/M30 RGB port.
+For phase 4, report any physical offset as an adapter defect; do not patch it
+with guessed hard-coded LED numbers before checking `g_led_config`.
 
 ## OLED Observation
 
-Current expected state: Unicorne shows Boardsource/default OLED, not final
-ChieftainDots OLED.
+Phase-1/2 artifact expectation: Boardsource/default OLED. Phase-4 source
+expectation: Bongocat on the USB-connected master and ChieftainDots status on
+the non-master, with Boardsource's default task suppressed. The Unicorne
+userspace adapter owns the accepted role-aware rotations: left-master Bongocat
+at 0 degrees, right-master Bongocat at 180 degrees, and status on either
+non-master at 270 degrees.
 
 Observe and record:
 
-- What the master side shows with USB plugged into left.
-- What the non-master side shows with USB plugged into left.
-- Whether either display is upside down.
+- With USB left, confirm Bongocat is upright on the left and status is upright
+  on the right.
+- With USB right, confirm status is upright on the left and Bongocat is upright
+  on the right.
 - Whether layer images change when holding Symbols, Numbers, Function, or Snap.
-- Repeat with USB plugged into right if you plan to use either side as master.
+- Let both screens sleep, then confirm the first key wakes both and still
+  produces its normal input/animation.
+- Confirm swapping the USB side swaps roles without stale or overwritten art.
 
-Do not treat the Boardsource logo or gear/layer screen as a failure yet. This
-is input for the M29 OLED port.
+In a phase-4 build, the Boardsource logo or gear/layer screen means the
+userspace adapter did not take callback ownership as intended.
 
 ## Pass Criteria For This Flash
 
@@ -165,7 +216,8 @@ This flashed build passes the first physical trial if:
 - Double-tap-hold `A/S/V` and Shift Enter do not create dangerous accidental
   behavior.
 - Spanish still works.
-- RGB/OLED are documented as current board-default behavior.
+- RGB/OLED match the phase being tested: board defaults for phase 1/2, or the
+  documented ChieftainDots adapters for phase 4.
 
 ## Stop Conditions
 

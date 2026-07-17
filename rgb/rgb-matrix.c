@@ -161,7 +161,7 @@ layer_state_t layer_state_set_user(layer_state_t const state) {
 	return state;
 }
 
-void keyboard_post_init_user(void) {
+void chieftaindots_rgb_post_init(void) {
 	rgb_matrix_mode_noeeprom(DEF_MODE);
 }
 
@@ -226,7 +226,7 @@ static void rgb_set_key_positions(uint8_t layer, uint8_t led_min, uint8_t led_ma
 		for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
 			uint8_t index_led = g_led_config.matrix_co[row][col];
 			RGB rgb = rgb_for_position(layer, row, col);
-			if (index_led != NO_LED && led_min <= index_led && index_led <= led_max &&
+			if (index_led != NO_LED && led_min <= index_led && index_led < led_max &&
 			    (rgb.r || rgb.g || rgb.b)) {
 				rgb_matrix_set_color(index_led, rgb.r, rgb.g, rgb.b);
 			}
@@ -237,15 +237,15 @@ static void rgb_set_key_positions(uint8_t layer, uint8_t led_min, uint8_t led_ma
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 	uint8_t layer = get_highest_layer(layer_state);
 	if (host_keyboard_led_state().caps_lock) {
-		for (uint8_t i = led_min; i <= led_max; ++i) {
+		for (uint8_t i = led_min; i < led_max; ++i) {
 			rgb_matrix_set_color(i, RGB_CAPS);
 		}
 	} else if (layer_state_is(CMK)) {
-		for (uint8_t i = led_min; i <= led_max; ++i) {
+		for (uint8_t i = led_min; i < led_max; ++i) {
 			rgb_matrix_set_color(i, RGB_CMK);
 		}
 	} else {
-		for (uint8_t i = led_min; i <= led_max; ++i) {
+		for (uint8_t i = led_min; i < led_max; ++i) {
 			rgb_matrix_set_color(i, RGB_OFF);
 		}
 	}

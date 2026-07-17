@@ -65,6 +65,40 @@ small slice with a compile afterward unless the change is documentation-only.
 | M37 | Requirement | Spanish Writing Coach for Unicorne. | Requirement only; do not implement without a separate design and size review. Goal: provide real-time Spanish orthography coaching directly from the keyboard on the Boardsource Unicorne, using the larger RP2040/OLED target rather than the byte-constrained Corne AVR build. The feature should inspect a recent keystroke stream, identify only high-confidence accent mistakes, provide immediate auditory feedback, show the typed word, suggested correction, and a brief rule explanation on the OLED screens, and allow one dedicated quick-correction key to replace the recently typed word with the suggested form. Initial rule set: 1. interrogative/exclamative words with missing accents when local punctuation strongly signals the context, especially opening `¿`/`¡`, including `qué`, `cómo`, `cuándo`, `cuál`, `quién`, `dónde`, and `cuánto`; 2. a curated dictionary of common hiatus words where accented `í` or `ú` breaks a diphthong, including `país`, `raíz`, `baúl`, `María`, `tía`, `frío`, `río`, `oír`, `reír`, `actúa`, and `continúa`; 3. a curated list of frequently mistyped accented words, including `también`, `después`, `además`, `difícil`, `fácil`, `inglés`, `teléfono`, and `página`. Precision must beat coverage: avoid full sentence-level grammar in QMK, avoid guessing pronunciation for arbitrary words, and do not initially handle context-dependent pairs such as `tu/tú`, `el/él`, `si/sí`, `de/dé`, or `se/sé`; those belong to a later companion-software idea with broader text context. Implementation notes to research before coding: decide whether keystroke buffering belongs in firmware or a companion process, determine how correction rewrites the recent word safely across host apps, define the OLED explanation vocabulary and screen timeout, choose the audio feedback mechanism, and measure memory/flash impact on Unicorne before considering any Corne involvement. Acceptance for a first trial: Unicorne compiles, normal Spanish typing remains unchanged when no high-confidence rule fires, false positives are rare, the correction key is deliberate and reversible, and all rule dictionaries are explicit, small, and easy to review. |
 | M38 | Requirement | Diacritical accent reminders for Unicorne. | Requirement only; do not implement without a separate design and size review. This complements M37 by handling Spanish diacritical-accent pairs as learning reminders rather than spelling corrections. Goal: when the user types an unaccented Spanish word that has a common accented counterpart, briefly show the grammatical distinction on the Unicorne OLED screens without claiming the typed word is wrong and without automatically changing it. Initial trigger pairs: `tu/tú`, `el/él`, `mi/mí`, `si/sí`, `de/dé`, `se/sé`, `te/té`, `mas/más`, and `aun/aún`. Screen experience: show both forms, a concise explanation, and a short example when space permits; for example, left screen `tu = possessive` with `tu casa`, right screen `tú = pronoun` with `tú sabes`. The reminder should disappear automatically as typing continues. Quick-change behavior: provide a dedicated deliberate key that replaces the recently typed unaccented word with its accented counterpart, but never label the original word as a mistake because either form may be correct depending on meaning. Feedback: unlike high-confidence M37 mistakes, reminders should primarily use screens; auditory feedback must be optional or disabled by default so frequent words such as `el`, `tu`, `de`, and `se` do not become disruptive. Design principles: treat this as a learning reminder, not a grammar checker; do not infer grammatical role from sentence context in firmware; keep explanations short enough to read while typing; avoid obstructing writing flow; and allow per-pair enable/disable or limiting so the user can tune noisy reminders. Implementation notes to research before coding: decide whether reminders share the M37 keystroke buffer and correction key, define a compact OLED template for left/right pair explanations, decide timeout/clear behavior, and measure Unicorne memory impact before considering broader support. |
 | M39 | Requirement | Spanish grammar micro lessons for Unicorne idle screens. | Requirement only; do not implement without a separate design and size review. This is a learning-mode feature, not a correction or reminder fired by a typed word. Goal: during idle periods or natural pauses in typing, use the Unicorne OLED screens to rotate brief Spanish grammar micro lessons for common word distinctions, reinforcing grammar through repeated low-effort exposure without interrupting writing. Scope: prioritize word groups that are frequently confused because they sound identical or look similar but serve different grammatical functions, and only include concepts that fit a concise rule plus simple example. Initial lesson set: `porque` for explaining a reason, `por qué` for direct/indirect questions, `porqué` as a noun meaning "the reason," and `por que` as the less common construction where `por` and `que` retain separate grammatical functions. Additional candidate groups include `a ver / haber`, `sino / si no`, `conque / con que / con qué`, `adonde / adónde`, and `aun / aún`. User experience: when typing has paused long enough, OLED should show the word group, a one-line explanation of each form, and a short example where space permits; the lesson disappears automatically as typing resumes. Design principles: teach rather than correct, keep lessons readable in a few seconds, rotate lessons over time for retention, avoid blocking or stealing attention during active typing, and allow users to enable, disable, or customise lesson categories. Long-term vision: grow a curated lesson library covering common Spanish grammar distinctions encountered by learners, giving Unicorne continuous bite-sized language instruction alongside everyday typing. Implementation notes to research before coding: decide whether this shares OLED real estate with Bongocat/status screens, define idle thresholds and dismissal behavior, choose lesson storage format, measure Unicorne memory impact, and decide whether categories are firmware settings or generated data. |
+| M40 | Requirement | Restore Enter/Alt on the Function layer's left Space position. | Goal: put left-hand Enter back on the physical thumb seat where it was previously learned while following the current thumb grammar. The target is the **third left thumb, nearest the centre gap**: the key that is `SPC/ALT` on Base/Colemak, not the middle left Shift thumb. Base and Colemak remain unchanged. While either Function anchor (`F` or `J`) is held, this same physical position becomes tap Enter / hold left Alt (`ENT/ALT`), preferably through the byte-cheap native keycode `LALT_T(KC_ENT)`. The dedicated middle left thumb remains plain Shift, so the historical Enter/Shift behavior should not be restored. The other five thumb positions and other Function-layer behavior remain unchanged. In the Markdown text map, the Function thumb row should read `SNAP  SHIFT  ENT/ALT | ENT/ALT  SHIFT  MENU`. In the rendered diagram, show the normal large Enter-arrow icon at the third left thumb with a small `Alt` hold annotation; do not render literal `ENT/ALT` text on the key. Only this Function-layer seat differs from the Base/Colemak thumb row, changing its tap from Space to Enter while preserving its left-Alt hold identity. This restores the earlier R26 workflow for confirming dialogs, searches, paste actions, and other mouse-driven tasks while the right hand stays on the mouse. Reject double-tap-hold Space as the implementation: its first Space can replace selected text, activate or scroll controls, insert host-visible text that later needs cleanup, collide with ordinary repeated spaces, and compete with Space-hold-Alt timing. Acceptance: ordinary Space and left Alt behavior remain boring on Base/Colemak, `Function + third left thumb` sends exactly one Enter without first sending Space, holding that Function-layer thumb position provides left Alt, Function Select All/Snip/Undo and Snap remain unchanged, the printable guide uses the Enter-arrow-plus-`Alt` treatment at the correct seat, Corne compiles with the byte count recorded, and tap Enter plus hold Alt are flashed and physically tested before marking Kept. |
+
+| M41 | Investigating | Smart English quote output can escape to Edge browser UI during typing practice. | Physical observation on 2026-07-15: when a typing-practice site requests the right directional quote `”`, pressing `Shift + '` can leave the exercise and move focus to Edge search/address or new-page UI instead of inserting the character. The matching left directional quote (`Shift + Caps`) and Spanish accented output may share the same risk because all use `send_windows_alt_code()`. Current implementation sends Windows Alt+numpad codes (`0148` for `”`, `0147` for `“`) through keypad keycodes. Leading hypothesis: host Num Lock is off, so Windows/Edge interprets the keypad sequence as navigation or browser commands instead of a numeric Alt code. Confirm before editing: enable Num Lock through Windows On-Screen Keyboard or another keyboard, retest both English directional quotes, and test one Spanish accented character. Record whether the problem occurs only in Edge/the typing site or in a plain text editor too. Do not change quote key placement or the shared Alt-code helper until the host-state test identifies the failure. If Num Lock is confirmed as the dependency, decide separately whether to document it, make the helper manage Num Lock safely, or replace Alt codes with a WinCompose/Unicode approach. |
+
+| M42 | Investigating | Replace the unstable Corne PCB path and evaluate Unicorne hardware as the shared ChieftainDots platform. | Hardware observation: the current Chieftain42 Corne has intermittent split/RGB failures that persist across USB cables, while restarting the computer can temporarily help. The leading physical suspect is the inter-half TRRS cable or jack, especially because this board already has known RGB soldering faults; do not treat firmware as the cause until the hardware path is isolated. Planned test: dry-fit the existing Boardsource Unicorne MX PCB/plate assembly in the Chieftain42 case. Perform the fit with USB and inter-half power disconnected, do not force or power a loose PCB against the aluminium, and verify the MX switch/plate alignment, PCB outline, mounting and o-ring clearance, USB-C openings, inter-half connector access, reset access, OLED/controller-cover clearance, underside component height, and protection against shorts. If the existing Unicorne PCB fits cleanly, consider using Boardsource RP2040 Corne/Unicorne hardware for both ChieftainDots keyboards. Benefit: one higher-memory QMK hardware target and one board-adapter path would reduce Corne-AVR byte pressure, avoid maintaining two materially different compile platforms, and make RGB/OLED behavior easier to consolidate. Practical constraint: the existing Unicorne is still needed as a separate home keyboard, so a successful dry fit may lead to buying a second compatible Boardsource Corne MX SMT/Unicorne PCB rather than permanently moving the only one. Confirm exact Chieftain42 compatibility and current product availability before purchase; do not assume that generic Corne compatibility guarantees USB-C, component, or cover clearance. Keep the current AVR Corne source and last known firmware as a rollback until replacement hardware is physically proven. |
+
+| M43 | Requirement | Harden the existing Unicorne port and evaluate it as the primary ChieftainDots coding platform. | This is an umbrella migration plan, not permission to implement all phases together. M27 already created and compiled `keymaps/unicorne.json`; M28-M30 contain the established RGB/OLED ownership requirements; M42 owns the Chieftain42 dry-fit and second-PCB decision. Execute M43 as small reversible slices, with separate compile/flash approval and physical acceptance after each slice. **Phase 1 — stable input:** override the upstream Boardsource default in the userspace Unicorne recipe with `"config": {"features": {"pointing_device": false}}` because the keyboard has no joystick and the inherited `analog_joystick` driver produces continuous down-right mouse movement. Do not edit `keyboards/boardsource/unicorne`; keep the fix in `keymaps/unicorne.json`. Compile and flash Unicorne, then confirm mouse drift is gone and ordinary keys remain correct. **Phase 2 — core behavior parity:** physically test Base/Colemak, the four home-row anchors, Numbers, Symbols, Navigation, Snap, Media, MS Styles, Spanish compose, smart quotes, text snippets with private-data safeguards, Function Select All/Snip/Undo, M40 Function Enter/Alt, Caps behavior, and host shortcuts. Record differences instead of assuming shared layout macros guarantee identical behavior. **Phase 3 — recovery and split validation:** verify Bootmagic and the running-firmware boot shortcut, USB on each half, handedness, inter-half USB-C behavior, reset access, and recovery after flashing. Do not carry Corne TRRS assumptions into Unicorne diagnostics. **Phase 4 — visual adapters:** implement M28-M30 in separate RGB and OLED slices. Shared userspace code owns visual meaning; a Unicorne adapter owns matrix-to-LED lookup, master/non-master screen roles, rotation, connector behavior, and any hardware-specific mapping. Do not edit upstream keyboard files. Compile and physically test each visual slice before proceeding. **Phase 5 — platform decision:** complete the fully unpowered M42 Chieftain42 dry fit. If fit, behavior, recovery, RGB, and OLED are accepted, consider Boardsource RP2040 Corne/Unicorne hardware the primary ChieftainDots target and use one shared high-memory QMK platform for home and work. Because the existing Unicorne is needed at home, purchase a second compatible PCB only after exact case fit, connector clearance, product identity, and availability are confirmed. Keep the AVR Corne recipe, source, last accepted firmware, and rollback documentation until the replacement platform is proven. **Documentation gate:** when the platform decision is accepted, update README build priorities, architecture ownership, engineering notes, physical-test plan, printable-guide target wording, Current Focus, and canonical compile/flash commands. Acceptance for the umbrella requirement: every phase has its own measured compile and physical result; no phase silently breaks Corne while Corne remains supported; Unicorne no longer drifts the mouse; the full daily behavior set works; recovery is proven on both halves; visual feedback is board-correct; and the primary-target decision is explicit rather than inferred from available memory. |
+| M44 | Requirement | Rename the printable diagram to `UNICORNE CAMMO` after the physical design is settled. | Defer the branding change until the Unicorne case and keycaps are selected and physically accepted, so the title describes the finished keyboard rather than a temporary electronics trial. At that point change the rendered diagram's visible title from ChieftainDots to exactly `UNICORNE CAMMO` in all caps, update the renderer source rather than editing the PNG by hand, rename diagram files and links consistently if the canonical filename changes, regenerate the image, and run the Printable Guide Renderer Gate. Do not rename the current Corne diagram or project identity prematurely while the AVR Corne remains the accepted keyboard and Unicorne remains under migration. |
+| M45 | Requirement | Redesign OLED ownership around Unicorne as the practical primary target. | Decision recorded from the first Phase-4 physical trial on 2026-07-17: do not constrain the Unicorne OLED implementation to the smallest Corne-compatible patch. The current Corne is physically unreliable, so the next OLED slice should make the Unicorne experience coherent and board-native while keeping Corne code isolated as a retained rollback target. Physical evidence: RGB appears to behave as intended; the USB-connected/master side shows ChieftainDots status, but its button tiles look halved or clipped; Bongocat appears reliably only while non-Control home-row layers are held; swapping the USB side can make Bongocat work briefly, then it goes dark after further typing. Diagnosis to verify before implementation: the status renderer assumes a portrait 32x128 logical canvas while the Boardsource master rotation leaves it landscape; `render_bongocat()` turns the display off after `OLED_TIMEOUT` but does not explicitly wake it on renewed activity; Bongocat infers anchor activity from non-typing layers, so the Control modifier anchor is invisible to that test; and the split currently synchronizes layer/modifier state but not the master-local `oled_tap_timer`, so normal typing activity does not reliably reach Bongocat on the non-master even though held layers do. **Ownership requirement:** `oled-unicorne.c` should own Unicorne screen roles, orientation policy, wake/sleep lifecycle, and semantic activity routing. Shared modules may retain reusable status artwork and Bongocat frame data, but must not force Corne orientation or lifecycle assumptions onto Unicorne. The USB-connected master should show a stable, readable ChieftainDots status screen; the non-master should show Bongocat; swapping USB sides should swap roles predictably without stale, blank, or overwritten content. **Settled display requirements:** preserve the existing ChieftainDots status artwork and its portrait 32x128 composition rather than redesigning it for landscape. Both screens should sleep after inactivity. Bongocat should sleep after inactivity and wake reliably on the first keypress, with that first keypress also producing the intended animation/feedback rather than being consumed only as a wake event. Retain the established R21 Bongocat grammar: ordinary typing uses the existing tap/idle animation; a held non-typing anchor uses the stable pressing frame; and a physically held Navigation or Snap directional action uses the larger press frame. Extend the anchor-active definition to cover the modifier-only Control anchor without making Bongocat responsible for semantic layer or chord names. The status screen retains semantic ownership: resting uses `base_layer`, a held anchor uses `anchor_layer`, a completed GUI chord uses `chord_layer`, the four-anchor stack identifies Control/Symbols/Numbers/Function, and chord labels remain `media`, `style`, `nav`, and `snap`. **Status requirements to explore:** confirm the physical OLED controller dimensions and valid QMK rotations on each half; preserve and correctly orient the existing portrait artwork; verify every logo, layer tile, label, connector, and four-anchor indicator is complete and aligned; define priority for Base, Colemak, Caps, Control, Symbols, Numbers, Function, and chord layers. **Bongocat requirements to explore:** preserve ordinary typing animation, all four home-row anchor held states including Control, the existing chord/big-press feedback, idle animation, timeout, and explicit first-key wake; decide whether sleep timing should be synchronized or independent between halves. **Split requirements to explore:** test USB on left and right, role changes after reconnect, layer/modifier/WPM or equivalent activity synchronization, display recovery after timeout, and behavior when one half is unavailable. **Architecture requirement:** investigate the Boardsource `oled_init_kb()` implementation, which currently chooses rotation without delegating to `oled_init_user()`, then select a clean userspace/build-configuration mechanism or a deliberate keyboard-level correction rather than claiming the existing task-only adapter owns rotation. Upstream keyboard edits are no longer categorically forbidden if QMK's hook boundary makes correct ownership impossible, but any such edit must be narrowly justified, documented as a board fix, and evaluated for maintainability against a userspace-only alternative. **Acceptance:** both halves are flashed from the intended checkout; status is readable and correctly oriented on either master; both screens sleep after inactivity; Bongocat remains functional through typing, idle, timeout, and first-key wake; all four anchors and intended chord states follow the established grammar; USB-side swapping is predictable; the Boardsource default renderer never overwrites ChieftainDots; and the physical results are recorded before the OLED redesign is marked Kept. Do not implement until the rotation/ownership mechanism and split sleep policy are chosen. |
+| M46 | Requirement | Add an old-television OLED shutdown transition before firmware-triggered flashing. | Requirement only; do not implement until M45 OLED roles, rotation, sleep/wake, and split synchronization are physically accepted. Goal: when the running ChieftainDots firmware enters the bootloader through `CD_BOOT`, both OLEDs should visibly shut down like an old CRT television before reset: wake if asleep, freeze or capture the current content, collapse the image vertically into a bright horizontal line, shrink the line toward the centre, leave a brief central dot, then turn fully off immediately before bootloader entry. The effect should feel deliberate and quick rather than delaying recovery; research a target around 300-450ms and integrate it with the existing M36 RGB boot confirmation so waits do not stack unnecessarily. The animation must be role- and rotation-aware: Bongocat may be on either master side and status on either non-master side, but both physical displays should show the same perceived top-to-bottom collapse regardless of their logical framebuffer rotation. Use shared OLED transition primitives or an adapter-owned physical-coordinate transform rather than duplicating separate hand-tuned frame sequences. For split behavior, the master should send a boot-transition request through the established Unicorne OLED transaction path, both halves should suppress normal OLED rendering during the transition, and the master must proceed after a short bounded delay even if the other half is absent or fails to acknowledge. Bootloader access is the hard safety requirement: OLED failure, a disconnected half, disabled visual builds, or a failed animation must never prevent `reset_keyboard()`. Scope limitation: userspace can guarantee this transition only when `CD_BOOT` is invoked while firmware is running. Physical reset, Bootmagic, double-reset, plugging into an already mounted bootloader drive, and the actual UF2 copy happen outside running userspace and cannot promise the animation. The final dot/off frame must not leave the non-resetting half brightly frozen while the connected half is in bootloader mode; decide whether the remote half stays off until reconnect or shows a separate bounded disconnected state only after the flash workflow is reliable. Acceptance: compile-measure the visual build; test `CD_BOOT` from either physical half and with USB on either side; confirm both orientations show the intended CRT collapse; confirm the existing boot-pink RGB feedback remains understandable; confirm the bootloader is reached every time with the other half connected, disconnected, asleep, or unavailable; and verify ordinary OLED timeout/wake behavior is unchanged after returning from flash. |
+
+M45 research update, 2026-07-17: QMK's OLED driver initializes rotation as
+`oled_init_user(oled_init_kb(rotation))`. The Boardsource Unicorne
+`oled_init_kb()` therefore does not need to call `oled_init_user()` itself and
+does not block a userspace rotation policy. Remove the earlier suspicion that
+correct rotation requires editing the upstream keyboard. Keep the solution in
+the Unicorne userspace adapter unless later evidence proves otherwise. The
+existing status artwork still targets the same 128x32 physical display in a
+32x128 logical portrait orientation; the observed clipping is a rotation-policy
+failure, not evidence that Unicorne needs different artwork.
+
+For wake/sleep activity, `SPLIT_WPM_ENABLE` is useful for typing-rate animation
+but is not the complete first-key wake signal: QMK's default WPM filter counts
+ordinary typing keycodes and intentionally excludes many layer, modifier,
+custom, and system actions. The requirement is stronger: every accepted key
+press, including all four home-row anchors and chord ingredients, must wake both
+screens and reset one shared inactivity deadline. Preferred architecture to
+evaluate is a small userspace split transaction carrying an activity generation
+or timestamp-equivalent signal from master to non-master, sent from a throttled
+housekeeping path as QMK recommends. WPM may still drive animation speed, but it
+must not own OLED power state. Both halves should render locally from the shared
+activity signal, sleep after the same configured inactivity interval, and wake
+on the first keypress without consuming that key's normal behavior or visual
+feedback.
 
 ## Current Focus
 
@@ -72,24 +106,167 @@ Start here if this project has been idle for a while. This short table is the
 authoritative resume point; the longer table below is parked detail and history
 from earlier discussions.
 
-Session handoff, 2026-07-14: userspace git is on `main`; latest accepted commit
-is `da3ec67 Keep Function undo and snip shortcuts`. The uncommitted working tree
-contains the now-kept M36 boot RGB confirmation and the now-kept M35 correction
-adding `Function + A` Select All, plus their documentation/guide updates.
-Current uncommitted userspace files are `eldestroyer74.c`,
-`features/user_keycodes.h`, `layout.h`, `rgb/rgb-matrix.c`,
-`rgb/rgb-matrix.h`, `docs/chieftainDots-roadmap.md`,
-`docs/chieftainDots-engineering-guide.md`, and
-`docs/chieftainDots-printable-layer-guide.md`. The ignored private file
+Session handoff, 2026-07-15: userspace git is on `main`; latest accepted commit
+is `e3abc73 Keep boot RGB confirmation and Function Select All`. M35 and M36
+are kept and committed. The only new working-tree change is the M40 requirement
+to restore direct `Function + left inner thumb` Enter. The ignored private file
 `features/text_stubs_private.h` is still local-only and must not be staged.
 The normal `C:\QMK_MSYS\shell_connector.cmd` Bash path currently fails with
 Win32 error 5, and `C:\QMK_MSYS\autorebase.bat` fails with "Too many DLLs for
 available address space." A PowerShell MinGW environment fallback did compile
 the current Corne M36 working tree at `28318/28672`, leaving `354` bytes free.
-Physical testing is complete: M36 boot confirmation works with the accepted
-split behavior described below, and `Function + A` Select All works. Next step:
-review the final userspace diff and private-data gate, then ask before staging
-or committing.
+Physical testing is complete for M35/M36: boot confirmation works with the
+accepted split behavior described below, and `Function + A` Select All works.
+M40 is now implemented in the working tree: on Function, the third left thumb
+is `ENT/ALT`; Base/Colemak remain `SPC/ALT`. The source guide and renderer are
+updated. M40 remains compile-pending and must be flashed and physically tested
+for both tap Enter and hold left Alt before it can be marked Kept.
+
+M41 logs a new smart-quote problem: `Shift + '` can send Edge to browser UI
+instead of producing `”`. Test Num Lock on, both directional English quotes,
+one Spanish accented character, and a plain text editor before changing the
+shared Windows Alt-code helper.
+
+M42 logs the intermittent Corne split/RGB hardware issue and the plan to dry-fit
+the existing Unicorne PCB in the Chieftain42 case while fully unpowered. A clean
+fit could converge home/work ChieftainDots boards on one RP2040 QMK platform;
+because the current Unicorne is still needed at home, confirm the fit before
+considering purchase of a second compatible PCB.
+
+M43 phases 1-4 were authorized together on 2026-07-17 as a time-saving
+exception, with physical acceptance still kept at phase boundaries. Phase 1 is
+implemented in `keymaps/unicorne.json`: inherited `pointing_device` is disabled
+without editing the Boardsource keyboard. The focused phase-1/2 documentation
+checkpoint has diff fingerprint `714bb464124765af9ed33ed4cda9728a136f4b4d`.
+Phase 2 behavior parity and phase 3 recovery/split checks are enumerated in
+`docs/chieftainDots-unicorne-physical-test-plan.md`; they remain physical-test
+pending. Phase 4 source is implemented but deliberately not compiled: Unicorne
+RGB now selects the shared matrix-lookup indicator module, and a board-specific
+OLED task adapter shows ChieftainDots status on master and Bongocat on
+non-master while suppressing the Boardsource default renderer. The upstream
+keyboard hook continues to own Unicorne OLED rotation. Phase 4 is opt-in through
+`CHIEFTAINDOTS_UNICORNE_VISUALS=yes`; compiling with it set to `no` produces the
+phase-1/2 behavior without removing any source. Phase-4 file rollback is
+isolated to `rules.mk`, `rgb/rgb-matrix.c`, `oled/oled-bongocat.c`,
+`oled/oled-corne.c`, and
+`oled/oled-unicorne.c`; reverting only those phase-4 changes preserves the
+phase-1 no-joystick fix, M40/shared behavior, and the phase-2/3 test plan.
+
+Compile status on 2026-07-17: the authorized Corne M40 compile was attempted
+twice, but `C:\QMK_MSYS\shell_connector.cmd` hung without compiler output and
+the native fallback still failed with MSYS Win32 error 5. No new firmware or
+byte count was produced. The latest verified size remains the M36 Corne build
+at `28318/28672`, leaving `354` bytes free. Do not describe M40 or any M43 phase
+as compile-verified until a clean build succeeds.
+
+Phase-4 compile investigation on 2026-07-17 reached the ARM compiler after the
+QMK MSYS process-pipe issue was bypassed. The visual Unicorne build then failed
+because the generated board configuration selected `RGB_MATRIX_ALPHAS_MODS`
+while ChieftainDots custom RGB deliberately removes built-in effects. The
+userspace intended to default custom RGB to `RGB_MATRIX_NONE`, but its
+`#ifndef RGB_MATRIX_DEFAULT_MODE` guard could not override the default already
+provided by the generated Unicorne header. The smallest fix explicitly
+redefines the default to `RGB_MATRIX_NONE` whenever `RGB_MATRIX_CUSTOM_USER` is
+active. This matches the existing indicator-first design. The visual-enabled
+Unicorne build then compiled successfully and produced
+`boardsource_unicorne_eldestroyer74.uf2` at 132096 bytes; SHA-256 is
+`74259E5A096D75798DB7F01094302C2463E5AA1CDBC9BB062A0079FCC6E6FCA7`.
+Physical RGB/OLED testing is now the active gate. The no-visual Unicorne safety
+build and Corne regression remain pending; do not overwrite the visual UF2
+before it is copied or flashed for this trial.
+
+Session handoff later on 2026-07-17: QMK split flash commands were provided for
+`uf2-split-left` and `uf2-split-right`, both with
+`CHIEFTAINDOTS_UNICORNE_VISUALS=yes`. The right-hand compile emitted the expected
+`Faking EE_HANDS for right hand` note, which is confirmation of side-specific
+firmware rather than an error. The user then identified that this Codex task was
+not the intended project/access context and chose to move to the correct one.
+Do not assume that the right-hand flash completed or that both halves now run
+the same visual build. On resume, first verify which half was actually flashed,
+confirm the source checkout and QMK home, then flash both halves from the
+intended project before judging RGB or OLED behavior. The visual-enabled source
+and compile-fix files are staged as a handoff only; no commit or push was made.
+
+First Phase-4 physical observation later on 2026-07-17: RGB appears to work as
+desired, but OLED does not pass. Status follows the USB-connected/master side
+and recognizes the home-row concepts, but its button artwork is visibly
+halved/clipped. Bongocat appears mainly while non-Control home-row layers are
+held; after swapping the USB side it can work briefly and then go dark after
+more typing. M45 records the decision to stop optimizing OLED work around the
+smallest Corne-compatible patch and instead define a coherent Unicorne-native
+OLED architecture. Treat Unicorne as the practical primary design target for
+this requirements pass while retaining Corne source and firmware as rollback.
+Do not implement yet: first settle native screen geometry/rotation, stable
+master/non-master ownership, explicit wake/sleep behavior, semantic feedback
+for all four anchors including Control, and both-USB-side split acceptance.
+
+M45 implementation/compile update later on 2026-07-17: the Unicorne adapter now
+owns master portrait rotation, a shared activity generation and Bongocat state
+sent through a QMK userspace split transaction, synchronized inactivity sleep,
+first-key wake, and Control-aware anchor feedback. Shared Bongocat exposes a
+weak anchor-state policy so Corne retains its existing behavior while Unicorne
+adds modifier-only Control. RGB initialization is coordinated from the central
+userspace post-init hook so the OLED transaction can register without competing
+for the same QMK callback. The first compile reached `oled-unicorne.c` and found
+one missing declaration for `is_transport_connected()`; including QMK's
+`split_util.h` corrected it. The visual-enabled Unicorne build then compiled and
+linked successfully with `CHIEFTAINDOTS_UNICORNE_VISUALS=yes`. Output
+`boardsource_unicorne_eldestroyer74.uf2` is 133632 bytes with SHA-256
+`A495ECAFC3A08D66B322B68AC967437549A94C494406ACA0BF4A49142B7DFEA9`.
+Direct ELF measurement reports text 66696, data 0, bss 263808, dec 330504.
+Post-compile review found a reconnect edge case in change-only split sync: a
+restarted non-master could miss state that the master believed it had already
+delivered. The working tree now adds a one-second two-byte heartbeat that does
+not reset inactivity unless the activity generation changes. The hash above is
+therefore the successful pre-heartbeat artifact and must not be flashed as the
+final M45 trial; one final visual compile is pending. Do not mark the OLED
+redesign Flashed or Kept until that exact post-review source compiles, both
+halves are flashed with their side-specific targets, and the M45 sleep/wake,
+orientation, anchor/chord, reconnect, and both-USB-side checks pass.
+
+M45 physical rotation/role decision later on 2026-07-17: with the temporary
+master=status policy, USB on the left produced upright status on the left and
+upright Bongocat on the right; USB on the right made both displays upside down.
+The preferred daily cable position is the right, but retain the useful ability
+to move display roles by changing which half is master. Final role requirement:
+the USB-connected master shows Bongocat and the non-master shows status. This
+puts status on the left and Bongocat on the right when USB is connected on the
+preferred right side, while intentionally swapping them when USB moves left.
+Physical rotation mapping for the next trial: left-master Bongocat is 0 degrees,
+right-master Bongocat is 180 degrees, and status on either non-master side is
+270 degrees. This also matches the established Corne role grammar while leaving
+the Unicorne adapter responsible for its own rotations and split activity.
+The revised visual build compiled successfully with the heartbeat and this
+dynamic role/rotation mapping. Final flash-candidate output
+`boardsource_unicorne_eldestroyer74.uf2` is 133632 bytes with SHA-256
+`547E96D382831DDA73F14BDEFA9B64D1BAF238FC10688CE8B182D585A3E6624D`.
+Direct ELF measurement reports text 66728, data 0, bss 263808, dec 330536.
+This artifact is compile-verified but not yet flashed; physical acceptance must
+start with the preferred right-master arrangement and then confirm the reversed
+left-master roles, orientations, timeout, first-key wake, anchors, chords, and
+reconnect heartbeat.
+
+M45 physical acceptance on 2026-07-17: both halves were flashed with the final
+visual build. OLED sleep and first-key wake work, both screens are upright, and
+the display roles swap correctly when the USB cable changes sides. With the
+preferred USB-right setup, Bongocat is on the right master and status is on the
+left non-master; USB-left reverses the roles as designed. RGB also appears to
+work as intended from the Phase-4 trial. M45 is Kept. M46 is now eligible for a
+separate research/implementation discussion but remains requirement-only.
+
+M46 records a follow-on OLED requirement for firmware-triggered flashing: when
+`CD_BOOT` is used, both screens should perform a short old-television shutdown
+transition (image to horizontal line, line to central dot, then off) before the
+bootloader reset. This is explicitly deferred until M45 is physically accepted.
+It must share timing with the existing RGB boot confirmation, remain correct
+across dynamic screen roles and rotations, and never delay or block recovery if
+the other half or either OLED is unavailable. Physical reset and Bootmagic are
+outside running userspace and therefore cannot guarantee the effect.
+
+M44 records the deferred diagram branding: once case and keycaps are accepted,
+rename the visible title to exactly `UNICORNE CAMMO` in all caps through the
+renderer and regenerate the diagram. The current Corne diagram remains named
+ChieftainDots during migration.
 
 Current accepted baseline: the four-anchor Corne layout has been physically
 tested and accepted on 2026-07-10. Home-row order is `A/; = Control`,

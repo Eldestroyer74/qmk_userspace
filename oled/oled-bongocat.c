@@ -48,6 +48,10 @@
 uint32_t oled_tap_timer = 0;
 extern uint8_t chieftaindots_cat_state;
 
+__attribute__((weak)) bool chieftaindots_bongocat_anchor_active(void) {
+	return get_highest_layer(layer_state) > CMK;
+}
+
 // Run-length encoded animation frames
 // Right frames
 static unsigned char const idle0[] PROGMEM = {144,
@@ -182,7 +186,7 @@ void animate_cat(void) {
 
 	if (chieftaindots_cat_state == CAT_BIG_PRESS) {
 		decode_frame_transformed(tap0, is_keyboard_left() ? OLED_TRANSFORM_MIRROR_X : OLED_TRANSFORM_NONE);
-	} else if (get_highest_layer(layer_state) > CMK) {
+	} else if (chieftaindots_bongocat_anchor_active()) {
 		decode_frame_transformed(tap1, is_keyboard_left() ? OLED_TRANSFORM_MIRROR_X : OLED_TRANSFORM_NONE);
 	} else if (timer_elapsed32(oled_tap_timer) < TAP_INTERVAL) {
 		tap_index = (tap_index + 1) & 1;
@@ -196,10 +200,10 @@ void animate_cat(void) {
 }
 
 
-static void render_bongocat(void) {
+void render_bongocat(void) {
 	// Timer duration between animation frames
 	static uint16_t anim_timer = 0;
-	bool cat_state_active = chieftaindots_cat_state == CAT_BIG_PRESS || get_highest_layer(layer_state) > CMK;
+	bool cat_state_active = chieftaindots_cat_state == CAT_BIG_PRESS || chieftaindots_bongocat_anchor_active();
 
 #ifdef WPM_ENABLE
 	static uint8_t prev_wpm = 0;
@@ -216,25 +220,4 @@ static void render_bongocat(void) {
 		anim_timer = timer_read();
 		animate_cat();
 	}
-}
-
-
-// Init and rendering calls
-oled_rotation_t oled_init_user(oled_rotation_t const rotation) {
-	if (is_keyboard_master()) {
-		return is_keyboard_left() ? rotation : OLED_ROTATION_180;
-	} else {
-		return OLED_ROTATION_270;
-	}
-}
-
-
-bool oled_task_user(void) {
-	extern void render_mod_status(void);
-	if (is_keyboard_master()) {
-		render_bongocat();
-	} else {
-		render_mod_status();
-	}
-	return false;
 }

@@ -166,6 +166,21 @@ userspace logic, while hardware-specific RGB matrix mapping, OLED orientation,
 split behavior, and bootloader commands stay behind board-specific gates until
 compiled and physically tested.
 
+The current phase-4 adapter shape keeps RGB meaning in `rgb/rgb-matrix.c` and
+uses each board's generated `g_led_config.matrix_co` lookup. `rules.mk` selects
+that shared meaning module for Corne and Unicorne without copying Unicorne LED
+indexes. OLED content is shared by `oled/oled-icons.c` and
+`oled/oled-bongocat.c`, while `oled/oled-corne.c` and
+`oled/oled-unicorne.c` own screen roles and callback behavior. The Unicorne
+userspace adapter owns role-aware rotation, shared activity/sleep state, and
+split synchronization. The USB-connected master shows Bongocat and the
+non-master shows status, so changing the USB side deliberately swaps the two
+roles. Left-master Bongocat uses 0 degrees, right-master Bongocat uses 180
+degrees, and status on either non-master uses 270 degrees. The userspace task
+adapter returns false after drawing so Boardsource's default screen does not
+render over ChieftainDots. This adapter shape is compiled, flashed, and
+physically accepted on Unicorne.
+
 Porting checklist:
 
 - Confirm the QMK keyboard name and supported layout macro.
