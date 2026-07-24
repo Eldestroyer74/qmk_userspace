@@ -51,23 +51,25 @@ DARK_LAYER = {"BASE", "COLEMAK", "SYMBOLS", "NUMBERS", "NAVIGATION",
 #   spanish â€” bottom-left, faint (Spanish-compose overlay)
 def K(tap, hold="", double="", spanish="", dhold=""): return (tap, hold, double, spanish, dhold)
 
+TRANSPARENT = "__TRANSPARENT__"
+
 BASE = [
-    [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("E","","","Ã‰","_TEXT_EMAIL"), K("R"), K("T"),
-     K("Y"), K("U","","","Ãš"), K("I","","","Ã"), K("O","","","Ã“"), K("P","","","","_TEXT_PHONE"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("S","Sym"), K("D","Num"), K("F","Fn"), K("G"),
-     K("H","","","","_TEXT_HOME"), K("J","Fn"), K("K","Num"), K("L","Sym"), K(";","Ctrl","","Ãœ"), K("'")],
+    [K("_KEY_TAB","Esc","Cls"), K("Q","","","\u00a1"), K("W","","","","_TEXT_WORK"), K("E","","","\u00c9","_TEXT_EMAIL"), K("R"), K("T"),
+     K("Y"), K("U","","","\u00da"), K("I","","","\u00cd"), K("O","","","\u00d3"), K("P","","","","_TEXT_PHONE"), K("_KEY_BSP")],
+    [K("_KEY_CAPS"), K("A","Ctrl","","\u00c1","All"), K("S","Sym"), K("D","Num"), K("F","Fn"), K("G"),
+     K("H","","","","_TEXT_HOME"), K("J","Fn"), K("K","Num"), K("L","Sym"), K(";","Ctrl","","\u00dc"), K("'")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
-     K("N","","","Ã‘","_TEXT_NAME"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
+     K("N","","","\u00d1","_TEXT_NAME"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","\u00bf"), K("_KEY_GLOBE")],
     [K("_KEY_GUI"), K("Shift","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift","","","","Ent"), K("_KEY_MENU")],
 ]
 
 COLEMAK = [
-    [K("_KEY_TAB","Esc","Cls"), K("Q","","","Â¡"), K("W","","","","_TEXT_WORK"), K("F","","","Ã‰"), K("P","","","","_TEXT_PHONE"), K("G"),
-     K("J"), K("L","","","Ãš"), K("U","","","Ã"), K("Y","","","Ã“"), K("'"), K("_KEY_BSP")],
-    [K("_KEY_CAPS"), K("A","Ctrl","","Ã","All"), K("R","Sym"), K("S","Num"), K("T","Fn"), K("D"),
-     K("H","","","","_TEXT_HOME"), K("N","Fn","","","_TEXT_NAME"), K("E","Num","","","_TEXT_EMAIL"), K("I","Sym"), K("O","Ctrl","","Ãœ"), K(";")],
+    [K("_KEY_TAB","Esc","Cls"), K("Q","","","\u00a1"), K("W","","","","_TEXT_WORK"), K("F","","","\u00c9"), K("P","","","","_TEXT_PHONE"), K("G"),
+     K("J"), K("L","","","\u00da"), K("U","","","\u00cd"), K("Y","","","\u00d3"), K("'"), K("_KEY_BSP")],
+    [K("_KEY_CAPS"), K("A","Ctrl","","\u00c1","All"), K("R","Sym"), K("S","Num"), K("T","Fn"), K("D"),
+     K("H","","","","_TEXT_HOME"), K("N","Fn","","","_TEXT_NAME"), K("E","Num","","","_TEXT_EMAIL"), K("I","Sym"), K("O","Ctrl","","\u00dc"), K(";")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
-     K("K","","","Ã‘"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","Â¿"), K("_KEY_GLOBE")],
+     K("K","","","\u00d1"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","\u00bf"), K("_KEY_GLOBE")],
     [K("_KEY_GUI"), K("Shift","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift","","","","Ent"), K("_KEY_MENU")],
 ]
 
@@ -114,7 +116,7 @@ NAV = [
      K("_ARROW_DOWN","_ARROW_DOWN","_WORD_DOWN","","_EXTREME_DOWN"),
      K("_ARROW_RIGHT","_ARROW_RIGHT","_WORD_RIGHT","","_EXTREME_RIGHT"), K(""), K("")],
     [K("")]*12,
-    [K("â–½"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K(TRANSPARENT), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 # MSSTYLES â€” Alt+Shift+arrows (PowerPoint paragraph/list style movement).
@@ -230,7 +232,7 @@ MEDIA = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_MEDIA_MUTE"), K("_MEDIA_VOLDN"), K("_MEDIA_PLAY"), K(""), K("")],
     [K("")]*12,
-    [K("â–½"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K(TRANSPARENT), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 TEXT = [
@@ -239,7 +241,7 @@ TEXT = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K("_TEXT_WORK"), K("_TEXT_MEET"), K("_TEXT_EMAIL"), K("_TEXT_NAME"), K(""), K("")],
     [K("")]*12,
-    [K(""), K("â–½"), K(""), K(""), K(""), K("")],
+    [K(""), K(TRANSPARENT), K(""), K(""), K(""), K("")],
 ]
 
 FUNCTION = [
@@ -265,7 +267,7 @@ SNAP = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_SNAP_LEFT"), K("_SNAP_MIN"), K("_SNAP_RIGHT"), K(""), K("")],
     [K("")]*12,
-    [K("â–½"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K(TRANSPARENT), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
 ]
 
 # ACCESS lists every key that gets highlighted on a layer card. Most entries
@@ -983,7 +985,7 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
              embed_palette=None, payload=False, payload_palette=None,
              spanish="", double_hold="", shift="", muted=False):
     blank = (tap == "" and not highlight and not secondary and not embed)
-    trans = (tap == "â–½")
+    trans = (tap == TRANSPARENT)
 
     pal = palette or DEFAULT_PALETTE
     emb_pal = embed_palette or pal
@@ -1175,7 +1177,7 @@ def draw_sym_strip(kb_x, kb_y, unit, sym_row):
     strip_text = {"_KEY_DEL": "Del"}
     for c in range(12):
         tap = sym_row[c][0]
-        if not tap or tap == "â–½":
+        if not tap or tap == TRANSPARENT:
             continue
         label = strip_text.get(tap, tap)
         # Skip icon tokens (e.g. _KEY_DEL) but let the literal "_" glyph through.
@@ -1426,6 +1428,25 @@ def notes_block(x, y, lines, header="TAP / HOLD / DOUBLE-TAP"):
 def _kb_width_est(unit):
     return 12 * (unit + max(2, unit * 0.06)) + unit * 0.45
 
+ALPHA_SPECS = [
+    ("BASE",    "QWERTY",      BASE,    1),
+    ("COLEMAK", "alt typing",  COLEMAK, 2),
+]
+
+ROW2_SPECS = [
+    ("CONTROL",    "CTRL",       CTRL,     3, "hold"),
+    ("MEDIA",      "MEDIA",      MEDIA,    4, "+ GUI"),
+    ("SYMBOLS",    "SYMBOLS",    SYMBOLS,  5, "hold"),
+    ("MS STYLES",  "MSSTYLES",   MSSTYLES, 6, "+ GUI"),
+]
+
+ROW3_SPECS = [
+    ("NUMBERS",    "NUMBERS",    NUMBERS,  7, "hold"),
+    ("NAVIGATION", "NAVIGATION", NAV,      8, "+ GUI"),
+    ("FUNCTION",   "FUNCTION",   FUNCTION, 9, "hold"),
+    ("SNAP",       "SNAP",       SNAP,    10, "+ GUI"),
+]
+
 # ---------- build ----------
 def build():
     """
@@ -1503,11 +1524,7 @@ def build():
     )
 
     # â”€â”€ Top band: BASE + COLEMAK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    alpha_specs = [
-        ("BASE",    "QWERTY",      BASE,    1),
-        ("COLEMAK", "alt typing",  COLEMAK, 2),
-    ]
-    for i, (name, sub, data, num) in enumerate(alpha_specs):
+    for i, (name, sub, data, num) in enumerate(ALPHA_SPECS):
         cx = MARGIN + i * (alpha_card_w + GAP)
         cy = top_y
         parts.append(draw_section_card(cx, cy, alpha_card_w, row_h,
@@ -1524,20 +1541,6 @@ def build():
     # â”€â”€ Matrix rows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Each row: (left pair) hold, +GUI  |divider|  (right pair) hold, +GUI
     # row 2: 4-col (Control/Media/Symbols/Styles), card_w=mid_card_w, unit=mid_unit
-    row2_specs = [
-        ("CONTROL",    "CTRL",       CTRL,     3, "hold"),
-        ("MEDIA",      "MEDIA",      MEDIA,    4, "+ GUI"),
-        ("SYMBOLS",    "SYMBOLS",    SYMBOLS,  5, "hold"),
-        ("MS STYLES",  "MSSTYLES",   MSSTYLES, 6, "+ GUI"),
-    ]
-    # row 3: 4-col (Numbers/Navigation/Function/Snap), card_w=mid_card_w, unit=mid_unit
-    row3_specs = [
-        ("NUMBERS",    "NUMBERS",    NUMBERS,  7, "hold"),
-        ("NAVIGATION", "NAVIGATION", NAV,      8, "+ GUI"),
-        ("FUNCTION",   "FUNCTION",   FUNCTION, 9, "hold"),
-        ("SNAP",       "SNAP",       SNAP,    10, "+ GUI"),
-    ]
-
     def render_row(specs, row_idx, card_w, unit):
         by = matrix_y[row_idx]
         for ci, (title, lk, data, num, role) in enumerate(specs):
@@ -1562,8 +1565,8 @@ def build():
                                        layer_name=lk)
             parts.append(kb)
 
-    render_row(row2_specs, 1, mid_card_w, mid_unit)
-    render_row(row3_specs, 2, mid_card_w, mid_unit)
+    render_row(ROW2_SPECS, 1, mid_card_w, mid_unit)
+    render_row(ROW3_SPECS, 2, mid_card_w, mid_unit)
 
     # â”€â”€ KEY ANATOMY (bare â€” no card background) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     label_color = MUTED
@@ -1591,7 +1594,7 @@ def build():
     bot_label_y = lg_y + lg_unit - 4
     parts.append(draw_key(lg_x[0], lg_y, lg_unit, lg_unit, "A", "Ctrl", "Wk",
                           True, False, None, lg_font_main, lg_font_hold,
-                          spanish="Ã", double_hold="_TEXT_WORK"))
+                          spanish="\u00c1", double_hold="_TEXT_WORK"))
     parts.append(f'<text x="{lg_x[0]+lg_unit+label_gap:.1f}" y="{label_y:.1f}" text-anchor="start" {FONTFAM} font-size="10.5" font-weight="600" fill="{label_color}">hold</text>')
     parts.append(f'<text x="{lg_x[0]-label_gap:.1f}" y="{label_y:.1f}" text-anchor="end" {FONTFAM} font-size="10.5" font-weight="600" fill="{label_color}">double-tap</text>')
     parts.append(f'<text x="{lg_x[0]-label_gap:.1f}" y="{bot_label_y:.1f}" text-anchor="end" {FONTFAM} font-size="10.5" font-weight="600" fill="{label_color}">dbl-hold</text>')
@@ -1614,6 +1617,161 @@ def build():
         f'</svg>'
     )
     return svg
+
+def build_desktop(width, height, content_width):
+    """Render the shared guide data in a purpose-built 32:9 composition."""
+    FONTFAM = 'font-family="Inter, Segoe UI, system-ui, sans-serif"'
+    comp_w, comp_h = 1920, 590
+    margin, gap = 86, 12
+    usable_w = comp_w - 2 * margin
+    alpha_h, small_h = 190, 130
+    alpha_y = 25
+    row2_y = alpha_y + alpha_h + gap
+    row3_y = row2_y + small_h + gap
+    anatomy_y = row3_y + small_h + 8
+    alpha_w = (usable_w - gap) / 2
+    small_w = (usable_w - 3 * gap) / 4
+    parts = [font_face_defs()]
+
+    for i, (name, sub, data, num) in enumerate(ALPHA_SPECS):
+        cx = margin + i * (alpha_w + gap)
+        parts.append(draw_section_card(cx, alpha_y, alpha_w, alpha_h,
+                                       num, name, sub, name))
+        unit = 43
+        keyboard_scale = 32 / unit
+        kb_x = cx + (alpha_w - _kb_width_est(unit) * keyboard_scale) / 2
+        kb_y = alpha_y + 44
+        keyboard, _, _ = draw_keyboard(
+            0, 0, unit, data, name in DARK_LAYER, set(), layer_name=name
+        )
+        parts.append(
+            f'<g transform="translate({kb_x:.3f} {kb_y:.3f}) '
+            f'scale({keyboard_scale:.8f})">'
+            + draw_sym_strip(0, 0, unit, SYMBOLS[0])
+            + keyboard
+            + '</g>'
+        )
+
+    def render_desktop_row(specs, y):
+        for i, (title, layer_name, data, num, role) in enumerate(specs):
+            cx = margin + i * (small_w + gap)
+            parts.append(draw_section_card(cx, y, small_w, small_h,
+                                           num, title, role, layer_name))
+            parts.append(
+                f'<text x="{cx+48:.1f}" y="{y+50:.1f}" {FONTFAM} '
+                f'font-size="8" font-weight="600" fill="{MUTED}" '
+                f'letter-spacing="0.3">{esc(role)}</text>'
+            )
+            unit = 27
+            keyboard_scale = 16 / unit
+            kb_x = cx + (small_w - _kb_width_est(unit) * keyboard_scale) / 2
+            kb_y = y + 49
+            access_set, secondary_set, cue_map = card_highlights(layer_name)
+            keyboard, _, _ = draw_keyboard(
+                0, 0, unit, data, layer_name in DARK_LAYER, access_set,
+                secondary_set=secondary_set, embed_set=embed_for(layer_name),
+                cue_map=cue_map,
+                font_boost=LAYER_FONT_BOOST.get(layer_name, 1.0),
+                layer_name=layer_name,
+            )
+            parts.append(
+                f'<g transform="translate({kb_x:.3f} {kb_y:.3f}) '
+                f'scale({keyboard_scale:.8f})">{keyboard}</g>'
+            )
+
+    render_desktop_row(ROW2_SPECS, row2_y)
+    render_desktop_row(ROW3_SPECS, row3_y)
+
+    parts.append(
+        f'<text x="{margin}" y="{anatomy_y+15}" {FONTFAM} font-size="10" '
+        f'font-weight="800" fill="{INK}" letter-spacing="0.6">KEY ANATOMY</text>'
+    )
+    anatomy_unit = 28
+    anatomy_key_y = anatomy_y + 18
+    anatomy_start = comp_w / 2 - 155
+    anatomy_x = [anatomy_start, anatomy_start + 155, anatomy_start + 310]
+    main_font = max(11, int(round(anatomy_unit * 0.42)))
+    hold_font = max(7, int(round(anatomy_unit * 0.26)))
+    parts.append(draw_key(anatomy_x[0], anatomy_key_y, anatomy_unit, anatomy_unit,
+                          "A", "Ctrl", "Wk", True, False, None,
+                          main_font, hold_font, spanish="\u00c1",
+                          double_hold="_TEXT_WORK"))
+    parts.append(draw_key(anatomy_x[1], anatomy_key_y, anatomy_unit, anatomy_unit,
+                          "", "", "A", True, True, "A", main_font, hold_font))
+    parts.append(draw_key(anatomy_x[2], anatomy_key_y, anatomy_unit, anatomy_unit,
+                          "", "", "", True, False, None, main_font, hold_font,
+                          secondary=True))
+    anatomy_label_gap = 5
+    anatomy_top_label_y = anatomy_key_y + 9
+    anatomy_bottom_label_y = anatomy_key_y + anatomy_unit - 3
+    anatomy_corner_labels = (
+        (anatomy_x[0] - anatomy_label_gap, anatomy_top_label_y,
+         "end", "double-tap"),
+        (anatomy_x[0] + anatomy_unit + anatomy_label_gap,
+         anatomy_top_label_y, "start", "hold"),
+        (anatomy_x[0] - anatomy_label_gap, anatomy_bottom_label_y,
+         "end", "dbl-hold"),
+        (anatomy_x[0] + anatomy_unit + anatomy_label_gap,
+         anatomy_bottom_label_y, "start", "Spanish"),
+    )
+    for x, y, anchor, label in anatomy_corner_labels:
+        parts.append(
+            f'<text x="{x:.1f}" y="{y:.1f}" text-anchor="{anchor}" '
+            f'{FONTFAM} font-size="7" font-weight="600" fill="{MUTED}">'
+            f'{label}</text>'
+        )
+    for x, caption in zip(anatomy_x, ("key anatomy", "chord member", "chord cue")):
+        parts.append(
+            f'<text x="{x+anatomy_unit/2:.1f}" y="{anatomy_y+53}" '
+            f'text-anchor="middle" {FONTFAM} font-size="7" font-weight="600" '
+            f'fill="{MUTED}">{caption}</text>'
+        )
+
+    desktop_inner = "\n".join(parts)
+    desktop_inner = desktop_inner.replace(
+        'fill="#ffffff" stroke="#c7ced8"',
+        'fill="#202b38" stroke="#536273"',
+    ).replace(
+        'fill="#eaeef3" stroke="#cbd5e1"',
+        'fill="#1b2531" stroke="#465567"',
+    )
+    desktop_colours = {
+        CARD_FILL: "#18212d", CARD_STROKE: "#66758970",
+        INK: "#cbd3df", MUTED: "#818d9e",
+        BLUE: "#728ab5", BLUE_DEEP: "#667ca4",
+        "#bfdbfe": "#34465c", "#93c5fd": "#526b88",
+        "#1f2937": "#465567", "#94a3b8": "#b5c0cf",
+    }
+    for paper_colour, desktop_colour in desktop_colours.items():
+        desktop_inner = desktop_inner.replace(paper_colour, desktop_colour)
+
+    safe_width = width * 0.90
+    safe_height = height * 0.86
+    scale = min(content_width / comp_w, safe_width / comp_w, safe_height / comp_h)
+    offset_x = (width - comp_w * scale) / 2
+    offset_y = (height - comp_h * scale) / 2
+
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        f'width="{width}" height="{height}">'
+        '<defs>'
+        '<radialGradient id="ambient" cx="50%" cy="42%" r="68%">'
+        '<stop offset="0" stop-color="#26354a"/>'
+        '<stop offset="0.52" stop-color="#151e2b"/>'
+        '<stop offset="1" stop-color="#090d14"/>'
+        '</radialGradient>'
+        '<filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="125%">'
+        '<feDropShadow dx="0" dy="18" stdDeviation="22" '
+        'flood-color="#00050b" flood-opacity="0.38"/>'
+        '</filter>'
+        '</defs>'
+        f'<rect width="{width}" height="{height}" fill="#090d14"/>'
+        f'<rect width="{width}" height="{height}" fill="url(#ambient)"/>'
+        f'<g transform="translate({offset_x:.3f} {offset_y:.3f}) '
+        f'scale({scale:.8f})" filter="url(#soft-shadow)">'
+        + desktop_inner +
+        '</g></svg>'
+    )
 
 def write_png(svg, png_path, output_width):
     """Rasterize the in-memory SVG to PNG using headless Microsoft Edge."""
@@ -1653,14 +1811,76 @@ def write_png(svg, png_path, output_width):
         except OSError:
             pass
 
+def write_png_exact(svg, png_path, width, height):
+    """Rasterize an SVG at an exact requested pixel size."""
+    png_path = _os.path.abspath(png_path)
+    html = (
+        "<!doctype html><html><head><meta charset=\"utf-8\">"
+        "<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;}"
+        f"svg{{width:{width}px;height:{height}px;display:block;}}"
+        "</style></head><body>"
+        f"{svg}"
+        "</body></html>"
+    )
+    with _tempfile.NamedTemporaryFile(
+        "w", encoding="utf-8", suffix=".html", delete=False
+    ) as tmp:
+        tmp.write(html)
+        render_path = tmp.name
+    try:
+        if _os.path.exists(png_path):
+            _os.unlink(png_path)
+        _subprocess.run(
+            [
+                _EDGE_EXE,
+                "--headless=new",
+                "--disable-gpu",
+                "--hide-scrollbars",
+                f"--window-size={width},{height}",
+                f"--screenshot={png_path}",
+                render_path,
+            ],
+            check=True,
+        )
+    finally:
+        try:
+            _os.unlink(render_path)
+        except OSError:
+            pass
+
+def positive_int(value):
+    """Argparse type for positive pixel dimensions."""
+    try:
+        number = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be a positive integer") from exc
+    if number <= 0:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return number
+
 if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser(description="Render ChieftainDots Corne keymap poster")
+    ap.add_argument("--mode", choices=("paper", "desktop"), default="paper",
+                    help="Output treatment (default: paper)")
     ap.add_argument("--out", default=_HERE,
                     help="Output directory (default: same folder as this script)")
+    ap.add_argument("--width", type=positive_int, default=3840,
+                    help="Desktop canvas width in pixels (default: 3840)")
+    ap.add_argument("--height", type=positive_int, default=1080,
+                    help="Desktop canvas height in pixels (default: 1080)")
+    ap.add_argument("--content-width", type=positive_int, default=3200,
+                    help="Preferred desktop composition width (default: 3200)")
     args = ap.parse_args()
     _os.makedirs(args.out, exist_ok=True)
-    svg = build()
-    png_path = _os.path.join(args.out, "chieftainDots-corne.png")
-    write_png(svg, png_path, PAGE_W * 2)
+    if args.mode == "paper":
+        svg = build()
+        png_path = _os.path.join(args.out, "chieftainDots-corne.png")
+        write_png(svg, png_path, PAGE_W * 2)
+    else:
+        svg = build_desktop(args.width, args.height, args.content_width)
+        png_path = _os.path.join(
+            args.out, f"chieftainDots-corne-desktop-{args.width}x{args.height}.png"
+        )
+        write_png_exact(svg, png_path, args.width, args.height)
     print(f"Wrote {png_path} from {len(svg):,} bytes of SVG")
