@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>M51 desktop layout wireframe</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #10141b;
+      color: #d9e0e9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      gap: 14px;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .frame {
+      position: relative;
+      width: min(100%, calc((100vh - 88px) * 32 / 9));
+      aspect-ratio: 32 / 9;
+      background: #171d26;
+      border: 1px solid #5e6876;
+      box-shadow: 0 10px 28px #0008;
+      overflow: hidden;
+    }
+
+    .canvas-label,
+    .zone-label,
+    .measure {
+      position: absolute;
+      z-index: 5;
+      font-size: clamp(7px, 0.48vw, 14px);
+      line-height: 1;
+      color: #9ca8b7;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .canvas-label { left: 1.3%; top: 2%; }
+
+    .safe-area {
+      position: absolute;
+      inset: 7.4% 4.2%;
+      border: 1px dashed #6e7b8d;
+    }
+
+    .zone {
+      position: absolute;
+      top: 9.3%;
+      bottom: 9.3%;
+      border: 1px dotted #465161;
+    }
+
+    .zone.left  { left: 5.2%; width: 22.9%; }
+    .zone.focus { left: 29.2%; width: 41.6%; border-color: #8795a8; }
+    .zone.right { right: 5.2%; width: 22.9%; }
+
+    .zone-label {
+      top: 1.8%;
+      left: 2%;
+    }
+
+    .card {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      border: 2px solid #a3afbd;
+      background: #252d38;
+      color: #f1f4f8;
+      font-size: clamp(11px, 1vw, 28px);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    .card.focus-card {
+      border-width: 3px;
+      border-color: #e0e6ee;
+      background: #303a47;
+    }
+
+    .card small {
+      display: block;
+      margin-top: 0.25em;
+      color: #aeb9c7;
+      font-size: 0.48em;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    /* Logical canvas: 3840 x 1080. Safe margin: 160 x 80. */
+    .base       { left: 5.7%;  top: 13%;   width: 21.9%; height: 31.5%; }
+    .control    { left: 5.7%;  top: 48.1%; width: 21.9%; height: 18.5%; }
+    .navigation { left: 5.7%;  top: 70.4%; width: 21.9%; height: 18.5%; }
+
+    .media      { left: 30.2%; top: 13%;   width: 19.2%; height: 31%; }
+    .symbols    { left: 50.5%; top: 13%;   width: 19.2%; height: 31%; }
+    .numbers    { left: 30.2%; top: 48%;   width: 19.2%; height: 31%; }
+    .function   { left: 50.5%; top: 48%;   width: 19.2%; height: 31%; }
+    .anatomy    { left: 30.2%; top: 82.7%; width: 39.5%; height: 6.2%; }
+
+    .colemak    { right: 5.7%; top: 13%;   width: 21.9%; height: 31.5%; }
+    .msstyles   { right: 5.7%; top: 48.1%; width: 21.9%; height: 18.5%; }
+    .snap       { right: 5.7%; top: 70.4%; width: 21.9%; height: 18.5%; }
+
+    .measure.margin-x { left: 0.7%; top: 50%; transform: rotate(-90deg); }
+    .measure.margin-y { left: 48%; top: 5%; }
+    .measure.focus-note { left: 42%; top: 91.5%; color: #c5ced9; }
+
+    .notes {
+      margin: 0;
+      color: #aab4c1;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-height: 600px) {
+      body { padding: 8px; gap: 7px; }
+      .frame { width: min(100%, calc((100vh - 42px) * 32 / 9)); }
+      .notes { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="frame" aria-label="M51 desktop card placement wireframe">
+    <div class="canvas-label">3840 × 1080 logical canvas</div>
+    <div class="safe-area" aria-hidden="true"></div>
+
+    <div class="zone left"><span class="zone-label">Left wing · 880 wide</span></div>
+    <div class="zone focus"><span class="zone-label">Central focus · 1600 wide</span></div>
+    <div class="zone right"><span class="zone-label">Right wing · 880 wide</span></div>
+
+    <section class="card base">BASE<small>wide alpha card</small></section>
+    <section class="card control">CONTROL</section>
+    <section class="card navigation">NAVIGATION</section>
+
+    <section class="card focus-card media">MEDIA</section>
+    <section class="card focus-card symbols">SYMBOLS</section>
+    <section class="card focus-card numbers">NUMBERS</section>
+    <section class="card focus-card function">FUNCTION</section>
+    <section class="card anatomy">KEY ANATOMY</section>
+
+    <section class="card colemak">COLEMAK<small>wide alpha card</small></section>
+    <section class="card msstyles">MS STYLES</section>
+    <section class="card snap">SNAP</section>
+
+    <span class="measure margin-x">160 px safe margin</span>
+    <span class="measure margin-y">80 px safe margin</span>
+    <span class="measure focus-note">40 px nominal card gaps</span>
+  </main>
+  <p class="notes">Placement review only · no keys, legends, artwork, or final styling</p>
+</body>
+</html>

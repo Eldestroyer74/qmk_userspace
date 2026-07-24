@@ -1622,73 +1622,112 @@ def build_desktop(width, height, content_width):
     """Render the shared guide data in a purpose-built 32:9 composition."""
     FONTFAM = 'font-family="Inter, Segoe UI, system-ui, sans-serif"'
     comp_w, comp_h = 1920, 590
-    margin, gap = 86, 12
-    usable_w = comp_w - 2 * margin
-    alpha_h, small_h = 190, 130
-    alpha_y = 25
-    row2_y = alpha_y + alpha_h + gap
-    row3_y = row2_y + small_h + gap
-    anatomy_y = row3_y + small_h + 8
-    alpha_w = (usable_w - gap) / 2
-    small_w = (usable_w - 3 * gap) / 4
+    left_x, side_w = 90, 430
+    center_x, center_w = 550, 820
+    right_x = 1400
+    top_y, alpha_h = 45, 240
+    utility_y = (299, 435)
+    utility_h = 122
+    focus_gap = 14
+    focus_w = (center_w - focus_gap) / 2
+    focus_y = (45, 264)
+    focus_h = 205
+    anatomy_y = 483
     parts = [font_face_defs()]
 
-    for i, (name, sub, data, num) in enumerate(ALPHA_SPECS):
-        cx = margin + i * (alpha_w + gap)
-        parts.append(draw_section_card(cx, alpha_y, alpha_w, alpha_h,
-                                       num, name, sub, name))
+    def desktop_card(x, y, w, h, num, title, role, layer_name, tier):
+        panel = draw_section_card(x, y, w, h, num, title, role, layer_name)
+        fill_opacity, stroke_opacity = {
+            "focus": (0.88, 0.76),
+            "alpha": (0.48, 0.48),
+            "utility": (0.26, 0.34),
+        }[tier]
+        return panel.replace(
+            f'fill="{CARD_FILL}" stroke="{CARD_STROKE}" stroke-width="1"',
+            f'fill="#18212d" fill-opacity="{fill_opacity}" '
+            f'stroke="#667589" stroke-opacity="{stroke_opacity}" '
+            f'stroke-width="1"',
+            1,
+        )
+
+    alpha_specs = {name: (sub, data, num) for name, sub, data, num in ALPHA_SPECS}
+    layer_specs = {
+        layer_name: (title, data, num, role)
+        for title, layer_name, data, num, role in ROW2_SPECS + ROW3_SPECS
+    }
+
+    def render_alpha(name, x):
+        sub, data, num = alpha_specs[name]
+        parts.append(desktop_card(
+            x, top_y, side_w, alpha_h, num, name, sub, name, "alpha"
+        ))
         unit = 43
-        keyboard_scale = 32 / unit
-        kb_x = cx + (alpha_w - _kb_width_est(unit) * keyboard_scale) / 2
-        kb_y = alpha_y + 44
+        keyboard_scale = 28 / unit
+        kb_x = x + (side_w - _kb_width_est(unit) * keyboard_scale) / 2
+        kb_y = top_y + 55
         keyboard, _, _ = draw_keyboard(
             0, 0, unit, data, name in DARK_LAYER, set(), layer_name=name
         )
         parts.append(
             f'<g transform="translate({kb_x:.3f} {kb_y:.3f}) '
-            f'scale({keyboard_scale:.8f})">'
+            f'scale({keyboard_scale:.8f})" opacity="0.82">'
             + draw_sym_strip(0, 0, unit, SYMBOLS[0])
             + keyboard
             + '</g>'
         )
 
-    def render_desktop_row(specs, y):
-        for i, (title, layer_name, data, num, role) in enumerate(specs):
-            cx = margin + i * (small_w + gap)
-            parts.append(draw_section_card(cx, y, small_w, small_h,
-                                           num, title, role, layer_name))
-            parts.append(
-                f'<text x="{cx+48:.1f}" y="{y+50:.1f}" {FONTFAM} '
-                f'font-size="8" font-weight="600" fill="{MUTED}" '
-                f'letter-spacing="0.3">{esc(role)}</text>'
-            )
-            unit = 27
-            keyboard_scale = 16 / unit
-            kb_x = cx + (small_w - _kb_width_est(unit) * keyboard_scale) / 2
-            kb_y = y + 49
-            access_set, secondary_set, cue_map = card_highlights(layer_name)
-            keyboard, _, _ = draw_keyboard(
-                0, 0, unit, data, layer_name in DARK_LAYER, access_set,
-                secondary_set=secondary_set, embed_set=embed_for(layer_name),
-                cue_map=cue_map,
-                font_boost=LAYER_FONT_BOOST.get(layer_name, 1.0),
-                layer_name=layer_name,
-            )
-            parts.append(
-                f'<g transform="translate({kb_x:.3f} {kb_y:.3f}) '
-                f'scale({keyboard_scale:.8f})">{keyboard}</g>'
-            )
+    def render_layer(layer_name, x, y, w, h, tier):
+        title, data, num, role = layer_specs[layer_name]
+        parts.append(desktop_card(
+            x, y, w, h, num, title, role, layer_name, tier
+        ))
+        role_opacity = 1.0 if tier == "focus" else 0.68
+        parts.append(
+            f'<text x="{x+48:.1f}" y="{y+50:.1f}" {FONTFAM} '
+            f'font-size="8" font-weight="600" fill="{MUTED}" '
+            f'fill-opacity="{role_opacity}" letter-spacing="0.3">'
+            f'{esc(role)}</text>'
+        )
+        unit = 27
+        target_unit = 25 if tier == "focus" else 17
+        keyboard_scale = target_unit / unit
+        kb_x = x + (w - _kb_width_est(unit) * keyboard_scale) / 2
+        kb_y = y + (55 if tier == "focus" else 44)
+        access_set, secondary_set, cue_map = card_highlights(layer_name)
+        keyboard, _, _ = draw_keyboard(
+            0, 0, unit, data, layer_name in DARK_LAYER, access_set,
+            secondary_set=secondary_set, embed_set=embed_for(layer_name),
+            cue_map=cue_map,
+            font_boost=LAYER_FONT_BOOST.get(layer_name, 1.0),
+            layer_name=layer_name,
+        )
+        content_opacity = 1.0 if tier == "focus" else 0.66
+        parts.append(
+            f'<g transform="translate({kb_x:.3f} {kb_y:.3f}) '
+            f'scale({keyboard_scale:.8f})" '
+            f'opacity="{content_opacity}">{keyboard}</g>'
+        )
 
-    render_desktop_row(ROW2_SPECS, row2_y)
-    render_desktop_row(ROW3_SPECS, row3_y)
+    render_alpha("BASE", left_x)
+    render_alpha("COLEMAK", right_x)
+    render_layer("CTRL", left_x, utility_y[0], side_w, utility_h, "utility")
+    render_layer("NAVIGATION", left_x, utility_y[1], side_w, utility_h, "utility")
+    render_layer("MSSTYLES", right_x, utility_y[0], side_w, utility_h, "utility")
+    render_layer("SNAP", right_x, utility_y[1], side_w, utility_h, "utility")
+    render_layer("NUMBERS", center_x, focus_y[0], focus_w, focus_h, "focus")
+    render_layer("SYMBOLS", center_x + focus_w + focus_gap,
+                 focus_y[0], focus_w, focus_h, "focus")
+    render_layer("FUNCTION", center_x, focus_y[1], focus_w, focus_h, "focus")
+    render_layer("MEDIA", center_x + focus_w + focus_gap,
+                 focus_y[1], focus_w, focus_h, "focus")
 
     parts.append(
-        f'<text x="{margin}" y="{anatomy_y+15}" {FONTFAM} font-size="10" '
+        f'<text x="{center_x}" y="{anatomy_y+15}" {FONTFAM} font-size="10" '
         f'font-weight="800" fill="{INK}" letter-spacing="0.6">KEY ANATOMY</text>'
     )
     anatomy_unit = 28
     anatomy_key_y = anatomy_y + 18
-    anatomy_start = comp_w / 2 - 155
+    anatomy_start = center_x + center_w / 2 - 155
     anatomy_x = [anatomy_start, anatomy_start + 155, anatomy_start + 310]
     main_font = max(11, int(round(anatomy_unit * 0.42)))
     hold_font = max(7, int(round(anatomy_unit * 0.26)))
