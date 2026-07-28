@@ -2,14 +2,25 @@
 """ChieftainDots Corne keymap poster â€” generates SVG + PNG reference sheet."""
 
 import os as _os
+import base64 as _base64
 import subprocess as _subprocess
 import tempfile as _tempfile
+import io as _io
+from PIL import Image as _Image
+from PIL import ImageFilter as _ImageFilter
+from PIL import ImageOps as _ImageOps
 from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.varLib.mutator import instantiateVariableFont
 
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
+DESKTOP_ARC_BACKGROUND = _os.path.join(
+    _HERE, "assets", "desktop-arc-background-clean-v2.png"
+)
+NAVIGATION_ROOSTER = _os.path.join(
+    _HERE, "assets", "navigation-rooster-a3.png"
+)
 _USER_FONTS = _os.path.join(
     _os.path.expanduser("~"), "AppData", "Local", "Microsoft", "Windows", "Fonts"
 )
@@ -60,7 +71,7 @@ BASE = [
      K("H","","","","_TEXT_HOME"), K("J","Fn"), K("K","Num"), K("L","Sym"), K(";","Ctrl","","\u00dc"), K("'")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
      K("N","","","\u00d1","_TEXT_NAME"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","\u00bf"), K("_KEY_GLOBE")],
-    [K("_KEY_GUI"), K("Shift","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift","","","","Ent"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_SHIFT","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT","","","","Ent"), K("_KEY_MENU")],
 ]
 
 COLEMAK = [
@@ -70,7 +81,7 @@ COLEMAK = [
      K("H","","","","_TEXT_HOME"), K("N","Fn","","","_TEXT_NAME"), K("E","Num","","","_TEXT_EMAIL"), K("I","Sym"), K("O","Ctrl","","\u00dc"), K(";")],
     [K("_KEY_GLOBE"), K("Z"), K("X"), K("C"), K("V","","","","_KEY_PASTE"), K("B"),
      K("K","","","\u00d1"), K("M","","","","_TEXT_MEET"), K(","), K("."), K("/","\\","|","\u00bf"), K("_KEY_GLOBE")],
-    [K("_KEY_GUI"), K("Shift","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift","","","","Ent"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_SHIFT","","","","Ent"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT","","","","Ent"), K("_KEY_MENU")],
 ]
 
 # SYMBOLS â€” shifted-number top row + right-hand shifted numpad echoes.
@@ -84,22 +95,21 @@ SYMBOLS = [
      K(""), K("$"), K("%"), K("^"), K("+"), K("")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("!"), K("@"), K("#"), K(""), K("")],
-    [K("_KEY_GUI"), K("Shift"), K("_KEY_ENTER","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_SHIFT"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
 ]
 
-# NUMBERS â€” full top-row digits, right-hand numpad below.
-# Row 1 col 4 holds an EMBEDDED CHORD: holding the F-position while S or L is
-# already held reaches the Symbols layer. Rendered as a blue highlighted key
-# with the SYM icon so the user reads it as "chord, not a typeable key".
+# NUMBERS â€” full top-row digits, right-hand numpad below. Symbols access lives
+# on both former Shift thumb positions; the left-home-row F seat is blank in
+# firmware and receives only the generic affordance surface in the diagram.
 NUMBERS = [
     [K("`"), K("1"), K("2"), K("3"), K("4"), K("5"),
      K("6"), K("7"), K("8"), K("9"), K("0"), K("-")],
-    [K(""), K(""), K(""), K(""), K("Sym"), K(""),
+    [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("4"), K("5"), K("6"), K("="), K("")],
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("1"), K("2", ",", "<"), K("3", ".", ">"), K("/"), K("")],
-    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Sym"),
-     K("_KEY_ENTER","Sym"), K("Shift"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_SYMBOLS"), K("_KEY_SPACE","Alt"),
+     K("_KEY_ENTER","Alt"), K("_KEY_SYMBOLS"), K("_KEY_MENU")],
 ]
 
 # NAV folds the old Extremes + Snap sub-layers into faint annotations on the
@@ -116,7 +126,7 @@ NAV = [
      K("_ARROW_DOWN","_ARROW_DOWN","_WORD_DOWN","","_EXTREME_DOWN"),
      K("_ARROW_RIGHT","_ARROW_RIGHT","_WORD_RIGHT","","_EXTREME_RIGHT"), K(""), K("")],
     [K("")]*12,
-    [K(TRANSPARENT), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K(TRANSPARENT), K("_KEY_SHIFT"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
 ]
 
 # MSSTYLES â€” Alt+Shift+arrows (PowerPoint paragraph/list style movement).
@@ -127,7 +137,7 @@ MSSTYLES = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_OUTDENT"), K("_REORDER_DN"), K("_INDENT"), K(""), K("")],
     [K("")]*12,
-    [K(""), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K(""), K("_KEY_SHIFT"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
 ]
 
 SNAP_ICONS = {"_SNAP_MAX", "_SNAP_MIN", "_SNAP_LEFT", "_SNAP_RIGHT"}
@@ -141,10 +151,16 @@ EXT_ICONS = {"_PG_UP", "_PG_DN", "_HOME_KEY", "_END_KEY"}
 STYLE_ICONS = {"_OUTDENT", "_INDENT", "_REORDER_UP", "_REORDER_DN"}
 # Universal keyboard-key icons (across BASE/COLEMAK + any layer with Del)
 # _KEY_SYM is the embedded-chord glyph used on NUMBERS row 1 col 4.
-KEY_ICONS = {"_KEY_TAB", "_KEY_MEDIA", "_KEY_CALC", "_KEY_GUI",
+KEY_ICONS = {"_KEY_TAB", "_KEY_MEDIA", "_KEY_CALC", "_KEY_GUI", "_KEY_SHIFT",
              "_KEY_SPACE", "_KEY_MENU", "_KEY_BSP", "_KEY_DEL",
              "_KEY_ENTER", "_KEY_ALT", "_KEY_SYM", "_KEY_GLOBE",
-             "_KEY_SELECT_ALL", "_KEY_SNIP", "_KEY_UNDO", "_KEY_CUT", "_KEY_COPY", "_KEY_PASTE"}
+             "_KEY_SELECT_ALL", "_KEY_SNIP", "_KEY_UNDO", "_KEY_CUT",
+             "_KEY_COPY", "_KEY_PASTE", "_KEY_BOOT"}
+CTRL_ICONS = {"_CTRL_REDO", "_CTRL_SAVE", "_CTRL_FIND", "_CTRL_REPLACE",
+              "_CTRL_PRINT", "_CTRL_NEW", "_CTRL_OPEN", "_CTRL_CLOSE",
+              "_CTRL_NEW_TAB", "_CTRL_REFRESH", "_CTRL_ADDRESS",
+              "_CTRL_BOLD", "_CTRL_ITALIC", "_CTRL_UNDERLINE",
+              "_CTRL_LINK"}
 # Nav 4-tier: word-jump (fast-forward rotated) + extremes (step-forward rotated)
 WORD_ICONS    = {"_WORD_LEFT", "_WORD_RIGHT", "_WORD_UP", "_WORD_DOWN"}
 EXTREME_ICONS = {"_EXTREME_LEFT", "_EXTREME_RIGHT", "_EXTREME_UP", "_EXTREME_DOWN"}
@@ -162,7 +178,8 @@ ICON_ROTATION = {
 }
 # _KEY_CAPS is drawn with a custom path (FA has no caps-lock glyph)
 ICON_TOKENS = (SNAP_ICONS | ARROW_ICONS | MEDIA_ICONS | TEXT_ICONS
-               | EXT_ICONS | STYLE_ICONS | KEY_ICONS | WORD_ICONS | EXTREME_ICONS)
+               | EXT_ICONS | STYLE_ICONS | KEY_ICONS | CTRL_ICONS
+               | WORD_ICONS | EXTREME_ICONS)
 
 # Per-icon vertical-centre tuning + size factor (font glyphs sit on a baseline,
 # so we need to nudge for visual centring).  size_factor is multiplied into key_size.
@@ -208,6 +225,8 @@ ICON_TUNING = {
     "_KEY_MEDIA":   (0.48, 0.36),   # music note
     "_KEY_CALC":    (0.50, 0.36),
     "_KEY_GUI":     (0.46, 0.36),   # grid
+    "_KEY_SHIFT":   (0.50, 0.36),   # selected FA arrow-up treatment
+    "_KEY_BOOT":    (0.58, 0.00),   # bolt: legible firmware-flash cue at card scale
     "_KEY_SPACE":   (0.62, 0.36),   # grip-lines â€” wide bar
     "_KEY_MENU":    (0.50, 0.36),   # bars
     "_KEY_BSP":     (0.56, 0.36),   # backspace key
@@ -221,6 +240,22 @@ ICON_TUNING = {
     "_KEY_CUT":     (0.54, 0.36),   # scissors
     "_KEY_COPY":    (0.52, 0.36),   # overlapping pages
     "_KEY_PASTE":   (0.50, 0.36),   # clipboard
+    # Conventional desktop Ctrl shortcuts
+    "_CTRL_REDO":      (0.54, 0.36),
+    "_CTRL_SAVE":      (0.50, 0.36),
+    "_CTRL_FIND":      (0.50, 0.36),
+    "_CTRL_REPLACE":   (0.54, 0.36),
+    "_CTRL_PRINT":     (0.52, 0.36),
+    "_CTRL_NEW":       (0.48, 0.36),
+    "_CTRL_OPEN":      (0.54, 0.36),
+    "_CTRL_CLOSE":     (0.52, 0.36),
+    "_CTRL_NEW_TAB":   (0.50, 0.36),
+    "_CTRL_REFRESH":   (0.52, 0.36),
+    "_CTRL_ADDRESS":   (0.44, 0.36),
+    "_CTRL_BOLD":      (0.46, 0.36),
+    "_CTRL_ITALIC":    (0.38, 0.36),
+    "_CTRL_UNDERLINE": (0.48, 0.36),
+    "_CTRL_LINK":      (0.52, 0.36),
 }
 
 # MEDIA â€” guide-aligned 4-key cluster: VOL+ above the home row, with
@@ -232,7 +267,7 @@ MEDIA = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_MEDIA_MUTE"), K("_MEDIA_VOLDN"), K("_MEDIA_PLAY"), K(""), K("")],
     [K("")]*12,
-    [K(TRANSPARENT), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K(TRANSPARENT), K("_KEY_SHIFT"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
 ]
 
 TEXT = [
@@ -249,17 +284,49 @@ FUNCTION = [
      K("F6"), K("F7"), K("F8"), K("F9"), K("F10"), K("_KEY_DEL")],
     [K(""), K("_KEY_SELECT_ALL"), K("_KEY_SNIP"), K(""), K(""), K(""),
      K(""), K("F4"), K("F5"), K("F6"), K("F11"), K("Cole","Tog")],
-    [K("BOOT"), K("_KEY_UNDO"), K(""), K(""), K(""), K(""),
-     K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("BOOT")],
-    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K("_KEY_BOOT"), K("_KEY_UNDO"), K("_KEY_CUT"), K("_KEY_COPY"), K(""), K(""),
+     K(""), K("F1"), K("F2"), K("F3"), K("F12"), K("_KEY_BOOT")],
+    [K("_KEY_GUI"), K("_KEY_SHIFT"), K("_KEY_ENTER","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
 ]
 
 CTRL = [
     [K("")]*12,
     [K("")]*12,
     [K("")]*12,
-    [K("_KEY_GUI"), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K("_KEY_GUI"), K("_KEY_SHIFT"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
 ]
+
+# Desktop-only CONTROL reference. These are conventional host/application
+# Ctrl shortcuts, not a literal QMK layer. Keep the mnemonic letter as a small
+# corner cue while the Font Awesome glyph carries the action meaning.
+CTRL_DESKTOP = [
+    [K(""), K("_CTRL_CLOSE"), K(""), K("_CTRL_REFRESH"), K("_CTRL_NEW_TAB"), K("_CTRL_REDO"),
+     K("_CTRL_UNDERLINE"), K("_CTRL_ITALIC"), K("_CTRL_OPEN"), K("_CTRL_PRINT"), K(""), K("")],
+    [K(""), K("_KEY_SELECT_ALL"), K("_CTRL_SAVE"), K(""), K("_CTRL_FIND"), K(""),
+     K("_CTRL_REPLACE"), K(""), K("_CTRL_LINK"), K("_CTRL_ADDRESS"), K(""), K("")],
+    [K(""), K("_KEY_UNDO"), K("_KEY_CUT"), K("_KEY_COPY"), K("_KEY_PASTE"), K("_CTRL_BOLD"),
+     K("_CTRL_NEW"), K(""), K(""), K(""), K(""), K("")],
+    [K("_KEY_GUI"), K("_KEY_SHIFT"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
+]
+
+CTRL_SHORTCUT_LETTERS = {
+    (0, 1): "W", (0, 3): "R", (0, 4): "T", (0, 5): "Y", (0, 6): "U",
+    (0, 7): "I", (0, 8): "O", (0, 9): "P",
+    (1, 2): "S", (1, 4): "F", (1, 6): "H",
+    (1, 8): "K", (1, 9): "L",
+    (2, 1): "Z", (2, 2): "X", (2, 3): "C", (2, 4): "V",
+    (2, 5): "B", (2, 6): "N",
+}
+CTRL_SHORTCUT_ACTIONS = {
+    (0, 1): "Close", (0, 3): "Refresh", (0, 4): "Tab", (0, 5): "Redo",
+    (0, 6): "Under", (0, 7): "Italic", (0, 8): "Open", (0, 9): "Print",
+    (1, 2): "Save", (1, 4): "Find", (1, 6): "Replace",
+    (1, 8): "Link", (1, 9): "Address",
+    (2, 1): "Undo", (2, 2): "Cut", (2, 3): "Copy", (2, 4): "Paste",
+    (2, 5): "Bold", (2, 6): "New",
+}
+CTRL_SHORTCUT_CORNER_ICONS = {(1, 1): "_KEY_SELECT_ALL"}
+CTRL_SHORTCUT_POSITIONS = set(CTRL_SHORTCUT_LETTERS) | set(CTRL_SHORTCUT_CORNER_ICONS)
 
 SNAP = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
@@ -267,7 +334,7 @@ SNAP = [
     [K(""), K(""), K(""), K(""), K(""), K(""),
      K(""), K("_SNAP_LEFT"), K("_SNAP_MIN"), K("_SNAP_RIGHT"), K(""), K("")],
     [K("")]*12,
-    [K(TRANSPARENT), K("Shift"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("Shift"), K("_KEY_MENU")],
+    [K(TRANSPARENT), K("_KEY_SHIFT"), K("_KEY_SPACE","Alt"), K("_KEY_ENTER","Alt"), K("_KEY_SHIFT"), K("_KEY_MENU")],
 ]
 
 # ACCESS lists every key that gets highlighted on a layer card. Most entries
@@ -297,29 +364,13 @@ ANCHOR_POSITIONS = [
     (1, 4),   # F
 ]
 
-# EMBED: positions on a layer that render in the sky-blue cue palette while
-# still showing their content (icons or text). Two use cases on NUMBERS:
-#   - (1, 4) is the SYM portal â€” a chord that takes you to Symbols. It is
-#     not the chord that REACHES Numbers, so it should not look "active"
-#     (highlight blue). Sky-blue + the literal text "Sym" signals "this is
-#     a hop, not the focus".
-#   - (3, 3..5) are carry-over thumb keys that fall through to BASE behavior
-#     (Enter / Alt / Menu). Drawing them sky-blue with dark-blue icons keeps
-#     them readable while letting the digit row carry the visual weight.
-EMBED = {
-    # Only the SYM portal stays as an "embed" â€” the left-thumb cluster is now
-    # handled as anchor cues so each thumb takes on the destination layer's
-    # pale hue plus its base icon (GUI/Alt/Space).
-    "NUMBERS": {(1, 4)},
-}
+# EMBED contains deliberate payload-bearing portal keys. Numbers no longer has
+# one: M54 moved Symbols access from home-row F to both former Shift thumbs.
+EMBED = {}
 
-# PORTAL_DEST: per-layer position â†’ destination-layer. Renders that key in the
-# destination layer's pale palette so the colour bridges the two layers
-# visually (e.g. "Sym" on NUMBERS draws in pale-amber to flag a hop into
-# SYMBOLS). Positions not listed fall back to the current layer's palette.
-PORTAL_DEST = {
-    "NUMBERS": {(1, 4): "SYMBOLS"},
-}
+# PORTAL_DEST maps any future deliberate payload-bearing portal to its
+# destination palette. It is empty in the current accepted layout.
+PORTAL_DEST = {}
 
 # LAYER_PALETTE: per-layer chord + anchor-cue palette. Mirrors the RGB scheme
 # defined in chieftainDots-rgb-palette-proposal.md.
@@ -356,10 +407,15 @@ LAYER_PALETTE = {
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
     "COLEMAK":    {"chord": "#5b21b6", "chord_text": "#ffffff", "chord_hold": "#ddd6fe",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "CTRL":       {"chord": "#334155", "chord_text": "#ffffff", "chord_hold": "#cbd5e1",
+    "CTRL":       {"chord": "#334155", "chord_text": "#f8fafc", "chord_hold": "#cbd5e1",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
     "SNAP":       {"chord": "#1e3a5f", "chord_text": "#ffffff", "chord_hold": "#bfdbfe",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
+}
+
+CTRL_SHORTCUT_PALETTE = {
+    "chord": "#0b1220", "chord_text": "#f8fafc", "chord_hold": "#dbeafe",
+    "cue": "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text": "#1e40af",
 }
 
 # Payload Del key uses the firmware Caps red (print-safe).
@@ -457,6 +513,12 @@ ANCHOR_ICON = {
 # Child cards also light the left GUI thumb. Other home-row anchors render as
 # pale cues in their sibling family's hue.
 HOME_ANCHORS = [(1, 1), (1, 2), (1, 3), (1, 4)]   # A / S / D / F
+MIRROR_ANCHOR_POSITION = {
+    (1, 1): (1, 10),  # A / ;
+    (1, 2): (1, 9),   # S / L
+    (1, 3): (1, 8),   # D / K
+    (1, 4): (1, 7),   # F / J
+}
 GUI_THUMB = (3, 0)                        # left GUI thumb = data[3][0]
 
 ACTIVE_ANCHOR = {
@@ -468,6 +530,12 @@ ACTIVE_ANCHOR = {
 
 # Parent (bare-hold) layers vs child (+GUI) layers.
 PARENT_LAYERS = {"FUNCTION", "SYMBOLS", "NUMBERS", "CTRL"}
+CHILD_PARENT = {
+    "MEDIA": "CTRL",
+    "MSSTYLES": "SYMBOLS",
+    "NAVIGATION": "NUMBERS",
+    "SNAP": "FUNCTION",
+}
 
 # Sibling-cue hue per anchor position.
 PARENT_HUE = {(1, 1): "CTRL",  (1, 2): "SYMBOLS",  (1, 3): "NUMBERS",    (1, 4): "FUNCTION"}
@@ -542,8 +610,12 @@ def _dosis_glyph(weight, ch):
     g = info["glyphs"][gname]
     sp = SVGPathPen(info["glyphs"])
     g.draw(sp)
+    bp = BoundsPen(info["glyphs"])
+    g.draw(bp)
     adv, _ = info["hmtx"][gname]
-    _DOSIS_GLYPH_CACHE[key] = {"d": sp.getCommands(), "adv": adv}
+    _DOSIS_GLYPH_CACHE[key] = {
+        "d": sp.getCommands(), "adv": adv, "bbox": bp.bounds,
+    }
     return _DOSIS_GLYPH_CACHE[key]
 
 def dosis_text(x, y, text, font_size, fill, anchor="start",
@@ -595,6 +667,25 @@ def dosis_width(text, font_size, letter_spacing=0, weight=DOSIS_WEIGHT_TITLE):
         width -= letter_spacing
     return width
 
+def draw_dosis_glyph_centered(cx, cy, box_size, ch, fg, size_factor=0.62,
+                              weight=600, optical_dx=0.0, optical_dy=0.0):
+    """Centre one Dosis glyph by its drawn bounds rather than advance width."""
+    ginfo = _dosis_glyph(weight, ch)
+    if not ginfo or not ginfo.get("bbox"):
+        return ""
+    xmin, ymin, xmax, ymax = ginfo["bbox"]
+    width = xmax - xmin
+    height = ymax - ymin
+    scale = box_size * size_factor / max(width, height)
+    centre_x = (xmin + xmax) / 2
+    centre_y = (ymin + ymax) / 2
+    tx = cx + optical_dx - centre_x * scale
+    ty = cy + optical_dy + centre_y * scale
+    return (
+        f'<g fill="{fg}" transform="translate({tx:.2f} {ty:.2f}) '
+        f'scale({scale:.5f} {-scale:.5f})"><path d="{ginfo["d"]}"/></g>'
+    )
+
 def fit_dosis_text(text, max_width, max_size, min_size=24, letter_spacing=0,
                    weight=DOSIS_WEIGHT_WORDMARK):
     """Return the largest integer font size that fits `max_width`."""
@@ -633,6 +724,7 @@ def _load_fa_glyphs():
         "_KEY_MEDIA":   0xf001,  # music
         "_KEY_CALC":    0xf1ec,  # calculator
         "_KEY_GUI":     0xf009,  # th-large
+        "_KEY_SHIFT":   0xf062,  # arrow-up, selected for thumb Shift
         "_KEY_SPACE":   0xf7a4,  # grip-lines
         "_KEY_MENU":    0xf0c9,  # bars
         "_KEY_BSP":     0xf55a,  # backspace
@@ -645,6 +737,24 @@ def _load_fa_glyphs():
         "_KEY_CUT":     0xf0c4,  # cut / scissors
         "_KEY_COPY":    0xf0c5,  # copy
         "_KEY_PASTE":   0xf0ea,  # paste / clipboard
+        "_KEY_BOOT":    0xf0e7,  # bolt / firmware flash / bootloader entry
+        "_CTRL_REDO":      0xf2f9,  # redo-alt
+        "_CTRL_SAVE":      0xf0c7,  # save
+        "_CTRL_FIND":      0xf002,  # search
+        "_CTRL_REPLACE":   0xf362,  # exchange-alt
+        "_CTRL_PRINT":     0xf02f,  # print
+        "_CTRL_NEW":       0xf15b,  # file
+        "_CTRL_OPEN":      0xf07c,  # folder-open
+        "_CTRL_CLOSE":     0xf410,  # window-close
+        "_CTRL_NEW_TAB":   0xf0fe,  # plus-square
+        "_CTRL_REFRESH":   0xf2f1,  # sync-alt
+        "_CTRL_ADDRESS":   0xf246,  # i-cursor
+        "_CTRL_BOLD":      0xf032,  # bold
+        "_CTRL_ITALIC":    0xf033,  # italic
+        "_CTRL_UNDERLINE": 0xf0cd,  # underline
+        "_CTRL_LINK":      0xf0c1,  # link
+        "_BADGE_KEYBOARD": 0xf11c, # shared Base/Colemak typing-surface badge
+        "_BADGE_PARAGRAPH": 0xf1dd, # MS Styles badge
         "_OUTDENT":     0xf03b,  # outdent â€” promote paragraph (Alt+Shift+Left)
         "_INDENT":      0xf03c,  # indent â€” demote paragraph (Alt+Shift+Right)
         "_REORDER_UP":  0xf161,  # sort-amount-up â€” move paragraph up (Alt+Shift+Up)
@@ -983,7 +1093,11 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
              font_main, font_hold, secondary=False, secondary_label=None,
              embed=False, font_boost=1.0, palette=None,
              embed_palette=None, payload=False, payload_palette=None,
-             spanish="", double_hold="", shift="", muted=False):
+             spanish="", double_hold="", shift="", muted=False,
+             primary_scale=1.0, shortcut_label="",
+             shortcut_action="", shortcut_icon="",
+             preserve_tap_on_highlight=False,
+             opaque_state_foreground=None):
     blank = (tap == "" and not highlight and not secondary and not embed)
     trans = (tap == TRANSPARENT)
 
@@ -1039,23 +1153,59 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
             text = INK
             hold_color = MUTED
 
+    if highlight:
+        material_class = "key-active"
+    elif secondary:
+        material_class = "key-cue"
+    elif payload or embed or (tap not in ("", TRANSPARENT) and not muted):
+        material_class = "key-functional"
+    elif muted:
+        material_class = "key-repeated"
+    else:
+        material_class = "key-unused"
+
     rx = 6
     out = [
-        f'<rect x="{x:.1f}" y="{y:.1f}" width="{w}" height="{h}" '
+        f'<rect class="keycap {material_class}" x="{x:.1f}" y="{y:.1f}" '
+        f'width="{w}" height="{h}" '
         f'rx="{rx}" ry="{rx}" fill="{fill}" stroke="{stroke}" stroke-width="1"/>'
     ]
     display = tap
-    if highlight and anchor_label:
+    if highlight and anchor_label and not preserve_tap_on_highlight:
         display = anchor_label
     if blank and not highlight:
         display = ""
     if secondary:
         display = secondary_label or ""
     if secondary and secondary_label:
-        text = MUTED
+        text = opaque_state_foreground or MUTED
+    if highlight and opaque_state_foreground:
+        text = opaque_state_foreground
 
     is_icon = False
-    if display in SNAP_ICONS:
+    if shortcut_label:
+        letter_fs = max(6, font_hold - 1)
+        action_fs = max(5, font_hold - 2)
+        out.append(
+            dosis_text(x + w/2, y + letter_fs + 1, shortcut_label, letter_fs,
+                       hold_color, anchor="middle", weight=DOSIS_WEIGHT_HOLD)
+        )
+        if display in ICON_TOKENS:
+            out.append(draw_fa_glyph(x + w/2, y + h*0.50, w*0.68,
+                                     display, text))
+        elif display:
+            out.append(
+                dosis_text(x + w/2, y + h*0.55, display,
+                           max(7, int(font_main * 0.72)), text,
+                           anchor="middle", weight=DOSIS_WEIGHT_KEY)
+            )
+        if shortcut_action:
+            out.append(
+                dosis_text(x + w/2, y + h - 3, shortcut_action, action_fs,
+                           hold_color, anchor="middle", weight=DOSIS_WEIGHT_HOLD)
+            )
+        is_icon = True
+    elif display in SNAP_ICONS:
         out.append(draw_snap_icon(x + w/2, y + h/2, w, display, text))
         is_icon = True
     elif display == "_KEY_CAPS":
@@ -1075,6 +1225,11 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
         is_icon = True
     elif display == "_KEY_ALT":
         out.append(draw_alt_icon(x + w/2, y + h/2, w, text))
+        is_icon = True
+    elif display == "_KEY_SYMBOLS":
+        out.append(draw_dosis_glyph_centered(
+            x + w/2, y + h/2, w, "@", text, size_factor=0.58
+        ))
         is_icon = True
     elif display == "_MEDIA_PLAY":
         out.append(draw_fa_pair(x + w/2, y + h/2, w, "_MEDIA_PLAY",
@@ -1098,6 +1253,7 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
             fs = int(round(fs * font_boost))
         if len(display) >= 4: fs = max(10, fs - 1)
         if len(display) >= 6: fs = max(9, fs - 3)
+        fs = max(9, int(round(fs * primary_scale)))
         cy = y + h/2 + fs*0.34
         if hold and not blank and not trans:
             cy = y + h/2 + fs*0.45
@@ -1166,6 +1322,12 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
             dosis_text(x + w/2, y + faint_fs + 2, shift, faint_fs,
                        hold_color, anchor="middle", weight=DOSIS_WEIGHT_HOLD)
         )
+    if shortcut_icon and not blank and not trans:
+        box = w * 0.24
+        out.append(
+            draw_fa_corner(x + w - 5 - box/2, y + h - 5 - box/2,
+                           box, shortcut_icon, hold_color)
+        )
     return "\n".join(out)
 
 def draw_sym_strip(kb_x, kb_y, unit, sym_row):
@@ -1195,10 +1357,17 @@ def draw_sym_strip(kb_x, kb_y, unit, sym_row):
 
 def draw_keyboard(ox, oy, unit, data, dark, access_set,
                   secondary_set=None, embed_set=None, font_boost=1.0,
-                  layer_name=None, cue_map=None):
+                  layer_name=None, cue_map=None, payload_set=None,
+                  shortcut_labels=None, shortcut_actions=None,
+                  shortcut_icons=None,
+                  payload_palette=None, opaque_state_foreground=None):
     secondary_set = secondary_set or set()
     embed_set = embed_set or set()
     cue_map = cue_map or {}
+    payload_set = payload_set or set()
+    shortcut_labels = shortcut_labels or {}
+    shortcut_actions = shortcut_actions or {}
+    shortcut_icons = shortcut_icons or {}
     default_pal = palette_for(layer_name) if layer_name else DEFAULT_PALETTE
     gap = max(2, unit * 0.06)
     split_gap = unit * 0.45
@@ -1212,18 +1381,22 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
         if double or spanish or double_hold:
             return False
         repeated = {
-            (3, 1): ("Shift", ""),
+            (3, 1): ("_KEY_SHIFT", ""),
             (3, 2): ("_KEY_SPACE", "Alt"),
             (3, 3): ("_KEY_ENTER", "Alt"),
-            (3, 4): ("Shift", ""),
+            (3, 4): ("_KEY_SHIFT", ""),
             (3, 5): ("_KEY_MENU", ""),
         }
         return repeated.get((r, c)) == (tap, hold)
 
     def render(r, c, x, y, tap, hold, double, spanish="", double_hold=""):
         hl = (r, c) in access_set
-        sec = (r, c) in secondary_set and not hl and tap not in {"_KEY_SELECT_ALL", "_KEY_SNIP"}
+        sec = (r, c) in secondary_set and not hl
+        if (r, c) in HOME_ANCHORS and tap not in ("", TRANSPARENT):
+            # Real left-home-row payloads take precedence over generic cues.
+            sec = False
         emb = (r, c) in embed_set and not hl and not sec
+        payload = (r, c) in payload_set
         muted = (not hl and not sec and not emb and
                  is_repeated_thumb(r, c, tap, hold, double, spanish, double_hold))
 
@@ -1255,8 +1428,17 @@ def draw_keyboard(ox, oy, unit, data, dark, access_set,
                         secondary_label=ANCHOR_ICON.get((r, c)) if sec else None,
                         embed=emb, font_boost=font_boost,
                         palette=key_pal, embed_palette=emb_pal,
+                        payload=payload, payload_palette=payload_palette,
                         spanish=spanish, double_hold=double_hold,
                         muted=muted,
+                        primary_scale=(0.88 if layer_name == "NUMBERS" and
+                                       r == 3 and c in (1, 4) else 1.0),
+                        shortcut_label=shortcut_labels.get((r, c), ""),
+                        shortcut_action=shortcut_actions.get((r, c), ""),
+                        shortcut_icon=shortcut_icons.get((r, c), ""),
+                        preserve_tap_on_highlight=(payload and layer_name == "CTRL" and
+                                                   (r, c) not in shortcut_icons),
+                        opaque_state_foreground=opaque_state_foreground,
                         shift=SHIFT_MAP.get(tap, "") if layer_name in ("BASE", "COLEMAK") else "")
 
     def _unpack(cell):
@@ -1329,12 +1511,60 @@ def format_chord(access_keys, anchor_keys):
         return " or ".join(access_keys)
     return " + ".join(anchor_keys)
 
-def draw_section_card(x, y, w, h, num, title, sub, layer_name=None):
+def draw_card_badge(cx, cy, size, layer_name, fg):
+    """Render the shared semantic card mark used by paper and desktop."""
+    if layer_name in {"BASE", "COLEMAK"}:
+        return draw_fa_glyph(cx, cy, size, "_BADGE_KEYBOARD", fg)
+    if layer_name == "CTRL":
+        span = size * 0.24
+        top = cy - size * 0.15
+        bottom = cy + size * 0.10
+        return (
+            f'<path d="M {cx-span:.2f},{bottom:.2f} L {cx:.2f},{top:.2f} '
+            f'L {cx+span:.2f},{bottom:.2f}" fill="none" stroke="{fg}" '
+            f'stroke-width="{size*0.095:.2f}" stroke-linecap="round" '
+            f'stroke-linejoin="round"/>'
+        )
+    if layer_name == "NUMBERS":
+        return dosis_text(cx, cy + size * 0.25, "#", size * 0.66, fg,
+                          anchor="middle", weight=600)
+    if layer_name == "SYMBOLS":
+        return draw_dosis_glyph_centered(
+            cx, cy, size, "@", fg, size_factor=0.62, weight=600
+        )
+    if layer_name == "FUNCTION":
+        return dosis_text(cx, cy + size * 0.20, "Fn", size * 0.50, fg,
+                          anchor="middle", letter_spacing=-0.2, weight=600)
+    if layer_name == "MEDIA":
+        return draw_fa_glyph(cx + size * 0.025, cy - size * 0.02,
+                             size, "_KEY_MEDIA", fg)
+    if layer_name == "MSSTYLES":
+        return draw_fa_glyph(cx, cy, size, "_BADGE_PARAGRAPH", fg)
+    if layer_name == "NAVIGATION":
+        with open(NAVIGATION_ROOSTER, "rb") as rooster_file:
+            data = _base64.b64encode(rooster_file.read()).decode("ascii")
+        icon_size = size * 0.78
+        return (
+            f'<image x="{cx-icon_size/2:.2f}" y="{cy-icon_size/2:.2f}" '
+            f'width="{icon_size:.2f}" height="{icon_size:.2f}" '
+            f'href="data:image/png;base64,{data}"/>'
+        )
+    if layer_name == "SNAP":
+        return draw_snap_icon(cx, cy, size * 0.96, "_SNAP_RIGHT", fg)
+    return ""
+
+
+def draw_section_card(x, y, w, h, num, title, sub, layer_name=None,
+                      desktop_title=False, parent_layer_name=None):
     out = []
     pal = palette_for(layer_name) if layer_name else DEFAULT_PALETTE
     has_pal = bool(layer_name and layer_name in LAYER_PALETTE)
     badge_fill = pal["chord"] if has_pal else BLUE
     badge_text = pal.get("chord_text", "#ffffff") if has_pal else "#ffffff"
+    if desktop_title:
+        # Keep every semantic badge foreground white. Literal #ffffff is
+        # remapped by the desktop palette pass, so use an unmapped soft white.
+        badge_text = "#f8fafc"
     badge_stroke = pal.get("cue_stroke", badge_fill) if has_pal else badge_fill
     chord_fill = pal.get("cue_text", pal["chord"]) if has_pal else BLUE
     out.append(
@@ -1342,25 +1572,56 @@ def draw_section_card(x, y, w, h, num, title, sub, layer_name=None):
         f'rx="{CARD_RX}" ry="{CARD_RX}" fill="{CARD_FILL}" '
         f'stroke="{CARD_STROKE}" stroke-width="1"/>'
     )
-    out.append(
-        f'<rect x="{x+14}" y="{y+14}" width="26" height="26" rx="6" ry="6" '
-        f'fill="{badge_fill}" stroke="{badge_stroke}" stroke-width="1"/>'
+    badge_layers = (
+        [parent_layer_name, layer_name]
+        if desktop_title and parent_layer_name else [layer_name]
     )
-    out.append(
-        f'<text x="{x+27}" y="{y+32}" text-anchor="middle" '
-        f'font-family="Inter, Segoe UI, system-ui, sans-serif" '
-        f'font-size="14" font-weight="800" fill="{badge_text}">{num}</text>'
-    )
-    out.append(
-        f'<text x="{x+48}" y="{y+33}" '
-        f'font-family="Inter, Segoe UI, system-ui, sans-serif" '
-        f'font-size="18" font-weight="800" fill="{INK}" letter-spacing="0.6">'
-        f'{esc(title)}</text>'
-    )
+    badge_x = x + 14
+    for badge_layer in badge_layers:
+        badge_pal = palette_for(badge_layer)
+        badge_layer_fill = badge_pal["chord"]
+        badge_layer_stroke = badge_pal.get("cue_stroke", badge_layer_fill)
+        out.append(
+            f'<rect class="card-badge card-badge-{badge_layer or "default"}" '
+            f'x="{badge_x}" y="{y+14}" width="26" height="26" '
+            f'rx="6" ry="6" fill="{badge_layer_fill}" '
+            f'stroke="{badge_layer_stroke}" stroke-width="1"/>'
+        )
+        out.append(draw_card_badge(
+            badge_x + 13, y + 27, 26, badge_layer, badge_text
+        ))
+        badge_x += 32
+    if desktop_title:
+        out.append(dosis_text(badge_x + 2, y + 33, title, 19, INK,
+                              letter_spacing=0.7, weight=500))
+    else:
+        out.append(
+            f'<text x="{x+48}" y="{y+33}" '
+            f'font-family="Inter, Segoe UI, system-ui, sans-serif" '
+            f'font-size="18" font-weight="800" fill="{INK}" letter-spacing="0.6">'
+            f'{esc(title)}</text>'
+        )
     if layer_name is not None:
         access_keys, anchor_keys = chord_parts(layer_name)
+        if desktop_title:
+            access_keys = access_keys[:1]
         chord = format_chord(access_keys, anchor_keys)
-        if chord:
+        if desktop_title and access_keys and anchor_keys:
+            out.append(dosis_text(
+                x + w - 39, y + 33, f"{access_keys[0]} +", 13,
+                chord_fill, anchor="end", letter_spacing=0.4, weight=600
+            ))
+            out.append(draw_fa_glyph(
+                # The shared glyph is tuned for keycap centring. Nudge this
+                # header-only use down to the capital-letter optical centre.
+                x + w - 26, y + 29, 18, "_KEY_GUI", chord_fill
+            ))
+        elif desktop_title and chord:
+            out.append(dosis_text(
+                x + w - 14, y + 33, chord, 13, chord_fill,
+                anchor="end", letter_spacing=0.4, weight=600
+            ))
+        elif chord:
             out.append(
                 f'<text x="{x+w-14}" y="{y+33}" text-anchor="end" '
                 f'font-family="Inter, Segoe UI, system-ui, sans-serif" '
@@ -1618,25 +1879,41 @@ def build():
     )
     return svg
 
-def build_desktop(width, height, content_width):
+def build_desktop(width, height, content_width, desktop_background="gradient",
+                  desktop_key_material="opaque", desktop_glass_blur="shared"):
     """Render the shared guide data in a purpose-built 32:9 composition."""
     FONTFAM = 'font-family="Inter, Segoe UI, system-ui, sans-serif"'
     comp_w, comp_h = 1920, 590
     left_x, side_w = 90, 430
     center_x, center_w = 550, 820
     right_x = 1400
-    top_y, alpha_h = 45, 240
-    utility_y = (299, 435)
-    utility_h = 122
+    top_y, alpha_h = 45, 210
+    side_gap = 14
+    utility_h = 137
+    utility_y = (
+        top_y + alpha_h + side_gap,
+        top_y + alpha_h + side_gap + utility_h + side_gap,
+    )
     focus_gap = 14
     focus_w = (center_w - focus_gap) / 2
     focus_y = (45, 264)
     focus_h = 205
     anatomy_y = 483
     parts = [font_face_defs()]
+    glass_cards = []
 
     def desktop_card(x, y, w, h, num, title, role, layer_name, tier):
-        panel = draw_section_card(x, y, w, h, num, title, role, layer_name)
+        panel = draw_section_card(x, y, w, h, num, title, role, layer_name,
+                                  desktop_title=True,
+                                  parent_layer_name=CHILD_PARENT.get(layer_name))
+        if desktop_background == "image":
+            glass_cards.append((x, y, w, h, tier))
+            return panel.replace(
+                f'fill="{CARD_FILL}" stroke="{CARD_STROKE}" stroke-width="1"',
+                'fill="#18212d" fill-opacity="0" stroke="#667589" '
+                'stroke-opacity="0" stroke-width="1"',
+                1,
+            )
         fill_opacity, stroke_opacity = {
             "focus": (0.88, 0.76),
             "alpha": (0.48, 0.48),
@@ -1669,8 +1946,10 @@ def build_desktop(width, height, content_width):
             0, 0, unit, data, name in DARK_LAYER, set(), layer_name=name
         )
         parts.append(
-            f'<g transform="translate({kb_x:.3f} {kb_y:.3f}) '
-            f'scale({keyboard_scale:.8f})" opacity="0.82">'
+            f'<g class="desktop-keys layer-keys" '
+            f'transform="translate({kb_x:.3f} {kb_y:.3f}) '
+            f'scale({keyboard_scale:.8f})" '
+            f'opacity="{(1.0 if desktop_key_material == "unused-glass" else 0.82)}">'
             + draw_sym_strip(0, 0, unit, SYMBOLS[0])
             + keyboard
             + '</g>'
@@ -1678,47 +1957,73 @@ def build_desktop(width, height, content_width):
 
     def render_layer(layer_name, x, y, w, h, tier):
         title, data, num, role = layer_specs[layer_name]
+        if layer_name == "CTRL":
+            data = CTRL_DESKTOP
+        # Desktop headers teach one representative left-hand entry. Child
+        # cards add the GUI key as an icon; mirrored firmware access remains.
+        role = ""
         parts.append(desktop_card(
             x, y, w, h, num, title, role, layer_name, tier
         ))
-        role_opacity = 1.0 if tier == "focus" else 0.68
-        parts.append(
-            f'<text x="{x+48:.1f}" y="{y+50:.1f}" {FONTFAM} '
-            f'font-size="8" font-weight="600" fill="{MUTED}" '
-            f'fill-opacity="{role_opacity}" letter-spacing="0.3">'
-            f'{esc(role)}</text>'
-        )
         unit = 27
         target_unit = 25 if tier == "focus" else 17
         keyboard_scale = target_unit / unit
         kb_x = x + (w - _kb_width_est(unit) * keyboard_scale) / 2
         kb_y = y + (55 if tier == "focus" else 44)
         access_set, secondary_set, cue_map = card_highlights(layer_name)
+        if layer_name == "CTRL":
+            # Badge and A share the CONTROL accent. GUI is the visible Media
+            # chord affordance; empty D remains a home-row affordance; and
+            # shortcut-bearing S/F retain payload treatment.
+            access_set = {ACTIVE_ANCHOR["CTRL"]}
+            secondary_set = {(1, 3), GUI_THUMB}
+            cue_map = {(1, 3): "NUMBERS", GUI_THUMB: "MEDIA"}
+        if layer_name == "CTRL" and desktop_key_material == "etched-wayfinding-refined":
+            access_set.add((1, 10))  # Explicit mirrored `;` Control anchor trial.
         keyboard, _, _ = draw_keyboard(
             0, 0, unit, data, layer_name in DARK_LAYER, access_set,
             secondary_set=secondary_set, embed_set=embed_for(layer_name),
             cue_map=cue_map,
             font_boost=LAYER_FONT_BOOST.get(layer_name, 1.0),
             layer_name=layer_name,
+            payload_set=(CTRL_SHORTCUT_POSITIONS if layer_name == "CTRL" else None),
+            shortcut_labels=(CTRL_SHORTCUT_LETTERS if layer_name == "CTRL" else None),
+            shortcut_actions=(CTRL_SHORTCUT_ACTIONS if layer_name == "CTRL" else None),
+            shortcut_icons=(CTRL_SHORTCUT_CORNER_ICONS if layer_name == "CTRL" else None),
+            payload_palette=(CTRL_SHORTCUT_PALETTE if layer_name == "CTRL" else None),
+            opaque_state_foreground="#f8fafc",
         )
-        content_opacity = 1.0 if tier == "focus" else 0.66
+        if desktop_key_material == "unused-glass":
+            content_opacity = 1.0
+        elif tier == "focus":
+            content_opacity = 1.0
+        elif (layer_name == "CTRL" and
+              desktop_key_material not in {"etched-wayfinding",
+                                           "etched-wayfinding-refined"}):
+            content_opacity = 0.84
+        else:
+            content_opacity = 0.66
+        key_group_class = (
+            "desktop-keys control-keys" if layer_name == "CTRL"
+            else f"desktop-keys layer-keys {layer_name.lower()}-keys"
+        )
         parts.append(
-            f'<g transform="translate({kb_x:.3f} {kb_y:.3f}) '
+            f'<g class="{key_group_class}" transform="translate({kb_x:.3f} {kb_y:.3f}) '
             f'scale({keyboard_scale:.8f})" '
             f'opacity="{content_opacity}">{keyboard}</g>'
         )
 
     render_alpha("BASE", left_x)
     render_alpha("COLEMAK", right_x)
-    render_layer("CTRL", left_x, utility_y[0], side_w, utility_h, "utility")
+    render_layer("MEDIA", left_x, utility_y[0], side_w, utility_h, "utility")
     render_layer("NAVIGATION", left_x, utility_y[1], side_w, utility_h, "utility")
     render_layer("MSSTYLES", right_x, utility_y[0], side_w, utility_h, "utility")
     render_layer("SNAP", right_x, utility_y[1], side_w, utility_h, "utility")
-    render_layer("NUMBERS", center_x, focus_y[0], focus_w, focus_h, "focus")
+    render_layer("CTRL", center_x, focus_y[0], focus_w, focus_h, "focus")
     render_layer("SYMBOLS", center_x + focus_w + focus_gap,
                  focus_y[0], focus_w, focus_h, "focus")
-    render_layer("FUNCTION", center_x, focus_y[1], focus_w, focus_h, "focus")
-    render_layer("MEDIA", center_x + focus_w + focus_gap,
+    render_layer("NUMBERS", center_x, focus_y[1], focus_w, focus_h, "focus")
+    render_layer("FUNCTION", center_x + focus_w + focus_gap,
                  focus_y[1], focus_w, focus_h, "focus")
 
     parts.append(
@@ -1736,10 +2041,12 @@ def build_desktop(width, height, content_width):
                           main_font, hold_font, spanish="\u00c1",
                           double_hold="_TEXT_WORK"))
     parts.append(draw_key(anatomy_x[1], anatomy_key_y, anatomy_unit, anatomy_unit,
-                          "", "", "A", True, True, "A", main_font, hold_font))
+                          "", "", "D", True, True, "D", main_font, hold_font,
+                          opaque_state_foreground="#f8fafc"))
     parts.append(draw_key(anatomy_x[2], anatomy_key_y, anatomy_unit, anatomy_unit,
                           "", "", "", True, False, None, main_font, hold_font,
-                          secondary=True))
+                          secondary=True, secondary_label="_KEY_GUI",
+                          opaque_state_foreground="#f8fafc"))
     anatomy_label_gap = 5
     anatomy_top_label_y = anatomy_key_y + 9
     anatomy_bottom_label_y = anatomy_key_y + anatomy_unit - 3
@@ -1759,7 +2066,9 @@ def build_desktop(width, height, content_width):
             f'{FONTFAM} font-size="7" font-weight="600" fill="{MUTED}">'
             f'{label}</text>'
         )
-    for x, caption in zip(anatomy_x, ("key anatomy", "chord member", "chord cue")):
+    for x, caption in zip(
+            anatomy_x,
+            ("key anatomy", "active anchor", "chord affordance")):
         parts.append(
             f'<text x="{x+anatomy_unit/2:.1f}" y="{anatomy_y+53}" '
             f'text-anchor="middle" {FONTFAM} font-size="7" font-weight="600" '
@@ -1784,11 +2093,170 @@ def build_desktop(width, height, content_width):
     for paper_colour, desktop_colour in desktop_colours.items():
         desktop_inner = desktop_inner.replace(paper_colour, desktop_colour)
 
+    key_material_styles = {
+        "opaque": "",
+        "etched": (
+            '<style>.control-keys .keycap{fill-opacity:.28;stroke-opacity:.62}'
+            '.control-keys .keycap[fill="#1e3a5f"]{fill-opacity:.46;stroke-opacity:.78}'
+            '.control-keys .keycap[fill="#334155"]{fill-opacity:.56;stroke-opacity:.86}'
+            '</style>'
+        ),
+        "etched-strong": (
+            '<style>.control-keys .keycap{fill-opacity:.42;stroke-opacity:.76}'
+            '.control-keys .keycap[fill="#1e3a5f"]{fill-opacity:.62;stroke-opacity:.90}'
+            '.control-keys .keycap[fill="#334155"]{fill-opacity:.72;stroke-opacity:.96}'
+            '</style>'
+        ),
+        "etched-bolder": (
+            '<style>.control-keys .keycap{fill-opacity:.58;stroke-opacity:.86}'
+            '.control-keys .keycap[fill="#1e3a5f"]{fill-opacity:.76;stroke-opacity:.96}'
+            '.control-keys .keycap[fill="#334155"]{fill-opacity:.84;stroke-opacity:1}'
+            '</style>'
+        ),
+        "etched-wayfinding": (
+            '<style>.control-keys .keycap{fill-opacity:.34;stroke-opacity:.68}'
+            '.control-keys .keycap[fill="#1e3a5f"]{fill-opacity:.76;stroke-opacity:.96}'
+            '.control-keys .keycap[fill="#34465c"]{fill-opacity:1;stroke-opacity:1}'
+            '.control-keys .keycap[fill="#334155"]{fill-opacity:1;stroke-opacity:1}'
+            '</style>'
+        ),
+        "etched-wayfinding-refined": (
+            '<style>.control-keys .keycap{fill-opacity:.34;stroke-opacity:.68}'
+            '.control-keys .keycap[fill="#1e3a5f"]{fill-opacity:.76;stroke-opacity:.96}'
+            '.control-keys .keycap[fill="#34465c"]{fill:#26384d;fill-opacity:1;stroke-opacity:.86}'
+            '.control-keys .keycap[fill="#334155"]{fill:#5f748f;fill-opacity:1;stroke-opacity:1}'
+            '</style>'
+        ),
+        "unused-glass": (
+            '<style>'
+            '.card-badge-CTRL{fill:#526a9c;stroke:#8da2cc}'
+            '.card-badge-NUMBERS{fill:#3b82f6;stroke:#93c5fd}'
+            '.desktop-keys .key-unused,.desktop-keys .key-repeated'
+            '{fill-opacity:.30;stroke-opacity:.62}'
+            '.desktop-keys .key-functional,.desktop-keys .key-active,'
+            '.desktop-keys .key-cue'
+            '{fill-opacity:1;stroke-opacity:1}'
+            '.desktop-keys .key-functional[fill="#0b1220"]'
+            '{stroke:#6f839b;stroke-width:1.15}'
+            '.control-keys .key-functional'
+            '{fill:#0b1220;stroke:#6f839b;stroke-width:1.15}'
+            '.control-keys .key-active'
+            '{fill:#526a9c;stroke:#8da2cc;stroke-width:1.2}'
+            '.numbers-keys .key-active'
+            '{fill:#3b82f6;stroke:#93c5fd;stroke-width:1.2}'
+            '</style>'
+        ),
+    }
+    key_material_style = key_material_styles[desktop_key_material]
+
     safe_width = width * 0.90
     safe_height = height * 0.86
     scale = min(content_width / comp_w, safe_width / comp_w, safe_height / comp_h)
     offset_x = (width - comp_w * scale) / 2
     offset_y = (height - comp_h * scale) / 2
+
+    background_defs = ""
+    glass_defs = ""
+    glass_markup = ""
+    if desktop_background == "image":
+        if not _os.path.isfile(DESKTOP_ARC_BACKGROUND):
+            raise FileNotFoundError(
+                f"desktop image background not found: {DESKTOP_ARC_BACKGROUND}"
+            )
+        with open(DESKTOP_ARC_BACKGROUND, "rb") as background_file:
+            background_bytes = background_file.read()
+            background_data = _base64.b64encode(background_bytes).decode("ascii")
+        background_defs = (
+            f'<image id="desktop-arc-source" x="0" y="0" '
+            f'width="{width}" height="{height}" preserveAspectRatio="xMidYMid slice" '
+            f'href="data:image/png;base64,{background_data}"/>'
+        )
+        tier_style = {
+            "focus": (24, 0.50, 0.38, 0.18),
+            "alpha": (18, 0.40, 0.27, 0.14),
+            "utility": (14, 0.31, 0.20, 0.11),
+        }
+        glass_def_parts = [
+            f'<filter id="glass-blur-focus" filterUnits="userSpaceOnUse" '
+            f'x="0" y="0" width="{width}" height="{height}">'
+            '<feGaussianBlur stdDeviation="24" edgeMode="duplicate"/></filter>',
+            f'<filter id="glass-blur-alpha" filterUnits="userSpaceOnUse" '
+            f'x="0" y="0" width="{width}" height="{height}">'
+            '<feGaussianBlur stdDeviation="18" edgeMode="duplicate"/></filter>',
+            f'<filter id="glass-blur-utility" filterUnits="userSpaceOnUse" '
+            f'x="0" y="0" width="{width}" height="{height}">'
+            '<feGaussianBlur stdDeviation="14" edgeMode="duplicate"/></filter>',
+            '<filter id="glass-shadow" x="-15%" y="-20%" width="130%" height="145%">'
+            '<feDropShadow dx="0" dy="10" stdDeviation="16" '
+            'flood-color="#020711" flood-opacity="0.42"/></filter>',
+        ]
+        if desktop_glass_blur == "shared":
+            with _Image.open(_io.BytesIO(background_bytes)) as source_image:
+                fitted_background = _ImageOps.fit(
+                    source_image.convert("RGB"), (width, height),
+                    method=_Image.Resampling.LANCZOS,
+                    centering=(0.5, 0.5),
+                )
+                for tier, (blur_radius, _, _, _) in tier_style.items():
+                    blurred_background = fitted_background.filter(
+                        _ImageFilter.GaussianBlur(radius=blur_radius)
+                    )
+                    surface_buffer = _io.BytesIO()
+                    blurred_background.save(surface_buffer, format="PNG", optimize=False)
+                    surface_data = _base64.b64encode(
+                        surface_buffer.getvalue()
+                    ).decode("ascii")
+                    glass_def_parts.append(
+                        f'<image id="glass-surface-{tier}" x="0" y="0" '
+                        f'width="{width}" height="{height}" '
+                        f'href="data:image/png;base64,{surface_data}"/>'
+                    )
+        glass_parts = []
+        for index, (card_x, card_y, card_w, card_h, tier) in enumerate(glass_cards):
+            final_x = offset_x + card_x * scale
+            final_y = offset_y + card_y * scale
+            final_w = card_w * scale
+            final_h = card_h * scale
+            radius = 13 * scale
+            _, tint_opacity, border_opacity, highlight_opacity = tier_style[tier]
+            clip_id = f"glass-clip-{index}"
+            glass_def_parts.append(
+                f'<clipPath id="{clip_id}"><rect x="{final_x:.3f}" '
+                f'y="{final_y:.3f}" width="{final_w:.3f}" height="{final_h:.3f}" '
+                f'rx="{radius:.3f}" ry="{radius:.3f}"/></clipPath>'
+            )
+            if desktop_glass_blur == "shared":
+                glass_source = f'<use href="#glass-surface-{tier}"/>'
+            elif desktop_glass_blur == "on":
+                glass_source = (
+                    f'<use href="#desktop-arc-source" '
+                    f'filter="url(#glass-blur-{tier})"/>'
+                )
+            else:
+                glass_source = '<use href="#desktop-arc-source"/>'
+            glass_parts.append(
+                f'<g clip-path="url(#{clip_id})">{glass_source}</g>'
+                f'<rect x="{final_x:.3f}" y="{final_y:.3f}" '
+                f'width="{final_w:.3f}" height="{final_h:.3f}" '
+                f'rx="{radius:.3f}" ry="{radius:.3f}" fill="#101d30" '
+                f'fill-opacity="{tint_opacity}" stroke="#91acd0" '
+                f'stroke-opacity="{border_opacity}" stroke-width="1.2" '
+                f'filter="url(#glass-shadow)"/>'
+                f'<path d="M {final_x + radius:.3f} {final_y + 1.2:.3f} '
+                f'H {final_x + final_w - radius:.3f}" stroke="#d8e7f7" '
+                f'stroke-opacity="{highlight_opacity}" stroke-width="1" '
+                f'stroke-linecap="round"/>'
+            )
+        glass_defs = "".join(glass_def_parts)
+        glass_markup = "".join(glass_parts)
+        background_markup = '<use href="#desktop-arc-source"/>'
+        content_filter = ""
+    else:
+        background_markup = (
+            f'<rect width="{width}" height="{height}" fill="#090d14"/>'
+            f'<rect width="{width}" height="{height}" fill="url(#ambient)"/>'
+        )
+        content_filter = ' filter="url(#soft-shadow)"'
 
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
@@ -1803,11 +2271,11 @@ def build_desktop(width, height, content_width):
         '<feDropShadow dx="0" dy="18" stdDeviation="22" '
         'flood-color="#00050b" flood-opacity="0.38"/>'
         '</filter>'
-        '</defs>'
-        f'<rect width="{width}" height="{height}" fill="#090d14"/>'
-        f'<rect width="{width}" height="{height}" fill="url(#ambient)"/>'
+        + background_defs + glass_defs +
+        '</defs>' + key_material_style
+        + background_markup + glass_markup +
         f'<g transform="translate({offset_x:.3f} {offset_y:.3f}) '
-        f'scale({scale:.8f})" filter="url(#soft-shadow)">'
+        f'scale({scale:.8f})"{content_filter}>'
         + desktop_inner +
         '</g></svg>'
     )
@@ -1910,6 +2378,18 @@ if __name__ == "__main__":
                     help="Desktop canvas height in pixels (default: 1080)")
     ap.add_argument("--content-width", type=positive_int, default=3200,
                     help="Preferred desktop composition width (default: 3200)")
+    ap.add_argument("--desktop-background", choices=("gradient", "image"),
+                    default="gradient",
+                    help="Desktop background treatment (default: gradient)")
+    ap.add_argument("--desktop-key-material",
+                    choices=("opaque", "etched", "etched-strong", "etched-bolder",
+                             "etched-wayfinding", "etched-wayfinding-refined",
+                             "unused-glass"),
+                    default="opaque",
+                    help="CONTROL key-material prototype (default: opaque)")
+    ap.add_argument("--desktop-glass-blur", choices=("on", "off", "shared"),
+                    default="shared",
+                    help="Image-backed card blur method (default: shared)")
     args = ap.parse_args()
     _os.makedirs(args.out, exist_ok=True)
     if args.mode == "paper":
@@ -1917,9 +2397,25 @@ if __name__ == "__main__":
         png_path = _os.path.join(args.out, "chieftainDots-corne.png")
         write_png(svg, png_path, PAGE_W * 2)
     else:
-        svg = build_desktop(args.width, args.height, args.content_width)
+        svg = build_desktop(
+            args.width, args.height, args.content_width, args.desktop_background,
+            args.desktop_key_material, args.desktop_glass_blur
+        )
+        background_suffix = "-image" if args.desktop_background == "image" else ""
+        key_material_suffix = (
+            "" if args.desktop_key_material == "opaque"
+            else f"-keys-{args.desktop_key_material}"
+        )
+        glass_blur_suffix = {
+            "on": "-glass-legacy-blur",
+            "off": "-glass-no-blur",
+            "shared": "",
+        }[args.desktop_glass_blur]
         png_path = _os.path.join(
-            args.out, f"chieftainDots-corne-desktop-{args.width}x{args.height}.png"
+            args.out,
+            f"chieftainDots-corne-desktop{background_suffix}{key_material_suffix}"
+            f"{glass_blur_suffix}-"
+            f"{args.width}x{args.height}.png",
         )
         write_png_exact(svg, png_path, args.width, args.height)
     print(f"Wrote {png_path} from {len(svg):,} bytes of SVG")

@@ -160,6 +160,156 @@ Examples:
   literals. For example, layer ids belong in `features/layers.h` so `layout.h`,
   Tap Dance, RGB, and OLED can all refer to the same names.
 
+### Make Diagrams Truthful Before Decorative
+
+The guide is a reference for real behavior. Its key positions, tap and hold
+legends, chord members, and repeated thumb behavior must be derived from the
+current keymap data or checked against `layout.h`. Styling may establish visual
+hierarchy, but it must never replace, hide, or contradict a functional payload.
+
+In particular:
+
+- A home-row anchor or sibling-family cue must not replace the action shown in
+  the centre of a functional key. Show entry grammar with a border, corner mark,
+  header cue, or other secondary annotation that leaves the payload intact.
+- Use the established paper-guide entry grammar in both modes: highlight only
+  the left-hand representative anchor inside the keyboard drawing, and state
+  the complete mirrored access pair in the card header (`A or ;`, `S or L`,
+  `D or K`, or `F or J`). Do not add a second highlighted anchor or sibling
+  family cues merely to make the keyboard drawing symmetrical. This keeps the
+  right-hand positions available for their real payloads while still recording
+  every valid route into the surface.
+- Icons may replace words only when their meaning is established and legible at
+  the intended viewing size. Keep a short text or corner-letter cue where the
+  icon alone could be ambiguous.
+- Renderer-only reference material must be labelled as such. It must not look
+  like firmware behavior when it describes a host convention or mnemonic.
+
+### Distinguish Keyboard Maps From Reference Overlays
+
+Layer cards depict what the firmware produces at physical key positions.
+Reference overlays may depict useful conventions that are not QMK layers, but
+they must be explicit about that different contract.
+
+The desktop `CONTROL` card is an intentional exception to the normal modifier
+principle: it is a first-class end-user command reference because common Ctrl
+shortcuts are useful to the person using the guide. The user-facing diagram
+must not expose or visually weaken the card because Control happens to be a
+modifier rather than a QMK layer; that distinction is an internal source and
+verification concern. Present CONTROL with the same coherent card grammar as
+the other command concepts. Its descriptor is `common shortcuts`; its header
+retains `A or ;` as the physical Control access pair and owns the entry
+explanation. Inside the CONTROL keyboard, shortcut keys including `A` and `F`
+use the same dark payload background. Each shortcut uses a CONTROL-specific
+three-part anatomy: letter at top centre, slightly smaller action icon in the
+middle, and one short action word beneath it. The active `A` is the exception:
+it follows the standard large centred anchor-letter grammar and keeps Select All
+only as a small corner icon. The card badge and `A` anchor share one
+unmistakable CONTROL accent. An available child-chord key uses the shared opaque
+affordance treatment, not the destination colour; the destination family colour
+is reserved for the selected chord/current child card. The other payloads
+retain the common dark navy surface. Do not highlight the mirrored `;` inside
+the drawing or add a redundant subtitle beneath CONTROL.
+
+On every command card, the four left home-row seats `A S D F` follow one visual
+precedence: the pressed/current anchor uses its active semantic colour; a seat
+with a real key payload uses the dark payload treatment and keeps its legend;
+otherwise the empty seat uses the shared opaque affordance treatment. Never
+make an unoccupied left home-row seat look like an ordinary unused translucent
+key, and never replace a real payload merely to make the four backgrounds
+match.
+
+Desktop command-card headers use a single information split: the title on the
+left identifies the concept, and the complete access instruction on the right
+explains how to reach it. Do not repeat `hold`, `+ GUI`, or another access
+fragment beneath the title. Base/Colemak may retain useful typing-mode
+descriptors because those describe the surface rather than duplicating a chord.
+Paper remains unchanged unless separately revised.
+
+Side-column card heights should distribute the fixed column envelope according
+to content density rather than giving the alpha card unused space while utility
+cards crowd their bottom edges. Preserve symmetric left/right columns, stable
+outer margins and gaps, and canonical keyboard scale. Prefer reallocating height
+within the existing envelope over moving individual keyboards by arbitrary
+offsets.
+
+Opaque semantic keys use a soft-white foreground. This includes active anchor
+letters, selected chord-member icons, and available chord-affordance icons. The
+background—not a dim foreground—distinguishes active semantic colour from the
+shared affordance surface. Reserve muted blue-grey foregrounds for translucent
+inherited keys; unused translucent wells carry no icon.
+
+Desktop Key Anatomy teaches only non-obvious notation: the existing corner
+legend anatomy, an active anchor with white foreground, and an opaque chord
+affordance with white icon. Do not add permanent samples for inherited and
+unused wells; their icon-versus-no-icon distinction is self-explanatory and
+remains documented in the material principles.
+
+Key Anatomy examples should reuse real diagram vocabulary where practical. The
+active-anchor sample uses the same bright blue `D` as the desktop Numbers card,
+so the legend reinforces a real anchor rather than inventing an isolated generic
+`A` state.
+
+Internally, keep the chosen conventional shortcut vocabulary in one named
+renderer-owned dataset rather than pretending it is firmware-defined behavior
+or duplicating it across layout tables, paper data, firmware, or documentation
+tables. Reuse the shared physical keyboard geometry and verify the real Control
+access anchors against `layout.h`. The CONTROL shortcut arrangement is the
+Base/QWERTY reference; its letter cues name the shortcuts and it must not claim
+to be a separate literal Colemak physical map.
+
+### Use Visual Material Semantically
+
+Desktop materials should explain state, not merely add polish. Translucency
+primarily communicates absence, with one deliberate exception for inherited
+unchanged behavior. Any key that communicates a payload, entry point, selected
+chord, future chord affordance, wayfinding role, or layer-specific change must
+be opaque and visibly distinct from both its card surface and an unused etched
+well.
+
+- Transparent etched wells mean genuinely unused positions.
+- Payload keys use an opaque cool slate/navy surface with sufficient fill-value
+  and boundary contrast to remain distinct over both the darkest background and
+  the brightest cyan/violet arcs. Opacity alone is not evidence of legibility.
+- Active anchors and selected chord members use the strongest opaque semantic
+  family treatment.
+- Chord affordances remain opaque because they communicate an available route,
+  but use a quieter family tint than selected chord members. Do not use
+  translucency to express their lower priority.
+- Repeated or inherited unchanged thumbs may use the same translucent well as
+  unused positions, but must retain their muted icon and any essential hold
+  legend. The icon distinguishes "still available as normal" from an empty
+  position. This is the desktop equivalent of paper's quiet-grey repeated-thumb
+  treatment and lets opaque chord affordances and changed thumbs carry the
+  learning hierarchy.
+- Opaque keys may use a consistent restrained outline and top-edge highlight to
+  separate them from the card, but must not gain independent glow, blur, raised
+  shadow, or gaming-button styling.
+- A card samples one continuous blurred background pane. Individual keys do not
+  create independent blur, glow, external shadow, or raised gaming-button
+  effects.
+
+### Preserve Desktop Information Hierarchy
+
+The desktop guide is a glanceable wallpaper, not a uniformly weighted poster.
+Numbers, Symbols, Function, and Media are the primary central reference group.
+Base and Colemak are secondary. Control, Navigation, MS Styles, and Snap are
+quiet utility cards. Key Anatomy remains clear enough to decode the notation.
+
+Implement hierarchy by controlling panel, border, heading, accent, key, and
+legend strength separately. Do not fade an entire card uniformly, and do not
+allow bright background arcs to make a quiet side card compete with the central
+four. All essential legends must remain readable at the intended monitor size;
+phone crops are review aids, not proof of full-wallpaper legibility.
+
+### Keep Mode Scope Deliberate
+
+Paper and desktop share keymap truth and keyboard geometry, but may use
+different presentation rules. Paper remains the stable print reference unless a
+requirement explicitly changes it. Desktop may use responsive placement,
+semantic icons, smoked glass, and stronger information hierarchy. A desktop
+refinement must not silently regenerate or alter paper output.
+
 ### Byte Is King For Unused Code
 
 Do not spend firmware bytes on behavior ChieftainDots is not actively using.

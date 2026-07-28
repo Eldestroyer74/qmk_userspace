@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M51 desktop layout wireframe</title>
+  <title>M61 desktop hierarchy wireframe</title>
   <style>
     :root {
       color-scheme: dark;
@@ -99,12 +99,87 @@
       letter-spacing: 0.04em;
     }
 
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55em;
+    }
+
+    .badge-group {
+      display: inline-flex;
+      gap: 0.16em;
+    }
+
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      width: 1.35em;
+      aspect-ratio: 1;
+      border: 1px solid #ffffff8c;
+      border-radius: 0.28em;
+      color: #fff;
+      font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+      font-size: 0.78em;
+      font-weight: 700;
+      line-height: 1;
+      box-shadow: inset 0 1px 0 #ffffff2b;
+    }
+
+    .card-title {
+      font-family: "Dosis", "Segoe UI", sans-serif;
+      font-weight: 500;
+    }
+
+    .badge.keyboard { background: #4f63a5; }
+    .badge.control  { background: #526a9c; }
+    .badge.symbols  { background: #9a552a; }
+    .badge.numbers  { background: #3b82f6; }
+    .badge.function { background: #527a45; }
+    .badge.media    { background: #397b78; }
+    .badge.nav      { background: #397786; }
+    .badge.styles   { background: #9a692e; }
+    .badge.snap     { background: #53677e; }
+
+    .badge img {
+      width: 76%;
+      height: 76%;
+      object-fit: contain;
+      filter: grayscale(1) brightness(0) invert(1);
+    }
+
+    .access-cue {
+      position: absolute;
+      top: 0.72em;
+      right: 0.85em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28em;
+      color: #c2cbd7;
+      font-size: 0.52em;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .gui-icon {
+      display: inline-grid;
+      grid-template-columns: repeat(2, 0.28em);
+      grid-template-rows: repeat(2, 0.28em);
+      gap: 0.08em;
+    }
+
+    .gui-icon i {
+      width: 0.28em;
+      height: 0.28em;
+      background: currentColor;
+    }
+
     /* Logical canvas: 3840 x 1080. Safe margin: 160 x 80. */
     .base       { left: 5.7%;  top: 13%;   width: 21.9%; height: 31.5%; }
-    .control    { left: 5.7%;  top: 48.1%; width: 21.9%; height: 18.5%; }
+    .media      { left: 5.7%;  top: 48.1%; width: 21.9%; height: 18.5%; }
     .navigation { left: 5.7%;  top: 70.4%; width: 21.9%; height: 18.5%; }
 
-    .media      { left: 30.2%; top: 13%;   width: 19.2%; height: 31%; }
+    .control    { left: 30.2%; top: 13%;   width: 19.2%; height: 31%; }
     .symbols    { left: 50.5%; top: 13%;   width: 19.2%; height: 31%; }
     .numbers    { left: 30.2%; top: 48%;   width: 19.2%; height: 31%; }
     .function   { left: 50.5%; top: 48%;   width: 19.2%; height: 31%; }
@@ -133,7 +208,7 @@
   </style>
 </head>
 <body>
-  <main class="frame" aria-label="M51 desktop card placement wireframe">
+  <main class="frame" aria-label="M61 desktop hierarchy wireframe">
     <div class="canvas-label">3840 × 1080 logical canvas</div>
     <div class="safe-area" aria-hidden="true"></div>
 
@@ -141,19 +216,19 @@
     <div class="zone focus"><span class="zone-label">Central focus · 1600 wide</span></div>
     <div class="zone right"><span class="zone-label">Right wing · 880 wide</span></div>
 
-    <section class="card base">BASE<small>wide alpha card</small></section>
-    <section class="card control">CONTROL</section>
-    <section class="card navigation">NAVIGATION</section>
+    <section class="card base"><div class="card-header"><span class="badge-group"><span class="badge keyboard">⌨</span></span><span class="card-title">BASE</span></div></section>
+    <section class="card media"><div class="card-header"><span class="badge-group"><span class="badge control">⌃</span><span class="badge media">▶</span></span><span class="card-title">MEDIA</span></div><span class="access-cue">A + <span class="gui-icon" aria-label="GUI"><i></i><i></i><i></i><i></i></span></span></section>
+    <section class="card navigation"><div class="card-header"><span class="badge-group"><span class="badge numbers">#</span><span class="badge nav"><img src="assets/navigation-rooster-a3.png" alt=""></span></span><span class="card-title">NAVIGATION</span></div><span class="access-cue">D + <span class="gui-icon" aria-label="GUI"><i></i><i></i><i></i><i></i></span></span></section>
 
-    <section class="card focus-card media">MEDIA</section>
-    <section class="card focus-card symbols">SYMBOLS</section>
-    <section class="card focus-card numbers">NUMBERS</section>
-    <section class="card focus-card function">FUNCTION</section>
+    <section class="card focus-card control"><div class="card-header"><span class="badge-group"><span class="badge control">⌃</span></span><span class="card-title">CONTROL</span></div><span class="access-cue">A</span></section>
+    <section class="card focus-card symbols"><div class="card-header"><span class="badge-group"><span class="badge symbols">@</span></span><span class="card-title">SYMBOLS</span></div><span class="access-cue">S</span></section>
+    <section class="card focus-card numbers"><div class="card-header"><span class="badge-group"><span class="badge numbers">#</span></span><span class="card-title">NUMBERS</span></div><span class="access-cue">D</span></section>
+    <section class="card focus-card function"><div class="card-header"><span class="badge-group"><span class="badge function">Fn</span></span><span class="card-title">FUNCTION</span></div><span class="access-cue">F</span></section>
     <section class="card anatomy">KEY ANATOMY</section>
 
-    <section class="card colemak">COLEMAK<small>wide alpha card</small></section>
-    <section class="card msstyles">MS STYLES</section>
-    <section class="card snap">SNAP</section>
+    <section class="card colemak"><div class="card-header"><span class="badge-group"><span class="badge keyboard">⌨</span></span><span class="card-title">COLEMAK</span></div></section>
+    <section class="card msstyles"><div class="card-header"><span class="badge-group"><span class="badge symbols">@</span><span class="badge styles">¶</span></span><span class="card-title">MS STYLES</span></div><span class="access-cue">S + <span class="gui-icon" aria-label="GUI"><i></i><i></i><i></i><i></i></span></span></section>
+    <section class="card snap"><div class="card-header"><span class="badge-group"><span class="badge function">Fn</span><span class="badge snap">→</span></span><span class="card-title">SNAP</span></div><span class="access-cue">F + <span class="gui-icon" aria-label="GUI"><i></i><i></i><i></i><i></i></span></span></section>
 
     <span class="measure margin-x">160 px safe margin</span>
     <span class="measure margin-y">80 px safe margin</span>
