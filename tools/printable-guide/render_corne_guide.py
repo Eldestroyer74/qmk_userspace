@@ -382,6 +382,7 @@ PORTAL_DEST = {}
 #   cue_text    â€” label/icon colour on a cue / embed tile
 DEFAULT_PALETTE = {
     "chord":      "#3b82f6",
+    "chord_stroke": "#93c5fd",
     "chord_text": "#ffffff",
     "chord_hold": "#bfdbfe",
     "cue":        "#bfdbfe",
@@ -391,36 +392,39 @@ DEFAULT_PALETTE = {
 
 LAYER_PALETTE = {
     # Hybrid print-safe â€” hue family matches firmware LEDs, darker shades for white-on-chord legibility
-    "SYMBOLS":    {"chord": "#92400e", "chord_text": "#ffffff", "chord_hold": "#fde68a",
+    "BASE":       {"chord": "#2563eb", "chord_stroke": "#7dd3fc", "chord_text": "#ffffff", "chord_hold": "#dbeafe",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "MEDIA":      {"chord": "#134e4a", "chord_text": "#ffffff", "chord_hold": "#ccfbf1",
+    "SYMBOLS":    {"chord": "#92400e", "chord_stroke": "#f59e0b", "chord_text": "#ffffff", "chord_hold": "#fde68a",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "TEXT":       {"chord": "#9f1239", "chord_text": "#ffffff", "chord_hold": "#fecdd3",
+    "MEDIA":      {"chord": "#134e4a", "chord_stroke": "#2dd4bf", "chord_text": "#ffffff", "chord_hold": "#ccfbf1",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "FUNCTION":   {"chord": "#4d7c0f", "chord_text": "#ffffff", "chord_hold": "#d9f99d",
+    "TEXT":       {"chord": "#9f1239", "chord_stroke": "#fb7185", "chord_text": "#ffffff", "chord_hold": "#fecdd3",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "NUMBERS":    {"chord": "#1e40af", "chord_text": "#ffffff", "chord_hold": "#bfdbfe",
+    "FUNCTION":   {"chord": "#4d7c0f", "chord_stroke": "#84cc16", "chord_text": "#ffffff", "chord_hold": "#d9f99d",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "NAVIGATION": {"chord": "#0e7490", "chord_text": "#ffffff", "chord_hold": "#cffafe",
+    "NUMBERS":    {"chord": "#1e40af", "chord_stroke": "#60a5fa", "chord_text": "#ffffff", "chord_hold": "#bfdbfe",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "MSSTYLES":   {"chord": "#a16207", "chord_text": "#ffffff", "chord_hold": "#fef08a",
+    "NAVIGATION": {"chord": "#0e7490", "chord_stroke": "#22d3ee", "chord_text": "#ffffff", "chord_hold": "#cffafe",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "COLEMAK":    {"chord": "#5b21b6", "chord_text": "#ffffff", "chord_hold": "#ddd6fe",
+    "MSSTYLES":   {"chord": "#a16207", "chord_stroke": "#facc15", "chord_text": "#ffffff", "chord_hold": "#fef08a",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "CTRL":       {"chord": "#334155", "chord_text": "#f8fafc", "chord_hold": "#cbd5e1",
+    "COLEMAK":    {"chord": "#5b21b6", "chord_stroke": "#c4b5fd", "chord_text": "#ffffff", "chord_hold": "#ddd6fe",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
-    "SNAP":       {"chord": "#1e3a5f", "chord_text": "#ffffff", "chord_hold": "#bfdbfe",
+    "CTRL":       {"chord": "#334155", "chord_stroke": "#94a3b8", "chord_text": "#f8fafc", "chord_hold": "#cbd5e1",
+                   "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
+    "SNAP":       {"chord": "#1e3a5f", "chord_stroke": "#93c5fd", "chord_text": "#ffffff", "chord_hold": "#bfdbfe",
                    "cue":        "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text":   "#1e40af"},
 }
 
 CTRL_SHORTCUT_PALETTE = {
-    "chord": "#0b1220", "chord_text": "#f8fafc", "chord_hold": "#dbeafe",
+    "chord": "#0b1220", "chord_stroke": "#6f839b", "chord_text": "#f8fafc", "chord_hold": "#dbeafe",
     "cue": "#bfdbfe", "cue_stroke": "#93c5fd", "cue_text": "#1e40af",
 }
 
 # Payload Del key uses the firmware Caps red (print-safe).
 DEL_PAL = {
     "chord":      "#b91c1c",
+    "chord_stroke": "#f87171",
     "chord_text": "#ffffff",
     "chord_hold": "#fecaca",
     "cue":        "#bfdbfe",
@@ -835,6 +839,19 @@ def draw_fa_glyph(cx, cy, key_size, token, fg):
         return f'<g transform="rotate({rot} {cx:.2f} {cy:.2f})">{use_el}</g>'
     return use_el
 
+def draw_windows_icon(cx, cy, visible_size, fg):
+    """Render the project Windows/GUI mark as four perspective panes."""
+    scale = visible_size / 24
+    return (
+        f'<g transform="translate({cx-visible_size/2:.2f} '
+        f'{cy-visible_size/2:.2f}) scale({scale:.5f})" fill="{fg}">'
+        '<path d="M3 4.2 10.5 3v8H3V4.2Z"/>'
+        '<path d="M11.7 2.8 21 1.5V11h-9.3V2.8Z"/>'
+        '<path d="M3 12.2h7.5v8L3 19v-6.8Z"/>'
+        '<path d="M11.7 12.2H21v9.3l-9.3-1.3v-8Z"/>'
+        '</g>'
+    )
+
 def draw_fa_corner(cx, cy, box, token, fg):
     """Render a small FA glyph fit to a `box`-sized square centred at (cx, cy).
 
@@ -1107,7 +1124,7 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
 
     if highlight:
         fill = pal["chord"]
-        stroke = pal["chord"]
+        stroke = pal["chord_stroke"]
         text = pal["chord_text"]
         hold_color = pal["chord_hold"]
     elif payload:
@@ -1231,9 +1248,18 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
             x + w/2, y + h/2, w, "@", text, size_factor=0.58
         ))
         is_icon = True
+    elif display == "_KEY_GUI":
+        out.append(draw_windows_icon(x + w/2, y + h/2, w * 0.46, text))
+        is_icon = True
     elif display == "_MEDIA_PLAY":
         out.append(draw_fa_pair(x + w/2, y + h/2, w, "_MEDIA_PLAY",
                                 "_MEDIA_PAUSE", text))
+        is_icon = True
+    elif display == "_MEDIA_VOLDN":
+        # Keep the Font Awesome family at equal scale. Its volume-down glyph
+        # has asymmetric intrinsic bounds, so align its speaker optically.
+        out.append(draw_fa_glyph(x + w/2 - w*0.11, y + h/2,
+                                 w*0.84, display, text))
         is_icon = True
     elif display in ICON_TOKENS:
         out.append(draw_fa_glyph(x + w/2, y + h/2, w, display, text))
@@ -1280,7 +1306,7 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
         faint_fs = max(5, int(min(font_hold, fit)))
     if hold and not blank and not trans and not highlight and not secondary:
         if hold in ICON_TOKENS:
-            box = w * 0.26
+            box = w * (0.18 if hold in ARROW_ICONS else 0.26)
             out.append(draw_fa_corner(x + w - 5 - box/2, y + 5 + box/2,
                                       box, hold, hold_color))
         else:
@@ -1290,7 +1316,7 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
             )
     if double and not blank and not trans and not highlight and not secondary:
         if double in ICON_TOKENS:
-            box = w * 0.26
+            box = w * (0.18 if double in WORD_ICONS else 0.26)
             out.append(draw_fa_corner(x + 5 + box/2, y + 5 + box/2,
                                       box, double, hold_color))
         else:
@@ -1304,7 +1330,7 @@ def draw_key(x, y, w, h, tap, hold, double, dark, highlight, anchor_label,
             out.append(draw_snap_icon(x + 5 + box/2, y + h - 5 - box/2,
                                       box / 0.62, double_hold, hold_color))
         elif double_hold in ICON_TOKENS:
-            box = w * 0.26
+            box = w * (0.18 if double_hold in EXTREME_ICONS else 0.26)
             out.append(draw_fa_corner(x + 5 + box/2, y + h - 5 - box/2,
                                       box, double_hold, hold_color))
         else:
@@ -1554,6 +1580,83 @@ def draw_card_badge(cx, cy, size, layer_name, fg):
     return ""
 
 
+DESKTOP_LAYER_DEPTH = {
+    "BASE": "base",
+    "COLEMAK": "base",
+    "CTRL": "anchor",
+    "SYMBOLS": "anchor",
+    "NUMBERS": "anchor",
+    "FUNCTION": "anchor",
+    "MEDIA": "chord",
+    "MSSTYLES": "chord",
+    "NAVIGATION": "chord",
+    "SNAP": "chord",
+}
+
+
+def draw_desktop_layer_depth_icon(x, y, height, state, fg):
+    """Render the three-level header mark from one whole and two L planes."""
+    scale = height / 32
+    paths = [
+        '<path fill-rule="evenodd" d="M27 0 43 8 27 16 11 8Z '
+        'M27 3 37 8 27 13 17 8Z"/>',
+        '<path transform="translate(0 7)" fill-rule="evenodd" '
+        'd="M19 4 27 8 35 4 43 8 35 12 27 16 19 12 11 8Z '
+        'M20 6 27 10 34 6 39 8 34 10 27 14 20 10 15 8Z"/>',
+        '<path transform="translate(0 14)" fill-rule="evenodd" '
+        'd="M19 4 27 8 35 4 43 8 35 12 27 16 19 12 11 8Z '
+        'M20 6 27 10 34 6 39 8 34 10 27 14 20 10 15 8Z"/>',
+    ]
+    fills = {
+        "chord": '<path d="M27 3 37 8 27 13 17 8Z"/>',
+        "anchor": '<path transform="translate(0 7)" '
+                  'd="M20 6 27 10 34 6 39 8 34 10 27 14 20 10 15 8Z"/>',
+        "base": '<path transform="translate(0 14)" '
+                'd="M20 6 27 10 34 6 39 8 34 10 27 14 20 10 15 8Z"/>',
+    }
+    return (
+        f'<g transform="translate({x:.2f} {y:.2f}) scale({scale:.5f})" '
+        f'fill="{fg}">{"".join(paths)}{fills[state]}</g>'
+    )
+
+
+def draw_desktop_access_formula(right_x, centre_y, anchor, with_gui,
+                                depth_state, fg):
+    """Right-align a tokenised access equation with uniform optical gaps."""
+    font_size = 13
+    weight = 600
+    letter_spacing = 0.4
+    gap = 5
+    icon_h = 12
+    depth_w = icon_h * 54 / 32
+    baseline_y = centre_y + 4
+    parts = []
+
+    cursor = right_x - depth_w
+    parts.append(draw_desktop_layer_depth_icon(
+        cursor, centre_y - icon_h / 2, icon_h, depth_state, fg
+    ))
+
+    for token_type, token in reversed(
+            ([('text', anchor), ('text', '+'), ('gui', None), ('text', '=')]
+             if with_gui else
+             [('text', anchor), ('text', '=')])):
+        cursor -= gap
+        if token_type == 'gui':
+            cursor -= icon_h
+            parts.append(draw_windows_icon(
+                cursor + icon_h / 2, centre_y, icon_h, fg
+            ))
+        else:
+            token_w = dosis_width(token, font_size, letter_spacing, weight)
+            cursor -= token_w
+            parts.append(dosis_text(
+                cursor, baseline_y, token, font_size, fg,
+                anchor="start", letter_spacing=letter_spacing, weight=weight
+            ))
+    return "".join(parts)
+
+
 def draw_section_card(x, y, w, h, num, title, sub, layer_name=None,
                       desktop_title=False, parent_layer_name=None):
     out = []
@@ -1565,7 +1668,7 @@ def draw_section_card(x, y, w, h, num, title, sub, layer_name=None,
         # Keep every semantic badge foreground white. Literal #ffffff is
         # remapped by the desktop palette pass, so use an unmapped soft white.
         badge_text = "#f8fafc"
-    badge_stroke = pal.get("cue_stroke", badge_fill) if has_pal else badge_fill
+    badge_stroke = pal.get("chord_stroke", DEFAULT_PALETTE["chord_stroke"])
     chord_fill = pal.get("cue_text", pal["chord"]) if has_pal else BLUE
     out.append(
         f'<rect x="{x}" y="{y}" width="{w}" height="{h}" '
@@ -1580,7 +1683,7 @@ def draw_section_card(x, y, w, h, num, title, sub, layer_name=None,
     for badge_layer in badge_layers:
         badge_pal = palette_for(badge_layer)
         badge_layer_fill = badge_pal["chord"]
-        badge_layer_stroke = badge_pal.get("cue_stroke", badge_layer_fill)
+        badge_layer_stroke = badge_pal.get("chord_stroke", badge_layer_fill)
         out.append(
             f'<rect class="card-badge card-badge-{badge_layer or "default"}" '
             f'x="{badge_x}" y="{y+14}" width="26" height="26" '
@@ -1606,20 +1709,19 @@ def draw_section_card(x, y, w, h, num, title, sub, layer_name=None,
         if desktop_title:
             access_keys = access_keys[:1]
         chord = format_chord(access_keys, anchor_keys)
-        if desktop_title and access_keys and anchor_keys:
-            out.append(dosis_text(
-                x + w - 39, y + 33, f"{access_keys[0]} +", 13,
-                chord_fill, anchor="end", letter_spacing=0.4, weight=600
+        depth_state = DESKTOP_LAYER_DEPTH.get(layer_name)
+        # Match the visible height of the GUI glyph, not its 18 px keycap box.
+        depth_h = 12
+        depth_w = depth_h * 54 / 32
+        depth_right = x + w - 14
+        if desktop_title and depth_state and access_keys:
+            out.append(draw_desktop_access_formula(
+                depth_right, y + 29, access_keys[0], bool(anchor_keys),
+                depth_state, chord_fill
             ))
-            out.append(draw_fa_glyph(
-                # The shared glyph is tuned for keycap centring. Nudge this
-                # header-only use down to the capital-letter optical centre.
-                x + w - 26, y + 29, 18, "_KEY_GUI", chord_fill
-            ))
-        elif desktop_title and chord:
-            out.append(dosis_text(
-                x + w - 14, y + 33, chord, 13, chord_fill,
-                anchor="end", letter_spacing=0.4, weight=600
+        elif desktop_title and depth_state:
+            out.append(draw_desktop_layer_depth_icon(
+                depth_right - depth_w, y + 23, depth_h, depth_state, chord_fill
             ))
         elif chord:
             out.append(
@@ -1890,10 +1992,8 @@ def build_desktop(width, height, content_width, desktop_background="gradient",
     top_y, alpha_h = 45, 210
     side_gap = 14
     utility_h = 137
-    utility_y = (
-        top_y + alpha_h + side_gap,
-        top_y + alpha_h + side_gap + utility_h + side_gap,
-    )
+    utility_y = (top_y, top_y + utility_h + side_gap)
+    alpha_y = utility_y[1] + utility_h + side_gap
     focus_gap = 14
     focus_w = (center_w - focus_gap) / 2
     focus_y = (45, 264)
@@ -1933,15 +2033,15 @@ def build_desktop(width, height, content_width, desktop_background="gradient",
         for title, layer_name, data, num, role in ROW2_SPECS + ROW3_SPECS
     }
 
-    def render_alpha(name, x):
+    def render_alpha(name, x, y):
         sub, data, num = alpha_specs[name]
         parts.append(desktop_card(
-            x, top_y, side_w, alpha_h, num, name, sub, name, "alpha"
+            x, y, side_w, alpha_h, num, name, sub, name, "alpha"
         ))
         unit = 43
         keyboard_scale = 28 / unit
         kb_x = x + (side_w - _kb_width_est(unit) * keyboard_scale) / 2
-        kb_y = top_y + 55
+        kb_y = y + 55
         keyboard, _, _ = draw_keyboard(
             0, 0, unit, data, name in DARK_LAYER, set(), layer_name=name
         )
@@ -2013,12 +2113,12 @@ def build_desktop(width, height, content_width, desktop_background="gradient",
             f'opacity="{content_opacity}">{keyboard}</g>'
         )
 
-    render_alpha("BASE", left_x)
-    render_alpha("COLEMAK", right_x)
-    render_layer("MEDIA", left_x, utility_y[0], side_w, utility_h, "utility")
-    render_layer("NAVIGATION", left_x, utility_y[1], side_w, utility_h, "utility")
-    render_layer("MSSTYLES", right_x, utility_y[0], side_w, utility_h, "utility")
-    render_layer("SNAP", right_x, utility_y[1], side_w, utility_h, "utility")
+    render_layer("NAVIGATION", left_x, utility_y[0], side_w, utility_h, "utility")
+    render_layer("MEDIA", left_x, utility_y[1], side_w, utility_h, "utility")
+    render_alpha("BASE", left_x, alpha_y)
+    render_layer("SNAP", right_x, utility_y[0], side_w, utility_h, "utility")
+    render_layer("MSSTYLES", right_x, utility_y[1], side_w, utility_h, "utility")
+    render_alpha("COLEMAK", right_x, alpha_y)
     render_layer("CTRL", center_x, focus_y[0], focus_w, focus_h, "focus")
     render_layer("SYMBOLS", center_x + focus_w + focus_gap,
                  focus_y[0], focus_w, focus_h, "focus")
@@ -2026,10 +2126,6 @@ def build_desktop(width, height, content_width, desktop_background="gradient",
     render_layer("FUNCTION", center_x + focus_w + focus_gap,
                  focus_y[1], focus_w, focus_h, "focus")
 
-    parts.append(
-        f'<text x="{center_x}" y="{anatomy_y+15}" {FONTFAM} font-size="10" '
-        f'font-weight="800" fill="{INK}" letter-spacing="0.6">KEY ANATOMY</text>'
-    )
     anatomy_unit = 28
     anatomy_key_y = anatomy_y + 18
     anatomy_start = center_x + center_w / 2 - 155
